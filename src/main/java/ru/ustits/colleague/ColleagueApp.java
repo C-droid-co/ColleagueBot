@@ -12,7 +12,7 @@ public class ColleagueApp {
     public static void main(String[] args) {
         ApiContextInitializer.init();
         BotContext.init(args[0]);
-        TelegramBotsApi api = new TelegramBotsApi();
+        final TelegramBotsApi api = new TelegramBotsApi();
 
         try {
             api.registerBot(new ColleagueBot());

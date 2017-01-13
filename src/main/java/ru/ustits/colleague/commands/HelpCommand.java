@@ -25,14 +25,14 @@ public class HelpCommand extends BotCommand {
 
     @Override
     public void execute(AbsSender absSender, User user, Chat chat, String[] arguments) {
-        StringBuilder helpMessageBuilder = new StringBuilder("<b>Help</b>\n");
+        final StringBuilder helpMessageBuilder = new StringBuilder("<b>Help</b>\n");
         helpMessageBuilder.append("These are the registered commands for this Bot:\n\n");
 
         for (BotCommand botCommand : commandRegistry.getRegisteredCommands()) {
             helpMessageBuilder.append(botCommand.toString()).append("\n\n");
         }
 
-        SendMessage helpMessage = new SendMessage();
+        final SendMessage helpMessage = new SendMessage();
         helpMessage.setChatId(chat.getId().toString());
         helpMessage.enableHtml(true);
         helpMessage.setText(helpMessageBuilder.toString());

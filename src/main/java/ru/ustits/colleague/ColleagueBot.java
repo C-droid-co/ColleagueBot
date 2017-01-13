@@ -23,7 +23,7 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
 
     private final Map<String, PartialBotApiMethod> triggers;
 
-    private TriggerCommand triggerCommand;
+    private final TriggerCommand triggerCommand;
 
     public ColleagueBot() {
         triggers = new HashMap<>();
@@ -60,13 +60,13 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
     private void sendMessage(Long chatId, PartialBotApiMethod object) {
         try {
             if (object instanceof SendMessage) {
-                SendMessage message = ((SendMessage) object).setChatId(chatId);
+                final SendMessage message = ((SendMessage) object).setChatId(chatId);
                 sendMessage(message);
             } else if (object instanceof SendSticker) {
-                SendSticker sticker = ((SendSticker) object).setChatId(chatId);
+                final SendSticker sticker = ((SendSticker) object).setChatId(chatId);
                 sendSticker(sticker);
             } else if (object instanceof SendDocument) {
-                SendDocument document = ((SendDocument) object).setChatId(chatId);
+                final SendDocument document = ((SendDocument) object).setChatId(chatId);
                 sendDocument(document);
             }
         } catch (TelegramApiException e) {

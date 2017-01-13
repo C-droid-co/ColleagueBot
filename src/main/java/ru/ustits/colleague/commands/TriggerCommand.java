@@ -26,7 +26,7 @@ public class TriggerCommand extends BotCommand {
     }
 
     public void execute(AbsSender absSender, User user, Chat chat, String[] arguments) {
-        SendMessage answer = processArgumentsAndSetResponse(arguments);
+        final SendMessage answer = processArgumentsAndSetResponse(arguments);
         try {
             absSender.sendMessage(answer.setChatId(chat.getId().toString()));
         } catch (TelegramApiException e) {
@@ -35,7 +35,7 @@ public class TriggerCommand extends BotCommand {
     }
 
     private SendMessage processArgumentsAndSetResponse(String[] arguments) {
-        SendMessage commandResult = new SendMessage();
+        final SendMessage commandResult = new SendMessage();
         if (arguments.length >= 2) {
             String trigger = addTrigger(arguments);
             commandResult.setText(String.format("Trigger [%s] successfully added", trigger));
@@ -49,7 +49,7 @@ public class TriggerCommand extends BotCommand {
         String trigger = arguments[0];
         String response = convertStringArrayToString(arguments);
 
-        SendMessage message = new SendMessage();
+        final SendMessage message = new SendMessage();
         message.setText(response);
 
         triggers.put(trigger, message);
@@ -57,7 +57,7 @@ public class TriggerCommand extends BotCommand {
     }
 
     private String convertStringArrayToString(String[] array) {
-        StringBuilder builder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
         for (int i = 1; i < array.length; i++) {
             builder.append(array[i]).append(" ");
         }
