@@ -3,6 +3,8 @@ package ru.ustits.colleague;
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.api.methods.send.SendDocument;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -22,13 +24,11 @@ import java.util.regex.Pattern;
 /**
  * @author ustits
  */
+@Component
 public class ColleagueBot extends TelegramLongPollingCommandBot {
 
-    private final TriggerCommand triggerCommand;
-
-    public ColleagueBot() {
-        triggerCommand = new TriggerCommand();
-    }
+    @Autowired
+    private TriggerCommand triggerCommand;
 
     @Override
     public void processNonCommandUpdate(final Update update) {

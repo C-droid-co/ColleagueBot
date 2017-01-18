@@ -19,10 +19,8 @@ import ru.ustits.colleague.tables.records.TriggersRecord;
  */
 public class TriggerCommand extends BotCommand {
 
-    private static final String COMMAND_TAG = "trigger";
-
-    public TriggerCommand() {
-        super(COMMAND_TAG, "add trigger");
+    public TriggerCommand(final String command) {
+        super(command, "add trigger");
     }
 
     public void execute(final AbsSender absSender, final User user, final Chat chat, final String[] arguments) {
@@ -30,7 +28,7 @@ public class TriggerCommand extends BotCommand {
         try {
             absSender.sendMessage(answer.setChatId(chat.getId().toString()));
         } catch (TelegramApiException e) {
-            BotLogger.error(COMMAND_TAG, e);
+            BotLogger.error(getCommandIdentifier(), e);
         }
     }
 
@@ -72,6 +70,6 @@ public class TriggerCommand extends BotCommand {
 
     private String failResult() {
         return String.format("Couldn't add trigger. Please use \"/%s trigger response_text\" construction",
-                COMMAND_TAG);
+                getCommandIdentifier());
     }
 }
