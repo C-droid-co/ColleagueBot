@@ -18,17 +18,17 @@ public class HelpCommand extends BotCommand {
 
     private final ICommandRegistry commandRegistry;
 
-    public HelpCommand(ICommandRegistry commandRegistry) {
+    public HelpCommand(final ICommandRegistry commandRegistry) {
         super(COMMAND_TAG, "list all commands");
         this.commandRegistry = commandRegistry;
     }
 
     @Override
-    public void execute(AbsSender absSender, User user, Chat chat, String[] arguments) {
+    public void execute(final AbsSender absSender, final User user, final Chat chat, final String[] arguments) {
         final StringBuilder helpMessageBuilder = new StringBuilder("<b>Help</b>\n");
         helpMessageBuilder.append("These are the registered commands for this Bot:\n\n");
 
-        for (BotCommand botCommand : commandRegistry.getRegisteredCommands()) {
+        for (final BotCommand botCommand : commandRegistry.getRegisteredCommands()) {
             helpMessageBuilder.append(botCommand.toString()).append("\n\n");
         }
 

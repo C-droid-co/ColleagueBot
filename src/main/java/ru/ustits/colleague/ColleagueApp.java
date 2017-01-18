@@ -1,26 +1,23 @@
 package ru.ustits.colleague;
 
 import org.jooq.DSLContext;
-import org.jooq.Record;
-import org.jooq.Result;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
 import ru.ustits.colleague.tables.Triggers;
-
-import java.sql.Connection;
-import java.sql.DriverManager;
+import ru.ustits.colleague.tables.records.TriggersRecord;
 
 /**
  * @author ustits
  */
 public class ColleagueApp {
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         ApiContextInitializer.init();
         BotContext.init(args[0]);
+        DBContext.init(args[1], args[2]);
         final TelegramBotsApi api = new TelegramBotsApi();
 
         try {
@@ -29,24 +26,17 @@ public class ColleagueApp {
             e.printStackTrace();
         }
 
-        sampleJooqQuering(args[1], args[2]);
+        printAllTriggers();
     }
 
-    private static void sampleJooqQuering(String userName, String password) {
-        String url = "jdbc:postgresql://localhost:5432/colleague";
+    private static void printAllTriggers() {
+        final DSLContext create = DSL.using(DBContext.connection(), SQLDialect.POSTGRES);
 
-        try (Connection conn = DriverManager.getConnection(url, userName, password)) {
-            DSLContext create = DSL.using(conn, SQLDialect.POSTGRES);
-            Result<Record> result = create.select().from(Triggers.TRIGGERS).fetch();
-
-            for (Record r : result) {
-                Integer id = r.getValue(Triggers.TRIGGERS.ID);
-                String trigger = r.getValue(Triggers.TRIGGERS.TRIGGER);
-                String message = r.getValue(Triggers.TRIGGERS.MESSAGE);
-                System.out.println("ID: " + id + " trigger: " + trigger + " message: " + message);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        for (final TriggersRecord record : create.fetch(Triggers.TRIGGERS)) {
+            final Integer id = record.getId();
+            final String trigger = record.getTrigger();
+            final String message = record.getMessage();
+            System.out.println("ID: " + id + " trigger: " + trigger + " message: " + message);
         }
     }
 }
