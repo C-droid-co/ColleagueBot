@@ -1,8 +1,7 @@
 package ru.ustits.colleague.commands;
 
 import org.jooq.DSLContext;
-import org.jooq.SQLDialect;
-import org.jooq.impl.DSL;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Chat;
 import org.telegram.telegrambots.api.objects.User;
@@ -10,7 +9,6 @@ import org.telegram.telegrambots.bots.AbsSender;
 import org.telegram.telegrambots.bots.commands.BotCommand;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 import org.telegram.telegrambots.logging.BotLogger;
-import ru.ustits.colleague.DBContext;
 import ru.ustits.colleague.tables.Triggers;
 import ru.ustits.colleague.tables.records.TriggersRecord;
 
@@ -18,6 +16,9 @@ import ru.ustits.colleague.tables.records.TriggersRecord;
  * @author ustits
  */
 public class TriggerCommand extends BotCommand {
+
+    @Autowired
+    private DSLContext dsl;
 
     public TriggerCommand(final String command) {
         super(command, "add trigger");
@@ -47,8 +48,7 @@ public class TriggerCommand extends BotCommand {
         final String trigger = arguments[0];
         final String message = convertStringArrayToString(arguments);
 
-        final DSLContext create = DSL.using(DBContext.connection(), SQLDialect.POSTGRES);
-        final TriggersRecord record = create.newRecord(Triggers.TRIGGERS);
+        final TriggersRecord record = dsl.newRecord(Triggers.TRIGGERS);
         record.setTrigger(trigger);
         record.setMessage(message);
         record.store();

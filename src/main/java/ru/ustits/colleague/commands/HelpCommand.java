@@ -14,12 +14,10 @@ import org.telegram.telegrambots.logging.BotLogger;
  */
 public class HelpCommand extends BotCommand {
 
-    private static final String COMMAND_TAG = "help";
-
     private final ICommandRegistry commandRegistry;
 
-    public HelpCommand(final ICommandRegistry commandRegistry) {
-        super(COMMAND_TAG, "list all commands");
+    public HelpCommand(final ICommandRegistry commandRegistry, final String command) {
+        super(command, "list all commands");
         this.commandRegistry = commandRegistry;
     }
 
@@ -40,7 +38,7 @@ public class HelpCommand extends BotCommand {
         try {
             absSender.sendMessage(helpMessage);
         } catch (TelegramApiException e) {
-            BotLogger.error(COMMAND_TAG, e);
+            BotLogger.error(getCommandIdentifier(), e);
         }
     }
 }

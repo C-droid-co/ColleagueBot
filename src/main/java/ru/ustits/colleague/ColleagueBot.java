@@ -1,10 +1,8 @@
 package ru.ustits.colleague;
 
+import lombok.Setter;
 import org.jooq.DSLContext;
-import org.jooq.SQLDialect;
-import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.api.methods.send.SendDocument;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -24,18 +22,23 @@ import java.util.regex.Pattern;
 /**
  * @author ustits
  */
-@Component
+@Setter
 public class ColleagueBot extends TelegramLongPollingCommandBot {
 
     @Autowired
+    private DSLContext dsl;
+
     private TriggerCommand triggerCommand;
+    private HelpCommand helpCommand;
+    private String botName;
+    private String botToken;
 
     @Override
     public void processNonCommandUpdate(final Update update) {
         System.out.println(update);
         if (isNotEditedMessage(update)) {
             register(triggerCommand);
-            register(new HelpCommand(this));
+            register(helpCommand);
             if (update.hasMessage() && update.getMessage().hasText()) {
                 processMessage(update.getMessage());
             }
@@ -47,9 +50,7 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
     }
 
     private void processMessage(final Message message) {
-        final DSLContext create = DSL.using(DBContext.connection(), SQLDialect.POSTGRES);
-
-        for (final TriggersRecord record : create.fetch(Triggers.TRIGGERS)) {
+        for (final TriggersRecord record : dsl.fetch(Triggers.TRIGGERS)) {
             final String trigger = record.getTrigger();
             final Pattern pattern = Pattern.compile(Pattern.quote(trigger),
                     Pattern.CASE_INSENSITIVE + Pattern.UNICODE_CASE);
@@ -58,7 +59,6 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
                 final SendMessage sm = new SendMessage();
                 sm.setText(record.getMessage());
                 sendMessage(message.getChatId(), sm);
-
             }
         }
     }
@@ -82,11 +82,11 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
 
     @Override
     public String getBotToken() {
-        return BotContext.botToken();
+        return botToken;
     }
 
     @Override
     public String getBotUsername() {
-        return BotContext.botName();
+        return botName;
     }
 }
