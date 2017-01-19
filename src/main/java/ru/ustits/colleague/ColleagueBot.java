@@ -7,6 +7,8 @@ import org.telegram.telegrambots.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.api.methods.send.SendDocument;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.methods.send.SendSticker;
+import org.telegram.telegrambots.api.methods.updatingmessages.EditMessageText;
+import org.telegram.telegrambots.api.objects.CallbackQuery;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingCommandBot;
@@ -36,7 +38,9 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
     @Override
     public void processNonCommandUpdate(final Update update) {
         System.out.println(update);
-        if (isNotEditedMessage(update)) {
+        if (update.hasCallbackQuery()) {
+            processCallback(update.getCallbackQuery());
+        } else if (isNotEditedMessage(update)) {
             register(triggerCommand);
             register(helpCommand);
             if (update.hasMessage() && update.getMessage().hasText()) {
@@ -47,6 +51,18 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
 
     private boolean isNotEditedMessage(final Update update) {
         return update.getEditedMessage() == null;
+    }
+
+    private void processCallback(final CallbackQuery callback) {
+        final EditMessageText editMessage = new EditMessageText();
+        editMessage.setChatId(callback.getMessage().getChatId());
+        editMessage.setMessageId(callback.getMessage().getMessageId());
+        editMessage.setText(callback.getData());
+        try {
+            editMessageText(editMessage);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
     }
 
     private void processMessage(final Message message) {
