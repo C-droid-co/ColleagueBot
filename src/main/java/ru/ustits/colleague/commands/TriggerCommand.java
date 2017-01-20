@@ -25,18 +25,22 @@ public class TriggerCommand extends BotCommand {
   }
 
   public void execute(final AbsSender absSender, final User user, final Chat chat, final String[] arguments) {
-    final SendMessage answer = processArgumentsAndSetResponse(arguments);
+    final TriggersRecord record = dsl.newRecord(Triggers.TRIGGERS);
+    final SendMessage answer = processArgumentsAndSetResponse(arguments, record);
     try {
+      record.setChatId(chat.getId());
+      record.setUserId(new Long(user.getId()));
+      record.store();
       absSender.sendMessage(answer.setChatId(chat.getId().toString()));
     } catch (TelegramApiException e) {
       BotLogger.error(getCommandIdentifier(), e);
     }
   }
 
-  protected SendMessage processArgumentsAndSetResponse(final String[] arguments) {
+  protected SendMessage processArgumentsAndSetResponse(final String[] arguments, final TriggersRecord record) {
     final SendMessage commandResult = new SendMessage();
     if (enough(arguments)) {
-      final String trigger = addTrigger(arguments);
+      final String trigger = addTrigger(arguments, record);
       commandResult.setText(String.format("Trigger [%s] successfully added", trigger));
     } else {
       commandResult.setText(failResult());
@@ -48,14 +52,12 @@ public class TriggerCommand extends BotCommand {
     return arguments != null && arguments.length >= 2;
   }
 
-  protected String addTrigger(final String[] arguments) {
+  protected String addTrigger(final String[] arguments, final TriggersRecord record) {
     final String trigger = arguments[0];
     final String message = convertStringArrayToString(arguments);
 
-    final TriggersRecord record = dsl.newRecord(Triggers.TRIGGERS);
     record.setTrigger(trigger);
     record.setMessage(message);
-    record.store();
 
     final String logMessage = String.format("Added trigger:\n %s", record.toString());
     System.out.println(logMessage);
