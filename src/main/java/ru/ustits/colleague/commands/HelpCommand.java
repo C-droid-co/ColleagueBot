@@ -20,41 +20,44 @@ import java.util.List;
  */
 public class HelpCommand extends BotCommand {
 
-    private final ICommandRegistry commandRegistry;
+  private final ICommandRegistry commandRegistry;
 
-    public HelpCommand(final ICommandRegistry commandRegistry, final String command) {
-        super(command, "list all commands");
-        this.commandRegistry = commandRegistry;
+  public HelpCommand(final ICommandRegistry commandRegistry, final String command) {
+    super(command, "list all commands");
+    this.commandRegistry = commandRegistry;
+  }
+
+  @Override
+  public void execute(final AbsSender absSender, final User user, final Chat chat, final String[] arguments) {
+    final StringBuilder helpMessageBuilder = new StringBuilder("<b>Help</b>\n");
+    helpMessageBuilder.append("These are the registered commands for this Bot:\n\n");
+
+    for (final BotCommand botCommand : commandRegistry.getRegisteredCommands()) {
+      helpMessageBuilder.append(botCommand.toString()).append("\n\n");
     }
 
-    @Override
-    public void execute(final AbsSender absSender, final User user, final Chat chat, final String[] arguments) {
-        final StringBuilder helpMessageBuilder = new StringBuilder("<b>Help</b>\n");
-        helpMessageBuilder.append("These are the registered commands for this Bot:\n\n");
+    final SendMessage helpMessage = new SendMessage();
+    helpMessage.setChatId(chat.getId().toString());
+    helpMessage.enableHtml(true);
+    helpMessage.setText(helpMessageBuilder.toString());
+    helpMessage.setReplyMarkup(createButtons());
 
-        final InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
-        final List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
-        final List<InlineKeyboardButton> row = new ArrayList<>();
-        row.add(ButtonCreator.create("text1", "edit1"));
-        row.add(ButtonCreator.create("text2", "edit2"));
-        row.add(ButtonCreator.create("text3", "edit3"));
-        keyboard.add(row);
-        markup.setKeyboard(keyboard);
-
-        for (final BotCommand botCommand : commandRegistry.getRegisteredCommands()) {
-            helpMessageBuilder.append(botCommand.toString()).append("\n\n");
-        }
-
-        final SendMessage helpMessage = new SendMessage();
-        helpMessage.setChatId(chat.getId().toString());
-        helpMessage.enableHtml(true);
-        helpMessage.setText(helpMessageBuilder.toString());
-        helpMessage.setReplyMarkup(markup);
-
-        try {
-            absSender.sendMessage(helpMessage);
-        } catch (TelegramApiException e) {
-            BotLogger.error(getCommandIdentifier(), e);
-        }
+    try {
+      absSender.sendMessage(helpMessage);
+    } catch (TelegramApiException e) {
+      BotLogger.error(getCommandIdentifier(), e);
     }
+  }
+
+  private InlineKeyboardMarkup createButtons() {
+    final InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
+    final List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
+    final List<InlineKeyboardButton> row = new ArrayList<>();
+    row.add(ButtonCreator.create("text1", "edit1"));
+    row.add(ButtonCreator.create("text2", "edit2"));
+    row.add(ButtonCreator.create("text3", "edit3"));
+    keyboard.add(row);
+    markup.setKeyboard(keyboard);
+    return markup;
+  }
 }

@@ -11,18 +11,18 @@ import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
  */
 public class ColleagueApp {
 
-    public static void main(final String[] args) {
-        ApiContextInitializer.init();
-        final TelegramBotsApi api = new TelegramBotsApi();
+  public static void main(final String[] args) {
+    ApiContextInitializer.init();
+    final TelegramBotsApi api = new TelegramBotsApi();
 
-        final ApplicationContext context =
-                new AnnotationConfigApplicationContext(AppContext.class);
-        final ColleagueBot bot = context.getBean(ColleagueBot.class);
+    final ApplicationContext context =
+            new AnnotationConfigApplicationContext(AppContext.class);
+    final ColleagueBot bot = context.getBean(ColleagueBot.class);
 
-        try {
-            api.registerBot(bot);
-        } catch (TelegramApiRequestException e) {
-            e.printStackTrace();
-        }
+    try {
+      api.registerBot(bot);
+    } catch (TelegramApiRequestException e) {
+      e.printStackTrace();
     }
+  }
 }

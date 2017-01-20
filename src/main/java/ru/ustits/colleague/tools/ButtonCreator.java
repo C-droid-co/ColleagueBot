@@ -7,10 +7,10 @@ import org.telegram.telegrambots.api.objects.replykeyboard.buttons.InlineKeyboar
  */
 public class ButtonCreator {
 
-    public static InlineKeyboardButton create(final String text, final String callBackData) {
-        final InlineKeyboardButton button = new InlineKeyboardButton();
-        button.setText(text);
-        button.setCallbackData(callBackData);
-        return button;
-    }
+  public static InlineKeyboardButton create(final String text, final String callBackData) {
+    final InlineKeyboardButton button = new InlineKeyboardButton();
+    button.setText(text);
+    button.setCallbackData(callBackData);
+    return button;
+  }
 }
