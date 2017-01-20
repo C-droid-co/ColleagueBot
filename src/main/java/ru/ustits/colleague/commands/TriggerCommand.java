@@ -33,9 +33,9 @@ public class TriggerCommand extends BotCommand {
     }
   }
 
-  private SendMessage processArgumentsAndSetResponse(final String[] arguments) {
+  protected SendMessage processArgumentsAndSetResponse(final String[] arguments) {
     final SendMessage commandResult = new SendMessage();
-    if (arguments.length >= 2) {
+    if (enough(arguments)) {
       final String trigger = addTrigger(arguments);
       commandResult.setText(String.format("Trigger [%s] successfully added", trigger));
     } else {
@@ -44,7 +44,11 @@ public class TriggerCommand extends BotCommand {
     return commandResult;
   }
 
-  private String addTrigger(final String[] arguments) {
+  private boolean enough(final String[] arguments) {
+    return arguments != null && arguments.length >= 2;
+  }
+
+  protected String addTrigger(final String[] arguments) {
     final String trigger = arguments[0];
     final String message = convertStringArrayToString(arguments);
 
@@ -59,16 +63,15 @@ public class TriggerCommand extends BotCommand {
     return trigger;
   }
 
-  private String convertStringArrayToString(final String[] array) {
+  protected String convertStringArrayToString(final String[] array) {
     final StringBuilder builder = new StringBuilder();
     for (int i = 1; i < array.length; i++) {
       builder.append(array[i]).append(" ");
     }
-    builder.substring(0, builder.length() - 1);
-    return builder.toString();
+    return builder.substring(0, builder.length() - 1);
   }
 
-  private String failResult() {
+  protected String failResult() {
     return String.format("Couldn't add trigger. Please use \"/%s trigger response_text\" construction",
             getCommandIdentifier());
   }
