@@ -1,5 +1,7 @@
 package ru.ustits.colleague;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DefaultDSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +25,10 @@ import java.sql.SQLException;
 @PropertySource("classpath:bot_config.properties")
 public class AppContext {
 
-  private final static String TRIGGER_COMMAND = "trigger";
-  private final static String HELP_COMMAND = "help";
+  private static final Logger log = LogManager.getLogger();
+
+  private static final String TRIGGER_COMMAND = "trigger";
+  private static final String HELP_COMMAND = "help";
 
   @Autowired
   private Environment environment;
@@ -69,7 +73,7 @@ public class AppContext {
     try {
       return DriverManager.getConnection(url, user, password);
     } catch (SQLException e) {
-      e.printStackTrace();
+      log.error(e);
     }
     return null;
   }

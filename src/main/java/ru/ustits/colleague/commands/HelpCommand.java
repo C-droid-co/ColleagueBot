@@ -1,5 +1,7 @@
 package ru.ustits.colleague.commands;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Chat;
 import org.telegram.telegrambots.api.objects.User;
@@ -9,7 +11,6 @@ import org.telegram.telegrambots.bots.AbsSender;
 import org.telegram.telegrambots.bots.commands.BotCommand;
 import org.telegram.telegrambots.bots.commands.ICommandRegistry;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
-import org.telegram.telegrambots.logging.BotLogger;
 import ru.ustits.colleague.tools.ButtonCreator;
 
 import java.util.ArrayList;
@@ -19,6 +20,8 @@ import java.util.List;
  * @author ustits
  */
 public class HelpCommand extends BotCommand {
+
+  private static final Logger log = LogManager.getLogger();
 
   private final ICommandRegistry commandRegistry;
 
@@ -45,7 +48,7 @@ public class HelpCommand extends BotCommand {
     try {
       absSender.sendMessage(helpMessage);
     } catch (TelegramApiException e) {
-      BotLogger.error(getCommandIdentifier(), e);
+      log.error(getCommandIdentifier(), e);
     }
   }
 

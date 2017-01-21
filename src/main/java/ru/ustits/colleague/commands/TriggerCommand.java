@@ -1,5 +1,7 @@
 package ru.ustits.colleague.commands;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -8,7 +10,6 @@ import org.telegram.telegrambots.api.objects.User;
 import org.telegram.telegrambots.bots.AbsSender;
 import org.telegram.telegrambots.bots.commands.BotCommand;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
-import org.telegram.telegrambots.logging.BotLogger;
 import ru.ustits.colleague.tables.Triggers;
 import ru.ustits.colleague.tables.records.TriggersRecord;
 
@@ -17,6 +18,8 @@ import ru.ustits.colleague.tables.records.TriggersRecord;
  */
 public class TriggerCommand extends BotCommand {
 
+  private static final Logger log = LogManager.getLogger();
+
   @Autowired
   private DSLContext dsl;
 
@@ -24,6 +27,7 @@ public class TriggerCommand extends BotCommand {
     super(command, "add trigger");
   }
 
+  @Override
   public void execute(final AbsSender absSender, final User user, final Chat chat, final String[] arguments) {
     final TriggersRecord record = dsl.newRecord(Triggers.TRIGGERS);
     final SendMessage answer = processArgumentsAndSetResponse(arguments, record);
@@ -31,9 +35,11 @@ public class TriggerCommand extends BotCommand {
       record.setChatId(chat.getId());
       record.setUserId(new Long(user.getId()));
       record.store();
+      final String logMessage = String.format("Added trigger:%n %s", record.toString());
+      log.info(logMessage);
       absSender.sendMessage(answer.setChatId(chat.getId().toString()));
     } catch (TelegramApiException e) {
-      BotLogger.error(getCommandIdentifier(), e);
+      log.error(getCommandIdentifier(), e);
     }
   }
 
@@ -55,13 +61,8 @@ public class TriggerCommand extends BotCommand {
   protected String addTrigger(final String[] arguments, final TriggersRecord record) {
     final String trigger = arguments[0];
     final String message = convertStringArrayToString(arguments);
-
     record.setTrigger(trigger);
     record.setMessage(message);
-
-    final String logMessage = String.format("Added trigger:\n %s", record.toString());
-    System.out.println(logMessage);
-
     return trigger;
   }
 

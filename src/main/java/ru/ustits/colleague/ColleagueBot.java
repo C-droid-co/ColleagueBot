@@ -1,6 +1,8 @@
 package ru.ustits.colleague;
 
 import lombok.Setter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.telegram.telegrambots.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.api.methods.send.SendDocument;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -21,6 +23,8 @@ import java.util.List;
 @Setter
 public class ColleagueBot extends TelegramLongPollingCommandBot {
 
+  private static final Logger log = LogManager.getLogger();
+
   private TriggerProcessor triggerProcessor;
   private TriggerCommand triggerCommand;
   private HelpCommand helpCommand;
@@ -29,7 +33,7 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
 
   @Override
   public void processNonCommandUpdate(final Update update) {
-    System.out.println(update);
+    log.info(update);
     if (update.hasCallbackQuery()) {
       processCallback(update.getCallbackQuery());
     } else if (isNotEditedMessage(update)) {
@@ -61,8 +65,8 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
     editMessage.setText(callback.getData());
     try {
       editMessageText(editMessage);
-    } catch (Throwable e) {
-      e.printStackTrace();
+    } catch (TelegramApiException e) {
+      log.error(e);
     }
   }
 
@@ -79,7 +83,7 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
         sendDocument(document);
       }
     } catch (TelegramApiException e) {
-      e.printStackTrace();
+      log.error(e);
     }
   }
 
