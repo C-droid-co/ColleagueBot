@@ -2,7 +2,9 @@ package ru.ustits.colleague.commands;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Chat;
@@ -10,8 +12,9 @@ import org.telegram.telegrambots.api.objects.User;
 import org.telegram.telegrambots.bots.AbsSender;
 import org.telegram.telegrambots.bots.commands.BotCommand;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
-import ru.ustits.colleague.tables.Triggers;
 import ru.ustits.colleague.tables.records.TriggersRecord;
+
+import static ru.ustits.colleague.tables.Triggers.TRIGGERS;
 
 /**
  * @author ustits
@@ -29,49 +32,70 @@ public class TriggerCommand extends BotCommand {
 
   @Override
   public void execute(final AbsSender absSender, final User user, final Chat chat, final String[] arguments) {
-    final TriggersRecord record = dsl.newRecord(Triggers.TRIGGERS);
-    final SendMessage answer = processArgumentsAndSetResponse(arguments, record);
+    final SendMessage answer = createRecord(user, chat, arguments);
     try {
-      record.setChatId(chat.getId());
-      record.setUserId(new Long(user.getId()));
-      record.store();
-      final String logMessage = String.format("Added trigger:%n %s", record.toString());
-      log.info(logMessage);
-      absSender.sendMessage(answer.setChatId(chat.getId().toString()));
+      absSender.sendMessage(answer);
     } catch (TelegramApiException e) {
       log.error(getCommandIdentifier(), e);
     }
   }
 
-  protected SendMessage processArgumentsAndSetResponse(final String[] arguments, final TriggersRecord record) {
-    final SendMessage commandResult = new SendMessage();
+  protected SendMessage createRecord(final User user, final Chat chat, final String[] arguments) {
+    final SendMessage answer;
     if (enough(arguments)) {
-      final String trigger = addTrigger(arguments, record);
-      commandResult.setText(String.format("Trigger [%s] successfully added", trigger));
+      final String trigger = arguments[0];
+      final String message = resolveMessage(arguments);
+      final Result result = dsl.fetch(TRIGGERS, triggerExists(chat.getId(), new Long(user.getId()), trigger));
+
+      if (result.isEmpty()) {
+        answer = createTrigger(trigger, chat.getId(), new Long(user.getId()), message);
+      } else {
+        answer = updateTrigger(message, result);
+      }
     } else {
-      commandResult.setText(failResult());
+      answer = new SendMessage().setText(failResult());
     }
-    return commandResult;
+    return answer.setChatId(chat.getId());
   }
 
   private boolean enough(final String[] arguments) {
     return arguments != null && arguments.length >= 2;
   }
 
-  protected String addTrigger(final String[] arguments, final TriggersRecord record) {
-    final String trigger = arguments[0];
-    final String message = convertStringArrayToString(arguments);
-    record.setTrigger(trigger);
-    record.setMessage(message);
-    return trigger;
-  }
-
-  protected String convertStringArrayToString(final String[] array) {
+  protected String resolveMessage(final String[] array) {
     final StringBuilder builder = new StringBuilder();
     for (int i = 1; i < array.length; i++) {
       builder.append(array[i]).append(" ");
     }
     return builder.substring(0, builder.length() - 1);
+  }
+
+  private Condition triggerExists(final Long chatId, final Long userId, final String trigger) {
+    final Condition sameChat = TRIGGERS.CHAT_ID.eq(chatId);
+    final Condition sameUser = TRIGGERS.USER_ID.eq(userId);
+    final Condition sameTrigger = TRIGGERS.TRIGGER.eq(trigger);
+    return sameChat.and(sameUser.and(sameTrigger));
+  }
+
+  private SendMessage createTrigger(final String trigger, final Long chatId, final Long userId, final String message) {
+    final TriggersRecord record = dsl.newRecord(TRIGGERS);
+    record.setTrigger(trigger);
+    record.setChatId(chatId);
+    record.setMessage(message);
+    record.setUserId(userId);
+    record.store();
+    final String logMessage = String.format("Added trigger:%n %s", record.toString());
+    log.info(logMessage);
+    return new SendMessage().setText(String.format("Trigger [%s] added", record.getTrigger()));
+  }
+
+  private SendMessage updateTrigger(final String message, final Result result) {
+    final TriggersRecord record = (TriggersRecord) result.get(0);
+    record.setMessage(message);
+    record.update();
+    final String logMessage = String.format("Updated trigger:%n %s", record.toString());
+    log.info(logMessage);
+    return new SendMessage().setText(String.format("Trigger [%s] was updated", record.getTrigger()));
   }
 
   protected String failResult() {
