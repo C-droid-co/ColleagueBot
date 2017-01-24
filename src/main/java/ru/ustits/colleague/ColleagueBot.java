@@ -1,6 +1,7 @@
 package ru.ustits.colleague;
 
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.telegram.telegrambots.api.methods.PartialBotApiMethod;
@@ -20,15 +21,13 @@ import java.util.List;
 /**
  * @author ustits
  */
+@Accessors(fluent = true)
 @Setter
 public class ColleagueBot extends TelegramLongPollingCommandBot {
 
   private static final Logger log = LogManager.getLogger();
 
   private TriggerProcessor triggerProcessor;
-  private TriggerCommand triggerCommand;
-  private HelpCommand helpCommand;
-  private RepeatCommand repeatCommand;
   private String botName;
   private String botToken;
 
@@ -38,9 +37,6 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
     if (update.hasCallbackQuery()) {
       processCallback(update.getCallbackQuery());
     } else if (isNotEditedMessage(update)) {
-      register(triggerCommand);
-      register(helpCommand);
-      register(repeatCommand);
       if (isMessage(update)) {
         findTriggers(update);
       }
@@ -82,6 +78,21 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
     } catch (TelegramApiException e) {
       log.error(e);
     }
+  }
+
+  public ColleagueBot triggerCommand(final TriggerCommand triggerCommand) {
+    register(triggerCommand);
+    return this;
+  }
+
+  public ColleagueBot helpCommand(final HelpCommand helpCommand) {
+    register(helpCommand);
+    return this;
+  }
+
+  public ColleagueBot repeatCommand(final RepeatCommand repeatCommand) {
+    register(repeatCommand);
+    return this;
   }
 
   @Override

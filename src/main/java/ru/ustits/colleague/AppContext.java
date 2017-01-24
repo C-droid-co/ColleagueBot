@@ -38,12 +38,12 @@ public class AppContext {
   @Bean
   public ColleagueBot bot() {
     final ColleagueBot bot = new ColleagueBot();
-    bot.setTriggerCommand(triggerCommand());
-    bot.setTriggerProcessor(triggerProcessor(dsl()));
-    bot.setHelpCommand(helpCommand(bot));
-    bot.setRepeatCommand(repeatCommand());
-    bot.setBotName(getBotName());
-    bot.setBotToken(getBotToken());
+    bot.triggerCommand(triggerCommand())
+            .triggerProcessor(triggerProcessor(dsl()))
+            .helpCommand(helpCommand(bot))
+            .repeatCommand(repeatCommand())
+            .botName(getBotName())
+            .botToken(getBotToken());
     return bot;
   }
 
