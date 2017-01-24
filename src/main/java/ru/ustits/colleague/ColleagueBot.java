@@ -7,7 +7,6 @@ import org.telegram.telegrambots.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.api.methods.send.SendDocument;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.methods.send.SendSticker;
-import org.telegram.telegrambots.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.api.objects.CallbackQuery;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingCommandBot;
@@ -62,15 +61,10 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
   }
 
   private void processCallback(final CallbackQuery callback) {
-    final EditMessageText editMessage = new EditMessageText();
-    editMessage.setChatId(callback.getMessage().getChatId());
-    editMessage.setMessageId(callback.getMessage().getMessageId());
-    editMessage.setText(callback.getData());
-    try {
-      editMessageText(editMessage);
-    } catch (TelegramApiException e) {
-      log.error(e);
-    }
+    final SendMessage helpMessage = new SendMessage();
+    helpMessage.setText(callback.getData());
+    helpMessage.enableMarkdown(true);
+    sendMessage(callback.getMessage().getChatId(), helpMessage);
   }
 
   private void sendMessage(final Long chatId, final PartialBotApiMethod object) {

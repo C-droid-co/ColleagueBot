@@ -56,9 +56,9 @@ public class HelpCommand extends BotCommand {
     final InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
     final List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
     final List<InlineKeyboardButton> row = new ArrayList<>();
-    row.add(ButtonCreator.create("text1", "edit1"));
-    row.add(ButtonCreator.create("text2", "edit2"));
-    row.add(ButtonCreator.create("text3", "edit3"));
+    row.add(ButtonCreator.create("/help", "*Ex.:* `/help`"));
+    row.add(ButtonCreator.create("/trigger", "*Ex.:* `/trigger [trigger_message] [response_message]`"));
+    row.add(ButtonCreator.create("/repeat", "*Ex.:* `/repeat [repeat_message] [hour] [minutes] [seconds]`"));
     keyboard.add(row);
     markup.setKeyboard(keyboard);
     return markup;
