@@ -13,6 +13,7 @@ import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingCommandBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 import ru.ustits.colleague.commands.HelpCommand;
+import ru.ustits.colleague.commands.RepeatCommand;
 import ru.ustits.colleague.commands.TriggerCommand;
 
 import java.util.List;
@@ -28,6 +29,7 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
   private TriggerProcessor triggerProcessor;
   private TriggerCommand triggerCommand;
   private HelpCommand helpCommand;
+  private RepeatCommand repeatCommand;
   private String botName;
   private String botToken;
 
@@ -39,6 +41,7 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
     } else if (isNotEditedMessage(update)) {
       register(triggerCommand);
       register(helpCommand);
+      register(repeatCommand);
       if (isMessage(update)) {
         findTriggers(update);
       }

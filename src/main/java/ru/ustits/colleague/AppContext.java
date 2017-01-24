@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import ru.ustits.colleague.commands.HelpCommand;
+import ru.ustits.colleague.commands.RepeatCommand;
 import ru.ustits.colleague.commands.TriggerCommand;
 
 import java.sql.Connection;
@@ -29,6 +30,7 @@ public class AppContext {
 
   private static final String TRIGGER_COMMAND = "trigger";
   private static final String HELP_COMMAND = "help";
+  private static final String REPEAT_COMMAND = "repeat";
 
   @Autowired
   private Environment environment;
@@ -39,6 +41,7 @@ public class AppContext {
     bot.setTriggerCommand(triggerCommand());
     bot.setTriggerProcessor(triggerProcessor(dsl()));
     bot.setHelpCommand(helpCommand(bot));
+    bot.setRepeatCommand(repeatCommand());
     bot.setBotName(getBotName());
     bot.setBotToken(getBotToken());
     return bot;
@@ -52,6 +55,11 @@ public class AppContext {
   @Bean
   public HelpCommand helpCommand(final ColleagueBot bot) {
     return new HelpCommand(bot, HELP_COMMAND);
+  }
+
+  @Bean
+  public RepeatCommand repeatCommand() {
+    return new RepeatCommand(REPEAT_COMMAND);
   }
 
   @Bean
