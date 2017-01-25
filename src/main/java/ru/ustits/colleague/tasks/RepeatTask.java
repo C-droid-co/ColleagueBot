@@ -6,12 +6,10 @@ import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.bots.AbsSender;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 
-import java.util.TimerTask;
-
 /**
  * @author ustits
  */
-public class RepeatTask extends TimerTask {
+public class RepeatTask implements Runnable {
 
   private static final Logger log = LogManager.getLogger();
 
@@ -25,6 +23,7 @@ public class RepeatTask extends TimerTask {
 
   @Override
   public void run() {
+    log.info(String.format("Repeated: %s in chat: %s", message.getText(), message.getChatId()));
     try {
       absSender.sendMessage(message);
     } catch (TelegramApiException e) {
