@@ -12,6 +12,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import ru.ustits.colleague.commands.HelpCommand;
 import ru.ustits.colleague.commands.RepeatCommand;
+import ru.ustits.colleague.commands.RequestCommand;
 import ru.ustits.colleague.commands.TriggerCommand;
 
 import java.sql.Connection;
@@ -31,6 +32,7 @@ public class AppContext {
   private static final String TRIGGER_COMMAND = "trigger";
   private static final String HELP_COMMAND = "help";
   private static final String REPEAT_COMMAND = "repeat";
+  private static final String REQUEST_COMMAND = "request";
 
   private static final int REPEAT_POOL_SIZE = 1;
 
@@ -44,6 +46,7 @@ public class AppContext {
             .triggerProcessor(triggerProcessor(dsl()))
             .helpCommand(helpCommand(bot))
             .repeatCommand(repeatCommand())
+            .requestCommand(requestCommand())
             .botName(getBotName())
             .botToken(getBotToken());
     return bot;
@@ -67,6 +70,11 @@ public class AppContext {
   @Bean
   public TriggerProcessor triggerProcessor(final DefaultDSLContext dsl) {
     return new TriggerProcessor(dsl);
+  }
+
+  @Bean
+  public RequestCommand requestCommand() {
+    return new RequestCommand(REQUEST_COMMAND);
   }
 
   @Bean

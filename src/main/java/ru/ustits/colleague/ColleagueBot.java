@@ -14,6 +14,7 @@ import org.telegram.telegrambots.bots.TelegramLongPollingCommandBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 import ru.ustits.colleague.commands.HelpCommand;
 import ru.ustits.colleague.commands.RepeatCommand;
+import ru.ustits.colleague.commands.RequestCommand;
 import ru.ustits.colleague.commands.TriggerCommand;
 
 import java.util.List;
@@ -92,6 +93,11 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
 
   public ColleagueBot repeatCommand(final RepeatCommand repeatCommand) {
     register(repeatCommand);
+    return this;
+  }
+
+  public ColleagueBot requestCommand(final RequestCommand requestCommand) {
+    register(requestCommand);
     return this;
   }
 
