@@ -121,7 +121,7 @@
                 <configuration>
                     <jdbc>
                         <driver>${db.driver}</driver>
-                        <url>${db.url}</url>
+                        <url>${db.jdbc_url}</url>
                         <user>${db.user}</user>
                         <password>${db.password}</password>
                     </jdbc>
@@ -129,7 +129,6 @@
                         <database>
                             <name>org.jooq.util.postgres.PostgresDatabase</name>
                             <includes>.*</includes>
-                            <excludes></excludes>
                             <inputSchema>public</inputSchema>
                         </database>
                         <target>

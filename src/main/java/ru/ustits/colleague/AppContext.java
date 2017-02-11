@@ -81,7 +81,7 @@ public class AppContext {
 
   @Bean
   public Connection connection() {
-    final String url = "jdbc:postgresql://localhost:5432/colleague";
+    final String url = environment.getRequiredProperty("db.url");
     final String user = environment.getRequiredProperty("db.user");
     final String password = environment.getRequiredProperty("db.password");
 
