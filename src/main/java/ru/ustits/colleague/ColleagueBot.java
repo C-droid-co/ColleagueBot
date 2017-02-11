@@ -4,6 +4,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.api.methods.send.SendDocument;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -28,6 +29,9 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
 
   private static final Logger log = LogManager.getLogger();
 
+  @Autowired
+  private MessageRepository messageRepository;
+
   private TriggerProcessor triggerProcessor;
   private String botName;
   private String botToken;
@@ -37,8 +41,11 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
     log.info(update);
     if (update.hasCallbackQuery()) {
       processCallback(update.getCallbackQuery());
-    } else if (isMessage(update) && isNotEdited(update)) {
-      findTriggers(update);
+    } else if (isMessage(update)) {
+      messageRepository.add(update);
+      if (isNotEdited(update)) {
+        findTriggers(update);
+      }
     }
   }
 

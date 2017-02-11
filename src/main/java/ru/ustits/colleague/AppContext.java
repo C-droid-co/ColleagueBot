@@ -96,6 +96,11 @@ public class AppContext {
     return null;
   }
 
+  @Bean
+  public MessageRepository messageRepository() {
+    return new MessageRepository();
+  }
+
   private String getBotName() {
     return environment.getRequiredProperty("bot.name");
   }
