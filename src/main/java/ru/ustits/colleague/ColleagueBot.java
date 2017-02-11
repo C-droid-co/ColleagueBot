@@ -1,7 +1,5 @@
 package ru.ustits.colleague;
 
-import lombok.Setter;
-import lombok.experimental.Accessors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,27 +11,23 @@ import org.telegram.telegrambots.api.objects.CallbackQuery;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingCommandBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
-import ru.ustits.colleague.commands.HelpCommand;
-import ru.ustits.colleague.commands.RepeatCommand;
-import ru.ustits.colleague.commands.RequestCommand;
-import ru.ustits.colleague.commands.TriggerCommand;
 
 import java.util.List;
 
 /**
  * @author ustits
  */
-@Accessors(fluent = true)
-@Setter
 public class ColleagueBot extends TelegramLongPollingCommandBot {
 
   private static final Logger log = LogManager.getLogger();
 
   @Autowired
   private MessageRepository messageRepository;
-
+  @Autowired
   private TriggerProcessor triggerProcessor;
+  @Autowired
   private String botName;
+  @Autowired
   private String botToken;
 
   @Override
@@ -86,26 +80,6 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
     } catch (TelegramApiException e) {
       log.error(e);
     }
-  }
-
-  public ColleagueBot triggerCommand(final TriggerCommand triggerCommand) {
-    register(triggerCommand);
-    return this;
-  }
-
-  public ColleagueBot helpCommand(final HelpCommand helpCommand) {
-    register(helpCommand);
-    return this;
-  }
-
-  public ColleagueBot repeatCommand(final RepeatCommand repeatCommand) {
-    register(repeatCommand);
-    return this;
-  }
-
-  public ColleagueBot requestCommand(final RequestCommand requestCommand) {
-    register(requestCommand);
-    return this;
   }
 
   @Override

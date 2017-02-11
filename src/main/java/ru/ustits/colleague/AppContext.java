@@ -42,13 +42,10 @@ public class AppContext {
   @Bean
   public ColleagueBot bot() {
     final ColleagueBot bot = new ColleagueBot();
-    bot.triggerCommand(triggerCommand())
-            .triggerProcessor(triggerProcessor(dsl()))
-            .helpCommand(helpCommand(bot))
-            .repeatCommand(repeatCommand())
-            .requestCommand(requestCommand())
-            .botName(getBotName())
-            .botToken(getBotToken());
+    bot.registerAll(triggerCommand(),
+            helpCommand(bot),
+            repeatCommand(),
+            requestCommand());
     return bot;
   }
 
@@ -101,11 +98,13 @@ public class AppContext {
     return new MessageRepository();
   }
 
-  private String getBotName() {
+  @Bean
+  public String botName() {
     return environment.getRequiredProperty("bot.name");
   }
 
-  private String getBotToken() {
+  @Bean
+  public String botToken() {
     return environment.getRequiredProperty("bot.token");
   }
 }
