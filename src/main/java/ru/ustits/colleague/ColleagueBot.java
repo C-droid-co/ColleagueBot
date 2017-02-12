@@ -11,6 +11,7 @@ import org.telegram.telegrambots.api.objects.CallbackQuery;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingCommandBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
+import ru.ustits.colleague.repositories.Repository;
 
 import java.util.List;
 
@@ -22,7 +23,7 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
   private static final Logger log = LogManager.getLogger();
 
   @Autowired
-  private MessageRepository messageRepository;
+  private Repository messageRepository;
   @Autowired
   private TriggerProcessor triggerProcessor;
   @Autowired
