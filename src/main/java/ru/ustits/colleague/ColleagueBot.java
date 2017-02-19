@@ -36,20 +36,24 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
     log.info(update);
     if (update.hasCallbackQuery()) {
       processCallback(update.getCallbackQuery());
-    } else if (isMessage(update)) {
+    } else if (hasMessage(update)) {
       messageRepository.add(update);
-      if (isNotEdited(update)) {
+      if (isMessage(update)) {
         findTriggers(update);
       }
     }
   }
 
-  private boolean isNotEdited(final Update update) {
-    return update.getEditedMessage() == null;
+  private boolean hasMessage(final Update update) {
+    return isMessage(update) || isEditMessage(update);
   }
 
   private boolean isMessage(final Update update) {
     return update.hasMessage() && update.getMessage().hasText();
+  }
+
+  private boolean isEditMessage(final Update update) {
+    return update.hasEditedMessage() && update.getEditedMessage().hasText();
   }
 
   private void findTriggers(final Update update) {

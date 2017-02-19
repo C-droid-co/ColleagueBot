@@ -29,28 +29,31 @@ public class MessageRepository extends BotRepository<Message, MessagesRecord> {
   @Override
   protected MessagesRecord add(final Message entity) {
     final MessagesRecord record = dsl().newRecord(MESSAGES);
+    record.setIsEdited(isEdited(entity));
     record.setMsgId(new Long(entity.getMessageId()));
     record.setDate(new Timestamp((long) entity.getDate() * 1000));
     record.setText(entity.getText());
+    record.setUserId(new Long(entity.getFrom().getId()));
+    record.setChatId(entity.getChat().getId());
     record.store();
     return record;
   }
 
+  private boolean isEdited(final Message entity) {
+    return entity.getEditDate() != null;
+  }
+
   private void add(final Message message, final boolean isEdited) {
-    ChatsRecord chatsRecord = dsl().fetchOne(CHATS, CHATS.ID.equal(message.getChatId()));
+    final ChatsRecord chatsRecord = dsl().fetchOne(CHATS, CHATS.ID.equal(message.getChatId()));
     if (chatsRecord == null) {
-      chatsRecord = new ChatsRepository().add(message.getChat());
+      new ChatsRepository().add(message.getChat());
     }
 
-    UsersRecord usersRecord = dsl().fetchOne(USERS, USERS.ID.equal(new Long(message.getFrom().getId())));
+    final UsersRecord usersRecord = dsl().fetchOne(USERS, USERS.ID.equal(new Long(message.getFrom().getId())));
     if (usersRecord == null) {
-      usersRecord = new UserRepository().add(message.getFrom());
+      new UserRepository().add(message.getFrom());
     }
 
-    final MessagesRecord record = add(message);
-    record.setIsEdited(isEdited);
-    record.setUserId(usersRecord.getId());
-    record.setChatId(chatsRecord.getId());
-    record.store();
+    add(message);
   }
 }
