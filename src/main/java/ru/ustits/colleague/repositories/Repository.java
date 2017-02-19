@@ -1,11 +1,13 @@
 package ru.ustits.colleague.repositories;
 
-import org.telegram.telegrambots.api.objects.Update;
+import org.jooq.Record;
 
 /**
  * @author ustits
  */
-public interface Repository {
+public interface Repository<T, V extends Record> {
 
-  void add(final Update update);
+  V add(final T entity);
+
+  boolean exists(final T entity);
 }

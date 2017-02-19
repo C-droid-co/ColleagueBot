@@ -11,7 +11,13 @@ import static ru.ustits.colleague.tables.Users.USERS;
 public class UserRepository extends BotRepository<User, UsersRecord> {
 
   @Override
-  protected UsersRecord add(final User entity) {
+  public boolean exists(final User user) {
+    final UsersRecord usersRecord = dsl().fetchOne(USERS, USERS.ID.equal(new Long(user.getId())));
+    return usersRecord != null;
+  }
+
+  @Override
+  public UsersRecord add(final User entity) {
     final UsersRecord record = dsl().newRecord(USERS);
     record.setId(new Long(entity.getId()));
     record.setFirstName(entity.getFirstName());

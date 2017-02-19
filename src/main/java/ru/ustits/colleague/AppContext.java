@@ -14,8 +14,9 @@ import ru.ustits.colleague.commands.HelpCommand;
 import ru.ustits.colleague.commands.RepeatCommand;
 import ru.ustits.colleague.commands.RequestCommand;
 import ru.ustits.colleague.commands.TriggerCommand;
+import ru.ustits.colleague.repositories.ChatsRepository;
 import ru.ustits.colleague.repositories.MessageRepository;
-import ru.ustits.colleague.repositories.Repository;
+import ru.ustits.colleague.repositories.UserRepository;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -96,8 +97,18 @@ public class AppContext {
   }
 
   @Bean
-  public Repository messageRepository() {
+  public MessageRepository messageRepository() {
     return new MessageRepository();
+  }
+
+  @Bean
+  public ChatsRepository chatsRepository() {
+    return new ChatsRepository();
+  }
+
+  @Bean
+  public UserRepository userRepository() {
+    return new UserRepository();
   }
 
   @Bean

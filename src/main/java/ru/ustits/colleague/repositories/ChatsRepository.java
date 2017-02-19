@@ -11,7 +11,13 @@ import static ru.ustits.colleague.tables.Chats.CHATS;
 public class ChatsRepository extends BotRepository<Chat, ChatsRecord> {
 
   @Override
-  protected ChatsRecord add(final Chat entity) {
+  public boolean exists(final Chat entity) {
+    final ChatsRecord chatsRecord = dsl().fetchOne(CHATS, CHATS.ID.equal(entity.getId()));
+    return chatsRecord != null;
+  }
+
+  @Override
+  public ChatsRecord add(final Chat entity) {
     final ChatsRecord record = dsl().newRecord(CHATS);
     record.setId(entity.getId());
     record.setTitle(entity.getTitle());

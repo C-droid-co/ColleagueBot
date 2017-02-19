@@ -8,10 +8,13 @@ import org.telegram.telegrambots.api.methods.send.SendDocument;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.methods.send.SendSticker;
 import org.telegram.telegrambots.api.objects.CallbackQuery;
+import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingCommandBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
-import ru.ustits.colleague.repositories.Repository;
+import ru.ustits.colleague.repositories.ChatsRepository;
+import ru.ustits.colleague.repositories.MessageRepository;
+import ru.ustits.colleague.repositories.UserRepository;
 
 import java.util.List;
 
@@ -23,7 +26,11 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
   private static final Logger log = LogManager.getLogger();
 
   @Autowired
-  private Repository messageRepository;
+  private MessageRepository messageRepository;
+  @Autowired
+  private ChatsRepository chatsRepository;
+  @Autowired
+  private UserRepository userRepository;
   @Autowired
   private TriggerProcessor triggerProcessor;
   @Autowired
@@ -37,7 +44,7 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
     if (update.hasCallbackQuery()) {
       processCallback(update.getCallbackQuery());
     } else if (hasMessage(update)) {
-      messageRepository.add(update);
+      addMessage(update);
       if (isMessage(update)) {
         findTriggers(update);
       }
@@ -54,6 +61,26 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
 
   private boolean isEditMessage(final Update update) {
     return update.hasEditedMessage() && update.getEditedMessage().hasText();
+  }
+
+  private void addMessage(final Update update) {
+    if (isMessage(update)) {
+      addMessage(update.getMessage());
+    } else if (isEditMessage(update)) {
+      addMessage(update.getEditedMessage());
+    }
+  }
+
+  private void addMessage(final Message message) {
+    if (!chatsRepository.exists(message.getChat())) {
+      chatsRepository.add(message.getChat());
+    }
+
+    if (!userRepository.exists(message.getFrom())) {
+      userRepository.add(message.getFrom());
+    }
+
+    messageRepository.add(message);
   }
 
   private void findTriggers(final Update update) {
