@@ -11,6 +11,7 @@ import org.telegram.telegrambots.bots.AbsSender;
 import org.telegram.telegrambots.bots.commands.BotCommand;
 import ru.ustits.colleague.tables.records.RepeatersRecord;
 import ru.ustits.colleague.tasks.RepeatTask;
+import ru.ustits.colleague.tools.TimeParser;
 
 import java.sql.Time;
 import java.time.Duration;
@@ -28,9 +29,6 @@ public class RepeatCommand extends BotCommand {
 
   private static final Logger log = LogManager.getLogger();
 
-  private static final int HOURS = 1;
-  private static final int MINUTES = 2;
-  private static final int SECONDS = 3;
   private static final Long DAY_PERIOD = TimeUnit.DAYS.toSeconds(1);
 
   @Autowired
@@ -46,7 +44,7 @@ public class RepeatCommand extends BotCommand {
   @Override
   public void execute(final AbsSender absSender, final User user, final Chat chat, final String[] arguments) {
     final String text = parseMessage(arguments);
-    final LocalTime time = parseTime(arguments);
+    final LocalTime time = TimeParser.parse(arguments);
     final long delay = delay(time);
 
     final SendMessage message = new SendMessage()
@@ -64,27 +62,8 @@ public class RepeatCommand extends BotCommand {
     scheduler.scheduleAtFixedRate(new RepeatTask(absSender, message), delay, DAY_PERIOD, TimeUnit.SECONDS);
   }
 
-  private LocalTime parseTime(final String[] arguments) {
-    final int hours = parseHours(arguments);
-    final int minutes = parseMinutes(arguments);
-    final int seconds = parseSeconds(arguments);
-    return LocalTime.of(hours, minutes, seconds);
-  }
-
   private String parseMessage(final String[] arguments) {
     return arguments[0];
-  }
-
-  private int parseHours(final String[] arguments) {
-    return getTimeUnit(arguments, HOURS);
-  }
-
-  private int parseMinutes(final String[] arguments) {
-    return getTimeUnit(arguments, MINUTES);
-  }
-
-  private int parseSeconds(final String[] arguments) {
-    return getTimeUnit(arguments, SECONDS);
   }
 
   private long delay(final LocalTime then) {
@@ -94,12 +73,5 @@ public class RepeatCommand extends BotCommand {
       return duration.plusDays(1).getSeconds();
     }
     return duration.getSeconds();
-  }
-
-  private int getTimeUnit(final String[] arguments, final int unit) {
-    if (arguments.length <= unit) {
-      return 0;
-    }
-    return Integer.parseInt(arguments[unit]);
   }
 }
