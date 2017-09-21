@@ -1,7 +1,6 @@
 package ru.ustits.colleague;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.api.methods.send.SendDocument;
@@ -21,9 +20,8 @@ import java.util.List;
 /**
  * @author ustits
  */
+@Log4j2
 public class ColleagueBot extends TelegramLongPollingCommandBot {
-
-  private static final Logger log = LogManager.getLogger();
 
   @Autowired
   private MessageRepository messageRepository;

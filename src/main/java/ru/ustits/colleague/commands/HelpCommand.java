@@ -1,7 +1,6 @@
 package ru.ustits.colleague.commands;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Chat;
 import org.telegram.telegrambots.api.objects.User;
@@ -19,9 +18,8 @@ import java.util.List;
 /**
  * @author ustits
  */
+@Log4j2
 public class HelpCommand extends BotCommand {
-
-  private static final Logger log = LogManager.getLogger();
 
   private final ICommandRegistry commandRegistry;
 

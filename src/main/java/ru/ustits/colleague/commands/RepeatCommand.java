@@ -1,7 +1,6 @@
 package ru.ustits.colleague.commands;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -25,9 +24,8 @@ import static ru.ustits.colleague.tables.Repeaters.REPEATERS;
 /**
  * @author ustits
  */
+@Log4j2
 public class RepeatCommand extends BotCommand {
-
-  private static final Logger log = LogManager.getLogger();
 
   private static final Long DAY_PERIOD = TimeUnit.DAYS.toSeconds(1);
 

@@ -1,7 +1,6 @@
 package ru.ustits.colleague.commands;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Result;
@@ -19,9 +18,8 @@ import static ru.ustits.colleague.tables.Triggers.TRIGGERS;
 /**
  * @author ustits
  */
+@Log4j2
 public class TriggerCommand extends BotCommand {
-
-  private static final Logger log = LogManager.getLogger();
 
   @Autowired
   private DSLContext dsl;

@@ -1,7 +1,6 @@
 package ru.ustits.colleague;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.telegram.telegrambots.ApiContextInitializer;
@@ -11,9 +10,8 @@ import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
 /**
  * @author ustits
  */
+@Log4j2
 public class ColleagueApp {
-
-  private static final Logger log = LogManager.getLogger();
 
   private ColleagueApp() {
   }

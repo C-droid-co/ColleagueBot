@@ -1,7 +1,6 @@
 package ru.ustits.colleague;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DefaultDSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,12 +24,11 @@ import java.sql.SQLException;
 /**
  * @author ustits
  */
+@Log4j2
 @Configuration
 @ComponentScan
 @PropertySource("classpath:bot_config.properties")
 public class AppContext {
-
-  private static final Logger log = LogManager.getLogger();
 
   private static final String TRIGGER_COMMAND = "trigger";
   private static final String HELP_COMMAND = "help";
