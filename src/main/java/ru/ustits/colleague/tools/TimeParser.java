@@ -1,6 +1,7 @@
 package ru.ustits.colleague.tools;
 
 import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
 
 /**
  * @author ustits
@@ -12,6 +13,17 @@ public class TimeParser {
   private static final int SECONDS = 3;
 
   private TimeParser() {
+  }
+
+  public static LocalTime parse(final String time) throws TimeParseException {
+    if (time == null) {
+      throw new TimeParseException("Time can't be null");
+    }
+    try {
+      return LocalTime.parse(time);
+    } catch (DateTimeParseException e) {
+      throw new TimeParseException("Time must be of format hh:mm:ss", e);
+    }
   }
 
   public static LocalTime parse(final String[] arguments) {
