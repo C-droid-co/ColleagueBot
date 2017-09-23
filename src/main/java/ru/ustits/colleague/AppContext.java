@@ -64,8 +64,8 @@ public class AppContext {
   }
 
   @Bean
-  public TriggerProcessor triggerProcessor(final DefaultDSLContext dsl) {
-    return new TriggerProcessor(dsl);
+  public TriggerProcessor triggerProcessor(final TriggerRepository repository) {
+    return new TriggerProcessor(repository);
   }
 
   @Bean
@@ -116,6 +116,16 @@ public class AppContext {
   @Bean
   public UserRepository userRepository() {
     return new UserRepository();
+  }
+
+  @Bean
+  public TriggerRepository triggerRepository() {
+    return new TriggerRepository();
+  }
+
+  @Bean
+  public RepeatRepository repeatRepository() {
+    return new RepeatRepository();
   }
 
   @Bean

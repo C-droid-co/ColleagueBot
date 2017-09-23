@@ -1,9 +1,6 @@
 package ru.ustits.colleague.commands;
 
 import lombok.extern.log4j.Log4j2;
-import org.jooq.Condition;
-import org.jooq.DSLContext;
-import org.jooq.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Chat;
@@ -11,9 +8,8 @@ import org.telegram.telegrambots.api.objects.User;
 import org.telegram.telegrambots.bots.AbsSender;
 import org.telegram.telegrambots.bots.commands.BotCommand;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
-import ru.ustits.colleague.tables.records.TriggersRecord;
-
-import static ru.ustits.colleague.tables.Triggers.TRIGGERS;
+import ru.ustits.colleague.repositories.TriggerRepository;
+import ru.ustits.colleague.repositories.records.TriggerRecord;
 
 /**
  * @author ustits
@@ -22,7 +18,7 @@ import static ru.ustits.colleague.tables.Triggers.TRIGGERS;
 public class TriggerCommand extends BotCommand {
 
   @Autowired
-  private DSLContext dsl;
+  private TriggerRepository repository;
 
   public TriggerCommand(final String command) {
     super(command, "add trigger");
@@ -43,12 +39,15 @@ public class TriggerCommand extends BotCommand {
     if (enough(arguments)) {
       final String trigger = arguments[0];
       final String message = resolveMessage(arguments);
-      final Result result = dsl.fetch(TRIGGERS, triggerExists(chat.getId(), new Long(user.getId()), trigger));
+      final TriggerRecord result = repository.fetchOne(trigger, chat.getId(), new Long(user.getId()));
 
-      if (result.isEmpty()) {
-        answer = createTrigger(trigger, chat.getId(), new Long(user.getId()), message);
+      final TriggerRecord record;
+      if (result == null) {
+        record = repository.add(trigger, message, chat.getId(), new Long(user.getId()));
+        answer = new SendMessage().setText(String.format("Trigger [%s] added", record.getTrigger()));
       } else {
-        answer = updateTrigger(message, result);
+        record = repository.update(message, result);
+        answer = new SendMessage().setText(String.format("Trigger [%s] was updated", record.getTrigger()));
       }
     } else {
       answer = new SendMessage().setText(failResult());
@@ -66,34 +65,6 @@ public class TriggerCommand extends BotCommand {
       builder.append(array[i]).append(" ");
     }
     return builder.substring(0, builder.length() - 1);
-  }
-
-  private Condition triggerExists(final Long chatId, final Long userId, final String trigger) {
-    final Condition sameChat = TRIGGERS.CHAT_ID.eq(chatId);
-    final Condition sameUser = TRIGGERS.USER_ID.eq(userId);
-    final Condition sameTrigger = TRIGGERS.TRIGGER.eq(trigger);
-    return sameChat.and(sameUser.and(sameTrigger));
-  }
-
-  private SendMessage createTrigger(final String trigger, final Long chatId, final Long userId, final String message) {
-    final TriggersRecord record = dsl.newRecord(TRIGGERS);
-    record.setTrigger(trigger);
-    record.setChatId(chatId);
-    record.setMessage(message);
-    record.setUserId(userId);
-    record.store();
-    final String logMessage = String.format("Added trigger:%n %s", record.toString());
-    log.info(logMessage);
-    return new SendMessage().setText(String.format("Trigger [%s] added", record.getTrigger()));
-  }
-
-  private SendMessage updateTrigger(final String message, final Result result) {
-    final TriggersRecord record = (TriggersRecord) result.get(0);
-    record.setMessage(message);
-    record.update();
-    final String logMessage = String.format("Updated trigger:%n %s", record.toString());
-    log.info(logMessage);
-    return new SendMessage().setText(String.format("Trigger [%s] was updated", record.getTrigger()));
   }
 
   protected String failResult() {

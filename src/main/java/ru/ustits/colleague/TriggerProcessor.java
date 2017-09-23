@@ -1,27 +1,23 @@
 package ru.ustits.colleague;
 
-import org.jooq.DSLContext;
+import lombok.RequiredArgsConstructor;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Update;
-import ru.ustits.colleague.tables.records.TriggersRecord;
+import ru.ustits.colleague.repositories.TriggerRepository;
+import ru.ustits.colleague.repositories.records.TriggerRecord;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static ru.ustits.colleague.tables.Triggers.TRIGGERS;
-
 /**
  * @author ustits
  */
+@RequiredArgsConstructor
 public class TriggerProcessor {
 
-  private final DSLContext dsl;
-
-  public TriggerProcessor(final DSLContext dsl) {
-    this.dsl = dsl;
-  }
+  private final TriggerRepository repository;
 
   public List<SendMessage> process(final Update update) {
     final List<SendMessage> messages = new ArrayList<>();
@@ -29,7 +25,7 @@ public class TriggerProcessor {
 
     final Long chatId = update.getMessage().getChatId();
 
-    for (final TriggersRecord record : dsl.fetch(TRIGGERS, TRIGGERS.CHAT_ID.eq(chatId))) {
+    for (final TriggerRecord record : repository.fetchAll(chatId)) {
       final String trigger = record.getTrigger();
       if (matches(text, trigger)) {
         messages.add(createMessage(record.getMessage()));

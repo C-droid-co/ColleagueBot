@@ -1,11 +1,9 @@
 package ru.ustits.colleague.repositories;
 
-import org.jooq.Record;
-
 /**
  * @author ustits
  */
-public interface Repository<T, V extends Record> {
+public interface Repository<T, V> {
 
   V add(final T entity);
 

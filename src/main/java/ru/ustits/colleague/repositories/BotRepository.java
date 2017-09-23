@@ -3,8 +3,7 @@ package ru.ustits.colleague.repositories;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.Accessors;
-import org.jooq.DSLContext;
-import org.jooq.Record;
+import org.apache.commons.dbutils.QueryRunner;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -12,8 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 @Accessors(fluent = true)
 @Getter(AccessLevel.PROTECTED)
-public abstract class BotRepository<T, V extends Record> implements Repository<T, V> {
+public abstract class BotRepository<T, V> implements Repository<T, V> {
 
   @Autowired
-  private DSLContext dsl;
+  private QueryRunner sql;
 }
