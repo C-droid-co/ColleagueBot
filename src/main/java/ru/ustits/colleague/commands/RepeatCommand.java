@@ -1,14 +1,13 @@
 package ru.ustits.colleague.commands;
 
 import lombok.extern.log4j.Log4j2;
-import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Chat;
 import org.telegram.telegrambots.api.objects.User;
 import org.telegram.telegrambots.bots.AbsSender;
 import org.telegram.telegrambots.bots.commands.BotCommand;
-import ru.ustits.colleague.tables.records.RepeatersRecord;
+import ru.ustits.colleague.repositories.RepeatRepository;
 import ru.ustits.colleague.tasks.RepeatTask;
 import ru.ustits.colleague.tools.TimeParser;
 
@@ -19,8 +18,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import static ru.ustits.colleague.tables.Repeaters.REPEATERS;
-
 /**
  * @author ustits
  */
@@ -30,7 +27,7 @@ public class RepeatCommand extends BotCommand {
   private static final Long DAY_PERIOD = TimeUnit.DAYS.toSeconds(1);
 
   @Autowired
-  private DSLContext dsl;
+  private RepeatRepository repository;
 
   private final ScheduledExecutorService scheduler;
 
@@ -49,15 +46,12 @@ public class RepeatCommand extends BotCommand {
             .setChatId(chat.getId())
             .setText(text);
 
-    final RepeatersRecord record = dsl.newRecord(REPEATERS);
-    record.setMessage(text);
-    record.setChatId(chat.getId());
-    record.setUserId(new Long(user.getId()));
-    record.setTime(new Time(time.getHour(), time.getMinute(), time.getSecond()));
-    record.store();
-    log.info(String.format("%s was scheduled in %d", text, delay));
 
-    scheduler.scheduleAtFixedRate(new RepeatTask(absSender, message), delay, DAY_PERIOD, TimeUnit.SECONDS);
+    if (repository.add(text, chat.getId(), new Long(user.getId()),
+            new Time(time.getHour(), time.getMinute(), time.getSecond())) != null) {
+      scheduler.scheduleAtFixedRate(new RepeatTask(absSender, message), delay, DAY_PERIOD, TimeUnit.SECONDS);
+      log.info(String.format("%s was scheduled in %d", text, delay));
+    }
   }
 
   private String parseMessage(final String[] arguments) {

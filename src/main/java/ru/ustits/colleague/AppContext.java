@@ -1,8 +1,8 @@
 package ru.ustits.colleague;
 
 import lombok.extern.log4j.Log4j2;
-import org.jooq.SQLDialect;
-import org.jooq.impl.DefaultDSLContext;
+import org.apache.commons.dbutils.QueryRunner;
+import org.postgresql.ds.PGSimpleDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -12,10 +12,9 @@ import org.springframework.core.env.Environment;
 import ru.ustits.colleague.commands.HelpCommand;
 import ru.ustits.colleague.commands.RepeatCommand;
 import ru.ustits.colleague.commands.TriggerCommand;
-import ru.ustits.colleague.repositories.ChatsRepository;
-import ru.ustits.colleague.repositories.MessageRepository;
-import ru.ustits.colleague.repositories.UserRepository;
+import ru.ustits.colleague.repositories.*;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -63,18 +62,29 @@ public class AppContext {
   }
 
   @Bean
-  public TriggerProcessor triggerProcessor(final DefaultDSLContext dsl) {
-    return new TriggerProcessor(dsl);
+  public TriggerProcessor triggerProcessor(final TriggerRepository repository) {
+    return new TriggerProcessor(repository);
   }
 
   @Bean
-  public DefaultDSLContext dsl() {
-    return new DefaultDSLContext(connection(), SQLDialect.POSTGRES);
+  public QueryRunner sql() {
+    return new QueryRunner(dataSource());
+  }
+
+  @Bean
+  public DataSource dataSource() {
+    final PGSimpleDataSource dataSource = new PGSimpleDataSource();
+    dataSource.setServerName(env.getRequiredProperty("db.url"));
+    dataSource.setDatabaseName(env.getRequiredProperty("db.name"));
+    dataSource.setUser(env.getRequiredProperty("db.user"));
+    dataSource.setPassword(env.getRequiredProperty("db.password"));
+    dataSource.setPortNumber(Integer.valueOf(env.getRequiredProperty("db.port")));
+    return dataSource;
   }
 
   @Bean
   public Connection connection() {
-    final String url = env.getRequiredProperty("db.url");
+    final String url = env.getRequiredProperty("db.jdbc_url");
     final String user = env.getRequiredProperty("db.user");
     final String password = env.getRequiredProperty("db.password");
 
@@ -99,6 +109,16 @@ public class AppContext {
   @Bean
   public UserRepository userRepository() {
     return new UserRepository();
+  }
+
+  @Bean
+  public TriggerRepository triggerRepository() {
+    return new TriggerRepository();
+  }
+
+  @Bean
+  public RepeatRepository repeatRepository() {
+    return new RepeatRepository();
   }
 
   @Bean
