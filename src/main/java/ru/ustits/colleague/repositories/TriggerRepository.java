@@ -26,7 +26,7 @@ public class TriggerRepository extends BotRepository<String, TriggerRecord> {
 
   public TriggerRecord fetchOne(final String trigger, final Long chatId, final Long userId) {
     try {
-      return sql().query("SELECT * FROM triggers WHERE chat_id=? AND user_id=? AND text=?",
+      return sql().query("SELECT * FROM triggers WHERE chat_id=? AND user_id=? AND trigger=?",
               resultSet -> {
                 if (resultSet.next()) {
                   return toRecord(resultSet);
