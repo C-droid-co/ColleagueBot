@@ -109,6 +109,7 @@
                             <goal>read-project-properties</goal>
                         </goals>
                         <configuration>
+                            <quiet>true</quiet>
                             <files>
                                 <file>src/main/resources/bot_config.properties</file>
                             </files>
