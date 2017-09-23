@@ -2,8 +2,6 @@ package ru.ustits.colleague;
 
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.dbutils.QueryRunner;
-import org.jooq.SQLDialect;
-import org.jooq.impl.DefaultDSLContext;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -66,11 +64,6 @@ public class AppContext {
   @Bean
   public TriggerProcessor triggerProcessor(final TriggerRepository repository) {
     return new TriggerProcessor(repository);
-  }
-
-  @Bean
-  public DefaultDSLContext dsl() {
-    return new DefaultDSLContext(connection(), SQLDialect.POSTGRES);
   }
 
   @Bean
