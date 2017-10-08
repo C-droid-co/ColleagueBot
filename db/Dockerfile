@@ -1,4 +1,4 @@
-FROM postgres:latest
+FROM postgres:9
 
 ENV POSTGRES_USER test
 ENV POSTGRES_PASSWORD test
