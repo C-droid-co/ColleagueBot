@@ -48,8 +48,9 @@ public class MessageRepository extends BotRepository<Message, MessageRecord> {
               new Timestamp((long) entity.getDate() * 1000),
               entity.getText(),
               isEdited(entity),
-              new Long(entity.getFrom().getId()),
-              entity.getChat().getId());
+              entity.getChat().getId(),
+              new Long(entity.getFrom().getId())
+              );
     } catch (SQLException e) {
       log.error(e);
     }
