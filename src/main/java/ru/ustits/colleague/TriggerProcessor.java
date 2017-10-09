@@ -34,14 +34,14 @@ public class TriggerProcessor {
     return messages;
   }
 
-  private boolean matches(final String text, final String regex) {
+  boolean matches(final String text, final String regex) {
     final Pattern pattern = Pattern.compile(Pattern.quote(regex),
             Pattern.CASE_INSENSITIVE + Pattern.UNICODE_CASE);
     final Matcher matcher = pattern.matcher(text);
     return matcher.find();
   }
 
-  private SendMessage createMessage(final String response) {
+  SendMessage createMessage(final String response) {
     final SendMessage message = new SendMessage();
     message.setText(response);
     return message;
