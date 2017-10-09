@@ -62,11 +62,6 @@ public class AppContext {
   }
 
   @Bean
-  public TriggerProcessor triggerProcessor(final TriggerRepository repository) {
-    return new TriggerProcessor(repository);
-  }
-
-  @Bean
   public QueryRunner sql() {
     return new QueryRunner(dataSource());
   }
