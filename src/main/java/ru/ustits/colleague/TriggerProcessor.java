@@ -27,15 +27,16 @@ public class TriggerProcessor {
 
     for (final TriggerRecord record : repository.fetchAll(chatId)) {
       final String trigger = record.getTrigger();
-      if (matches(text, trigger)) {
+      if (hasTrigger(text, trigger)) {
         messages.add(createMessage(record.getMessage()));
       }
     }
     return messages;
   }
 
-  boolean matches(final String text, final String regex) {
-    final Pattern pattern = Pattern.compile(Pattern.quote(regex),
+  boolean hasTrigger(final String text, final String trigger) {
+    final String regexp = String.format("\\b%s\\b", trigger);
+    final Pattern pattern = Pattern.compile(regexp,
             Pattern.CASE_INSENSITIVE + Pattern.UNICODE_CASE);
     final Matcher matcher = pattern.matcher(text);
     return matcher.find();

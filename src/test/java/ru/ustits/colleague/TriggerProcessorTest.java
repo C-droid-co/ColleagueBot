@@ -21,11 +21,19 @@ public class TriggerProcessorTest {
   }
 
   @Test
-  public void testMatches() throws Exception {
+  public void testHasTrigger() throws Exception {
     final String text = "SOME text";
-    final String pattern = "some";
-    final boolean result = processor.matches(text, pattern);
+    final String trigger = "some";
+    final boolean result = processor.hasTrigger(text, trigger);
     assertThat(result).isTrue();
+  }
+
+  @Test
+  public void testHasNoTrigger() throws Exception {
+    final String text = "somesome";
+    final String trigger = "some";
+    final boolean result = processor.hasTrigger(text, trigger);
+    assertThat(result).isFalse();
   }
 
   @Test
