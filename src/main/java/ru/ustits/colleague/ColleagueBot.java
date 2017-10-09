@@ -9,7 +9,8 @@ import org.telegram.telegrambots.api.methods.send.SendSticker;
 import org.telegram.telegrambots.api.objects.CallbackQuery;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
-import org.telegram.telegrambots.bots.TelegramLongPollingCommandBot;
+import org.telegram.telegrambots.bots.DefaultBotOptions;
+import org.telegram.telegrambots.bots.commandbot.TelegramLongPollingCommandBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 import ru.ustits.colleague.repositories.ChatsRepository;
 import ru.ustits.colleague.repositories.MessageRepository;
@@ -39,6 +40,10 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
   @Autowired
   private String botToken;
 
+  public ColleagueBot(final String botUsername) {
+    super(new DefaultBotOptions(), true, botUsername);
+  }
+
   @Override
   public void processNonCommandUpdate(final Update update) {
     log.info(update);
@@ -50,6 +55,11 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
         findTriggers(update);
       }
     }
+  }
+
+  @Override
+  public void onClosing() {
+    log.info("Closing");
   }
 
   private boolean hasMessage(final Update update) {
@@ -106,7 +116,7 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
     try {
       if (object instanceof SendMessage) {
         final SendMessage message = ((SendMessage) object).setChatId(chatId);
-        sendMessage(message);
+        execute(message);
       } else if (object instanceof SendSticker) {
         final SendSticker sticker = ((SendSticker) object).setChatId(chatId);
         sendSticker(sticker);
@@ -122,10 +132,5 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
   @Override
   public String getBotToken() {
     return botToken;
-  }
-
-  @Override
-  public String getBotUsername() {
-    return botName;
   }
 }

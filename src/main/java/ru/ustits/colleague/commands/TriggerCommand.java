@@ -6,7 +6,7 @@ import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Chat;
 import org.telegram.telegrambots.api.objects.User;
 import org.telegram.telegrambots.bots.AbsSender;
-import org.telegram.telegrambots.bots.commands.BotCommand;
+import org.telegram.telegrambots.bots.commandbot.commands.BotCommand;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 import ru.ustits.colleague.repositories.TriggerRepository;
 import ru.ustits.colleague.repositories.records.TriggerRecord;
@@ -28,7 +28,7 @@ public class TriggerCommand extends BotCommand {
   public void execute(final AbsSender absSender, final User user, final Chat chat, final String[] arguments) {
     final SendMessage answer = createRecord(user, chat, arguments);
     try {
-      absSender.sendMessage(answer);
+      absSender.execute(answer);
     } catch (TelegramApiException e) {
       log.error(getCommandIdentifier(), e);
     }

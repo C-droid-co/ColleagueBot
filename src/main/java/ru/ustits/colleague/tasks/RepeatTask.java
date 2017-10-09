@@ -23,7 +23,7 @@ public class RepeatTask implements Runnable {
   public void run() {
     log.info(String.format("Repeated: %s in chat: %s", message.getText(), message.getChatId()));
     try {
-      absSender.sendMessage(message);
+      absSender.execute(message);
     } catch (TelegramApiException e) {
       log.error(e);
     }

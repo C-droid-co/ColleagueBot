@@ -39,7 +39,7 @@ public class AppContext {
 
   @Bean
   public ColleagueBot bot() {
-    final ColleagueBot bot = new ColleagueBot();
+    final ColleagueBot bot = new ColleagueBot(botName());
     bot.registerAll(triggerCommand(),
             helpCommand(bot),
             repeatCommand());
