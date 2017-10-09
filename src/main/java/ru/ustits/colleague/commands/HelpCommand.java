@@ -44,7 +44,7 @@ public class HelpCommand extends BotCommand {
     helpMessage.setReplyMarkup(createButtons());
 
     try {
-      absSender.sendMessage(helpMessage);
+      absSender.execute(helpMessage);
     } catch (TelegramApiException e) {
       log.error(getCommandIdentifier(), e);
     }

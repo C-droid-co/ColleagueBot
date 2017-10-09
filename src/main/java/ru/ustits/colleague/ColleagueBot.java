@@ -116,7 +116,7 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
     try {
       if (object instanceof SendMessage) {
         final SendMessage message = ((SendMessage) object).setChatId(chatId);
-        sendApiMethod(message);
+        execute(message);
       } else if (object instanceof SendSticker) {
         final SendSticker sticker = ((SendSticker) object).setChatId(chatId);
         sendSticker(sticker);

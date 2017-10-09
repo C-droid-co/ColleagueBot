@@ -28,7 +28,7 @@ public class TriggerCommand extends BotCommand {
   public void execute(final AbsSender absSender, final User user, final Chat chat, final String[] arguments) {
     final SendMessage answer = createRecord(user, chat, arguments);
     try {
-      absSender.sendMessage(answer);
+      absSender.execute(answer);
     } catch (TelegramApiException e) {
       log.error(getCommandIdentifier(), e);
     }
