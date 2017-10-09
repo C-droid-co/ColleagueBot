@@ -1,4 +1,4 @@
-package ru.ustits.colleague;
+package ru.ustits.colleague.tools;
 
 import lombok.RequiredArgsConstructor;
 import org.telegram.telegrambots.api.methods.send.SendMessage;

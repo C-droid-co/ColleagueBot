@@ -13,6 +13,7 @@ import ru.ustits.colleague.commands.HelpCommand;
 import ru.ustits.colleague.commands.RepeatCommand;
 import ru.ustits.colleague.commands.TriggerCommand;
 import ru.ustits.colleague.repositories.*;
+import ru.ustits.colleague.tools.TriggerProcessor;
 
 import javax.sql.DataSource;
 import java.sql.Connection;

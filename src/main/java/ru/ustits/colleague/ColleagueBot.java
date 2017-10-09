@@ -14,6 +14,7 @@ import org.telegram.telegrambots.exceptions.TelegramApiException;
 import ru.ustits.colleague.repositories.ChatsRepository;
 import ru.ustits.colleague.repositories.MessageRepository;
 import ru.ustits.colleague.repositories.UserRepository;
+import ru.ustits.colleague.tools.TriggerProcessor;
 
 import java.util.List;
 
