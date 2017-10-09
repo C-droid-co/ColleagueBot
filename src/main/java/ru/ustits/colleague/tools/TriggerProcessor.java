@@ -3,10 +3,10 @@ package ru.ustits.colleague.tools;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import ru.ustits.colleague.repositories.records.TriggerRecord;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * @author ustits
@@ -14,15 +14,10 @@ import java.util.regex.Pattern;
 public class TriggerProcessor {
 
   public List<SendMessage> process(final String text, final List<TriggerRecord> triggers) {
-    final List<SendMessage> messages = new ArrayList<>();
-
-    for (final TriggerRecord record : triggers) {
-      final String trigger = record.getTrigger();
-      if (hasTrigger(text, trigger)) {
-        messages.add(createMessage(record.getMessage()));
-      }
-    }
-    return messages;
+    return triggers.stream().
+            filter(record -> hasTrigger(text, record.getTrigger())).
+            map(record -> createMessage(record.getMessage())).
+            collect(Collectors.toList());
   }
 
   boolean hasTrigger(final String text, final String trigger) {

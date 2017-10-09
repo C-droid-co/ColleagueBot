@@ -3,6 +3,10 @@ package ru.ustits.colleague.tools;
 import org.junit.Before;
 import org.junit.Test;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
+import ru.ustits.colleague.repositories.records.TriggerRecord;
+
+import java.util.Collections;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -16,6 +20,16 @@ public class TriggerProcessorTest {
   @Before
   public void setUp() throws Exception {
     processor = new TriggerProcessor();
+  }
+
+  @Test
+  public void testProcess() throws Exception {
+    final String trigger = "trigger";
+    final String message = "hello there!";
+    final TriggerRecord record = new TriggerRecord(0, trigger, message, 1L, 1L);
+    final String text = "some text with trigger";
+    final List<SendMessage> messages = processor.process(text, Collections.singletonList(record));
+    assertThat(messages).hasSize(1);
   }
 
   @Test
