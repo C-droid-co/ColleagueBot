@@ -16,34 +16,32 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class TriggerProcessorTest {
 
   private TriggerProcessor processor;
+  private String trigger;
 
   @Before
   public void setUp() throws Exception {
-    processor = new TriggerProcessor();
+    trigger = "trigger";
+    final TriggerRecord record = new TriggerRecord(0, trigger, "hello there!", 1L, 1L);
+    processor = new TriggerProcessor(Collections.singletonList(record));
   }
 
   @Test
   public void testProcess() throws Exception {
-    final String trigger = "trigger";
-    final String message = "hello there!";
-    final TriggerRecord record = new TriggerRecord(0, trigger, message, 1L, 1L);
     final String text = "some text with trigger";
-    final List<SendMessage> messages = processor.process(text, Collections.singletonList(record));
+    final List<SendMessage> messages = processor.process(text);
     assertThat(messages).hasSize(1);
   }
 
   @Test
   public void testHasTrigger() throws Exception {
-    final String text = "SOME text";
-    final String trigger = "some";
+    final String text = "TRIGGER text";
     final boolean result = processor.hasTrigger(text, trigger);
     assertThat(result).isTrue();
   }
 
   @Test
   public void testHasNoTrigger() throws Exception {
-    final String text = "somesome";
-    final String trigger = "some";
+    final String text = "triggertrigger";
     final boolean result = processor.hasTrigger(text, trigger);
     assertThat(result).isFalse();
   }

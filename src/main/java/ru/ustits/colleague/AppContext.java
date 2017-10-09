@@ -13,7 +13,6 @@ import ru.ustits.colleague.commands.HelpCommand;
 import ru.ustits.colleague.commands.RepeatCommand;
 import ru.ustits.colleague.commands.TriggerCommand;
 import ru.ustits.colleague.repositories.*;
-import ru.ustits.colleague.tools.TriggerProcessor;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -60,11 +59,6 @@ public class AppContext {
   @Bean
   public RepeatCommand repeatCommand() {
     return new RepeatCommand(REPEAT_COMMAND, REPEAT_POOL_SIZE);
-  }
-
-  @Bean
-  public TriggerProcessor triggerProcessor() {
-    return new TriggerProcessor();
   }
 
   @Bean

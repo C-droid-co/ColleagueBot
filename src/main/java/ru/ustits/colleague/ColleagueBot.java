@@ -35,8 +35,6 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
   @Autowired
   private TriggerRepository repository;
   @Autowired
-  private TriggerProcessor triggerProcessor;
-  @Autowired
   private String botName;
   @Autowired
   private String botToken;
@@ -90,7 +88,8 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
     final String text = update.getMessage().getText();
     final Long chatId = update.getMessage().getChatId();
     final List<TriggerRecord> triggers = repository.fetchAll(chatId);
-    final List<SendMessage> messages = triggerProcessor.process(text, triggers);
+    final TriggerProcessor processor = new TriggerProcessor(triggers);
+    final List<SendMessage> messages = processor.process(text);
     for (final SendMessage message : messages) {
       sendMessage(update.getMessage().getChatId(), message);
     }
