@@ -3,10 +3,8 @@ package ru.ustits.colleague.tools;
 import org.junit.Before;
 import org.junit.Test;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
-import ru.ustits.colleague.repositories.TriggerRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
 
 /**
  * @author ustits
@@ -17,7 +15,7 @@ public class TriggerProcessorTest {
 
   @Before
   public void setUp() throws Exception {
-    processor = new TriggerProcessor(mock(TriggerRepository.class));
+    processor = new TriggerProcessor();
   }
 
   @Test

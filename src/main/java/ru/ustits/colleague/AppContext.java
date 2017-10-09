@@ -63,8 +63,8 @@ public class AppContext {
   }
 
   @Bean
-  public TriggerProcessor triggerProcessor(final TriggerRepository repository) {
-    return new TriggerProcessor(repository);
+  public TriggerProcessor triggerProcessor() {
+    return new TriggerProcessor();
   }
 
   @Bean

@@ -1,9 +1,6 @@
 package ru.ustits.colleague.tools;
 
-import lombok.RequiredArgsConstructor;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
-import org.telegram.telegrambots.api.objects.Update;
-import ru.ustits.colleague.repositories.TriggerRepository;
 import ru.ustits.colleague.repositories.records.TriggerRecord;
 
 import java.util.ArrayList;
@@ -14,18 +11,12 @@ import java.util.regex.Pattern;
 /**
  * @author ustits
  */
-@RequiredArgsConstructor
 public class TriggerProcessor {
 
-  private final TriggerRepository repository;
-
-  public List<SendMessage> process(final Update update) {
+  public List<SendMessage> process(final String text, final List<TriggerRecord> triggers) {
     final List<SendMessage> messages = new ArrayList<>();
-    final String text = update.getMessage().getText();
 
-    final Long chatId = update.getMessage().getChatId();
-
-    for (final TriggerRecord record : repository.fetchAll(chatId)) {
+    for (final TriggerRecord record : triggers) {
       final String trigger = record.getTrigger();
       if (hasTrigger(text, trigger)) {
         messages.add(createMessage(record.getMessage()));
