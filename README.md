@@ -4,8 +4,9 @@
 
 # Colleague bot for Telegram
 ## Supported Commands
-* /trigger [trigger] [message] - shows the message if the trigger was written in the chat
-* /help - lists all available commands
+* `/trigger [trigger] [message]` - shows the message if the trigger was written in the chat
+* `/trigger_ls` - show all triggers available for current chat
+* `/help` - lists all available commands
 
 ## Version
 0.0.1
