@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import ru.ustits.colleague.commands.HelpCommand;
+import ru.ustits.colleague.commands.ListTriggersCommand;
 import ru.ustits.colleague.commands.RepeatCommand;
 import ru.ustits.colleague.commands.TriggerCommand;
 import ru.ustits.colleague.repositories.*;
@@ -29,6 +30,7 @@ import java.sql.SQLException;
 public class AppContext {
 
   private static final String TRIGGER_COMMAND = "trigger";
+  private static final String TRIGGER_LIST_COMMAND = "trigger_ls";
   private static final String HELP_COMMAND = "help";
   private static final String REPEAT_COMMAND = "repeat";
 
@@ -42,13 +44,19 @@ public class AppContext {
     final ColleagueBot bot = new ColleagueBot(botName());
     bot.registerAll(triggerCommand(),
             helpCommand(bot),
-            repeatCommand());
+            repeatCommand(),
+            listTriggersCommand());
     return bot;
   }
 
   @Bean
   public TriggerCommand triggerCommand() {
     return new TriggerCommand(TRIGGER_COMMAND);
+  }
+
+  @Bean
+  public ListTriggersCommand listTriggersCommand() {
+    return new ListTriggersCommand(TRIGGER_LIST_COMMAND);
   }
 
   @Bean
