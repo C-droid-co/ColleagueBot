@@ -7,6 +7,9 @@ import ru.ustits.colleague.repositories.records.MessageRecord;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author ustits
@@ -49,15 +52,43 @@ public class MessageRepository extends BotRepository<Message, MessageRecord> {
               entity.getText(),
               isEdited(entity),
               entity.getChat().getId(),
-              new Long(entity.getFrom().getId())
-              );
+              new Long(entity.getFrom().getId()));
     } catch (SQLException e) {
       log.error(e);
     }
     return null;
   }
 
+  public List<MessageRecord> fetchAll(final Long chatId) {
+    try {
+      return sql().query("SELECT * FROM messages WHERE chat_id=?",
+              resultSet -> {
+                final List<MessageRecord> records = new ArrayList<>();
+                while (resultSet.next()) {
+                  records.add(toRecord(resultSet));
+                }
+                return records;
+              },
+              chatId);
+    } catch (SQLException e) {
+      log.error("Unable to fetch messages", e);
+    }
+    return Collections.emptyList();
+  }
+
   private boolean isEdited(final Message entity) {
     return entity.getEditDate() != null;
+  }
+
+  private MessageRecord toRecord(final ResultSet resultSet) throws SQLException {
+    final Integer id = resultSet.getInt(1);
+    final Long messageId = resultSet.getLong(2);
+    final Timestamp date = resultSet.getTimestamp(3);
+    final String text = resultSet.getString(4);
+    final Boolean isEdited = resultSet.getBoolean(5);
+    final Long chatId = resultSet.getLong(6);
+    final Long userId = resultSet.getLong(7);
+    return new MessageRecord(id, messageId, date, text, isEdited,
+            chatId, userId);
   }
 }
