@@ -40,6 +40,18 @@ public class StatsCommandTest {
   }
 
   @Test
+  public void testBuildStatsWithEditedMessages() throws Exception {
+    final String firstName = "name";
+    final Long userId = 42L;
+    addUser(userId, firstName);
+    addMessage("text", userId);
+    addEditedMessage("text", userId);
+    addEditedMessage("text", userId);
+    final Map<String, Long> result = command.buildStats(messages, users);
+    assertThat(result).containsEntry(firstName, 1L);
+  }
+
+  @Test
   public void testBuildStatsIfMessageHasNoUser() throws Exception {
     final Long userId = 42L;
     addUser(userId, "name");
@@ -102,6 +114,12 @@ public class StatsCommandTest {
   private void addMessage(final String text, final Long userId) {
     final MessageRecord record = new MessageRecord(1, 1L, new Timestamp(10L),
             text, false, 1L, userId);
+    messages.add(record);
+  }
+
+  private void addEditedMessage(final String text, final Long userId) {
+    final MessageRecord record = new MessageRecord(1, 1L, new Timestamp(10L),
+            text, true, 1L, userId);
     messages.add(record);
   }
 

@@ -57,6 +57,7 @@ public class StatsCommand extends BotCommand {
       return Collections.emptyMap();
     }
     return messages.stream()
+            .filter(messageRecord -> !messageRecord.getIsEdited())
             .collect(groupingBy(o -> {
               for (final UserRecord user : users) {
                 if (user.getId().equals(o.getUserId())) {
