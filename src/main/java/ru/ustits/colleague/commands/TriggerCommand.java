@@ -46,8 +46,11 @@ public class TriggerCommand extends BotCommand {
         record = repository.add(trigger, message, chat.getId(), new Long(user.getId()));
         answer = new SendMessage().setText(String.format("Trigger [%s] added", record.getTrigger()));
       } else {
-        record = repository.update(message, result);
-        answer = new SendMessage().setText(String.format("Trigger [%s] was updated", record.getTrigger()));
+        if (repository.update(message, result) <= 0) {
+          answer = new SendMessage().setText("Ooops, i couldn't update trigger");
+        } else {
+          answer = new SendMessage().setText(String.format("Trigger [%s] was updated", trigger));
+        }
       }
     } else {
       answer = new SendMessage().setText(failResult());
