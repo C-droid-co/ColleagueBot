@@ -40,6 +40,22 @@ public class StatsCommandTest {
   }
 
   @Test
+  public void testStatsIsReversedOrdered() throws Exception {
+    final Long lucky = 42L;
+    final Long notLucky = 13L;
+    addUser(notLucky, "not lucky");
+    final Long notLuckyResult = generateMessages(notLucky);
+    addUser(lucky, "lucky");
+    final Long luckyResult = generateMessages(lucky);
+    final Map<String, Long> result = command.buildStats(messages, users);
+    if (luckyResult > notLuckyResult) {
+      assertThat(result.values()).containsExactly(luckyResult, notLuckyResult);
+    } else {
+      assertThat(result.values()).containsExactly(notLuckyResult, luckyResult);
+    }
+  }
+
+  @Test
   public void testBuildStatsWithEditedMessages() throws Exception {
     final String firstName = "name";
     final Long userId = 42L;

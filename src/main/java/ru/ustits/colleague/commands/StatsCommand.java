@@ -15,11 +15,11 @@ import ru.ustits.colleague.repositories.records.MessageRecord;
 import ru.ustits.colleague.repositories.records.UserRecord;
 
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static java.util.stream.Collectors.counting;
-import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.*;
 
 /**
  * @author ustits
@@ -44,7 +44,9 @@ public class StatsCommand extends BotCommand {
     final List<MessageRecord> messages = messageRepository.fetchAll(chat.getId());
     final List<UserRecord> users = userRepository.fetchAll();
     final Map<String, Long> stats = buildStats(messages, users);
-    final SendMessage message = new SendMessage(chat.getId(), buildText(stats));
+    final String text = String.format("%s%n%s", "*Chat stats:*", buildText(stats));
+    final SendMessage message = new SendMessage(chat.getId(), text);
+    message.enableMarkdown(true);
     try {
       absSender.execute(message);
     } catch (TelegramApiException e) {
@@ -65,7 +67,11 @@ public class StatsCommand extends BotCommand {
                 }
               }
               throw new IllegalStateException("Messages must be mapped to users in db");
-            }, counting()));
+            }, counting()))
+            .entrySet().stream()
+            .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
+            .collect(toMap(Map.Entry::getKey, Map.Entry::getValue,
+                    (oldValue, newValue) -> oldValue, LinkedHashMap::new));
   }
 
   String buildText(@NonNull final Map<String, Long> stats) {
