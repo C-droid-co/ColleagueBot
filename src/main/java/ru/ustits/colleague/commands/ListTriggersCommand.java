@@ -49,7 +49,7 @@ public class ListTriggersCommand extends BotCommand {
       final StringBuilder text = new StringBuilder();
       triggers.forEach(record ->
               text.append(record.getTrigger())
-                      .append(" : ")
+                      .append(": ")
                       .append(record.getMessage())
                       .append("\n"));
       return text.toString();
