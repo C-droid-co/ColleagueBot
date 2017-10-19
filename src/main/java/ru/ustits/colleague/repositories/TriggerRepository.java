@@ -78,18 +78,16 @@ public class TriggerRepository extends BotRepository<String, TriggerRecord> {
     return null;
   }
 
-  public TriggerRecord update(final String message, final TriggerRecord trigger) {
+  public int update(final String message, final TriggerRecord trigger) {
     try {
-      final TriggerRecord record = sql().query("UPDATE triggers SET message=? WHERE trigger=? AND chat_id=? AND user_id=?",
-              this::toRecord,
-              message, trigger.getTrigger(),
-              trigger.getChatId(), trigger.getUserId());
-      log.info("Updated trigger: " + record);
-      return record;
+      final int rows = sql().update("UPDATE triggers SET message=? WHERE trigger=? AND chat_id=? AND user_id=?",
+              message, trigger.getTrigger(), trigger.getChatId(), trigger.getUserId());
+      log.info("Updated trigger: " + trigger.getTrigger());
+      return rows;
     } catch (SQLException e) {
       log.error(e);
     }
-    return null;
+    return 0;
   }
 
   private TriggerRecord toRecord(final ResultSet resultSet) throws SQLException {

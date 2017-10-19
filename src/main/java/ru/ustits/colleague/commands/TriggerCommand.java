@@ -11,6 +11,8 @@ import org.telegram.telegrambots.exceptions.TelegramApiException;
 import ru.ustits.colleague.repositories.TriggerRepository;
 import ru.ustits.colleague.repositories.records.TriggerRecord;
 
+import static java.lang.Integer.toUnsignedLong;
+
 /**
  * @author ustits
  */
@@ -39,15 +41,18 @@ public class TriggerCommand extends BotCommand {
     if (enough(arguments)) {
       final String trigger = arguments[0];
       final String message = resolveMessage(arguments);
-      final TriggerRecord result = repository.fetchOne(trigger, chat.getId(), new Long(user.getId()));
+      final TriggerRecord result = repository.fetchOne(trigger, chat.getId(), toUnsignedLong(user.getId()));
 
       final TriggerRecord record;
       if (result == null) {
-        record = repository.add(trigger, message, chat.getId(), new Long(user.getId()));
+        record = repository.add(trigger, message, chat.getId(), toUnsignedLong(user.getId()));
         answer = new SendMessage().setText(String.format("Trigger [%s] added", record.getTrigger()));
       } else {
-        record = repository.update(message, result);
-        answer = new SendMessage().setText(String.format("Trigger [%s] was updated", record.getTrigger()));
+        if (repository.update(message, result) <= 0) {
+          answer = new SendMessage().setText("Ooops, i couldn't update trigger");
+        } else {
+          answer = new SendMessage().setText(String.format("Trigger [%s] was updated", trigger));
+        }
       }
     } else {
       answer = new SendMessage().setText(failResult());
