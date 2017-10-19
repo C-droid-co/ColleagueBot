@@ -32,7 +32,7 @@ public class ListTriggersCommand extends BotCommand {
   public void execute(final AbsSender absSender, final User user, final Chat chat, final String[] arguments) {
     final Long chatId = chat.getId();
     final List<TriggerRecord> triggers = repository.fetchAll(chatId);
-    final String text = "*Current triggers: *\n" + recordsToString(triggers);
+    final String text = String.format("*Current triggers:* %n```%n%s%n```", recordsToString(triggers));
     final SendMessage message = new SendMessage(chatId, text);
     message.enableMarkdown(true);
     try {
