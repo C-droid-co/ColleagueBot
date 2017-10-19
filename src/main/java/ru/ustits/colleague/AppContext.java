@@ -9,10 +9,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
-import ru.ustits.colleague.commands.HelpCommand;
-import ru.ustits.colleague.commands.ListTriggersCommand;
-import ru.ustits.colleague.commands.RepeatCommand;
-import ru.ustits.colleague.commands.TriggerCommand;
+import ru.ustits.colleague.commands.*;
 import ru.ustits.colleague.repositories.*;
 
 import javax.sql.DataSource;
@@ -33,6 +30,7 @@ public class AppContext {
   private static final String TRIGGER_LIST_COMMAND = "trigger_ls";
   private static final String HELP_COMMAND = "help";
   private static final String REPEAT_COMMAND = "repeat";
+  private static final String STATS_COMMAND = "stats";
 
   private static final int REPEAT_POOL_SIZE = 1;
 
@@ -45,7 +43,8 @@ public class AppContext {
     bot.registerAll(triggerCommand(),
             helpCommand(bot),
             repeatCommand(),
-            listTriggersCommand());
+            listTriggersCommand(),
+            statsCommand());
     return bot;
   }
 
@@ -62,6 +61,11 @@ public class AppContext {
   @Bean
   public HelpCommand helpCommand(final ColleagueBot bot) {
     return new HelpCommand(bot, HELP_COMMAND);
+  }
+
+  @Bean
+  public StatsCommand statsCommand() {
+    return new StatsCommand(STATS_COMMAND);
   }
 
   @Bean
