@@ -27,7 +27,7 @@ public class ListTriggersCommandTest {
     final TriggerRecord record = new TriggerRecord(1,
             trigger, message, 1L, 1L);
     final String result = command.recordsToString(Collections.singletonList(record));
-    assertThat(result).isEqualTo(trigger + " : " + message + "\n");
+    assertThat(result).isEqualTo(trigger + ": " + message + "\n");
   }
 
   @Test
