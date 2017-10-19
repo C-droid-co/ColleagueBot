@@ -129,7 +129,7 @@ public class StatsCommandTest {
   }
 
   private Long generateMessages(final Long userId) {
-    final long rounds = new Random().nextInt(50);
+    final long rounds = new Random().nextInt(50) + 1;
     for (int i = 0; i < rounds; i++) {
       addMessage("text", userId);
     }
