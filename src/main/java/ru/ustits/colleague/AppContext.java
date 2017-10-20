@@ -32,8 +32,6 @@ public class AppContext {
   private static final String REPEAT_COMMAND = "repeat";
   private static final String STATS_COMMAND = "stats";
 
-  private static final int REPEAT_POOL_SIZE = 1;
-
   @Autowired
   private Environment env;
 
@@ -70,7 +68,7 @@ public class AppContext {
 
   @Bean
   public RepeatCommand repeatCommand() {
-    return new RepeatCommand(REPEAT_COMMAND, REPEAT_POOL_SIZE);
+    return new RepeatCommand(REPEAT_COMMAND);
   }
 
   @Bean
