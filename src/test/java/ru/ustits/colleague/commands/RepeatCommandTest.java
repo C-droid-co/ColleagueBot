@@ -35,29 +35,31 @@ public class RepeatCommandTest {
   public void testBuildJob() throws Exception {
     final String text = "text";
     final AbsSender sender = mock(AbsSender.class);
-    final JobDetail job = command.buildJob(text, sender);
+    final Long chatId = 1L;
+    final JobDetail job = command.buildJob(text, chatId, sender);
     assertThat(job.getJobDataMap())
             .containsEntry(RepeatCommand.MESSAGE_KEY, text)
-            .containsEntry(RepeatCommand.SENDER_KEY, sender);
+            .containsEntry(RepeatCommand.SENDER_KEY, sender)
+            .containsEntry(RepeatCommand.CHAT_KEY, chatId);
   }
 
   @Test
   public void testScheduleTask() throws Exception {
-    final boolean result = command.scheduleTask(GOOD_ARGS, mock(AbsSender.class));
+    final boolean result = command.scheduleTask(GOOD_ARGS, 1L, mock(AbsSender.class));
     assertThat(result).isTrue();
     verify(scheduler).scheduleJob(any(JobDetail.class), any(Trigger.class));
   }
 
   @Test
   public void testScheduleTaskWithNullArguments() throws Exception {
-    final boolean result = command.scheduleTask(null, mock(AbsSender.class));
+    final boolean result = command.scheduleTask(null, 1L, mock(AbsSender.class));
     assertThat(result).isFalse();
   }
 
   @Test
   public void testScheduleTaskWithNotEnoughArguments() throws Exception {
     final String[] arguments = {"one", "two"};
-    final boolean result = command.scheduleTask(arguments, mock(AbsSender.class));
+    final boolean result = command.scheduleTask(arguments, 1L, mock(AbsSender.class));
     assertThat(result).isFalse();
   }
 

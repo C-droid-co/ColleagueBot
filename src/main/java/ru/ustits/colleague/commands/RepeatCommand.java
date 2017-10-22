@@ -29,6 +29,7 @@ public final class RepeatCommand extends BotCommand {
 
   public static final String SENDER_KEY = "sender";
   public static final String MESSAGE_KEY = "message";
+  public static final String CHAT_KEY = "chat";
   private static final Integer PARAMETERS_COUNT = 7;
 
   private final Scheduler scheduler;
@@ -41,7 +42,7 @@ public final class RepeatCommand extends BotCommand {
   @Override
   public void execute(final AbsSender absSender, final User user, final Chat chat, final String[] arguments) {
     try {
-      final String message = scheduleTask(arguments, absSender) ?
+      final String message = scheduleTask(arguments, chat.getId(), absSender) ?
               "Job scheduled" : "Failed to schedule job";
       absSender.execute(new SendMessage(chat.getId(), message));
     } catch (TelegramApiException e) {
@@ -49,7 +50,7 @@ public final class RepeatCommand extends BotCommand {
     }
   }
 
-  boolean scheduleTask(final String[] arguments, @NonNull final AbsSender sender) {
+  boolean scheduleTask(final String[] arguments, final Long chatId, @NonNull final AbsSender sender) {
     log.info("Got arguments {} for repeat task", Arrays.toString(arguments));
     if (arguments == null || arguments.length < PARAMETERS_COUNT) {
       return false;
@@ -57,13 +58,13 @@ public final class RepeatCommand extends BotCommand {
       final Optional<String> text = parseMessage(arguments);
       final Optional<CronExpression> cron = parseCron(arguments);
       return text.isPresent() && cron.isPresent()
-              && scheduleTask(text.get(), cron.get(), sender);
+              && scheduleTask(text.get(), cron.get(), chatId, sender);
     }
   }
 
   private boolean scheduleTask(final String text, final CronExpression cron,
-                               @NonNull final AbsSender sender) {
-    final JobDetail job = buildJob(text, sender);
+                               final Long chatId, @NonNull final AbsSender sender) {
+    final JobDetail job = buildJob(text, chatId, sender);
     final Trigger trigger = buildTrigger(cron, job);
     return scheduleTask(job, trigger);
   }
@@ -79,10 +80,11 @@ public final class RepeatCommand extends BotCommand {
     return true;
   }
 
-  JobDetail buildJob(final String text, @NonNull final AbsSender sender) {
+  JobDetail buildJob(final String text, final Long chatId, @NonNull final AbsSender sender) {
     final JobDataMap data = new JobDataMap();
     data.put(SENDER_KEY, sender);
     data.put(MESSAGE_KEY, text);
+    data.put(CHAT_KEY, chatId);
     return newJob(RepeatTask.class)
             .usingJobData(data)
             .build();
