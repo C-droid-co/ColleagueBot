@@ -27,6 +27,8 @@ import static org.quartz.TriggerBuilder.newTrigger;
 @Log4j2
 public final class RepeatCommand extends BotCommand {
 
+  public static final String SENDER_KEY = "sender";
+  public static final String MESSAGE_KEY = "message";
   private static final Integer PARAMETERS_COUNT = 7;
 
   private final Scheduler scheduler;
@@ -79,8 +81,8 @@ public final class RepeatCommand extends BotCommand {
 
   JobDetail buildJob(final String text, @NonNull final AbsSender sender) {
     final JobDataMap data = new JobDataMap();
-    data.put("sender", sender);
-    data.put("text", text);
+    data.put(SENDER_KEY, sender);
+    data.put(MESSAGE_KEY, text);
     return newJob(RepeatTask.class)
             .usingJobData(data)
             .build();

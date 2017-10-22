@@ -36,7 +36,9 @@ public class RepeatCommandTest {
     final String text = "text";
     final AbsSender sender = mock(AbsSender.class);
     final JobDetail job = command.buildJob(text, sender);
-    assertThat(job.getJobDataMap()).containsValues(text, sender);
+    assertThat(job.getJobDataMap())
+            .containsEntry(RepeatCommand.MESSAGE_KEY, text)
+            .containsEntry(RepeatCommand.SENDER_KEY, sender);
   }
 
   @Test
