@@ -72,6 +72,7 @@ public class AppContext {
   @Bean
   public RepeatCommand repeatCommand() throws SchedulerException {
     final Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
+    scheduler.start();
     return new RepeatCommand(REPEAT_COMMAND, scheduler);
   }
 
