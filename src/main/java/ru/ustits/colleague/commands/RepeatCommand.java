@@ -10,6 +10,7 @@ import org.telegram.telegrambots.bots.AbsSender;
 import org.telegram.telegrambots.bots.commandbot.commands.BotCommand;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 import ru.ustits.colleague.tasks.RepeatTask;
+import ru.ustits.colleague.tools.CronRestriction;
 
 import java.text.ParseException;
 import java.util.Arrays;
@@ -114,7 +115,8 @@ public final class RepeatCommand extends BotCommand {
     if (isValidExpression(expression)) {
       try {
         log.info("Parsed repeat task cron expression [{}]", expression);
-        return Optional.of(new CronExpression(expression));
+        return new CronRestriction(
+                new CronExpression(expression)).restrictToHours();
       } catch (ParseException e) {
         throw new IllegalStateException("Error occurred, though the expression was validated", e);
       }
