@@ -47,6 +47,12 @@ public class RepeatCommandTest {
   }
 
   @Test
+  public void testScheduleTaskWithNullArguments() throws Exception {
+    final boolean result = command.scheduleTask(null, mock(AbsSender.class));
+    assertThat(result).isFalse();
+  }
+
+  @Test
   public void testScheduleTaskWithNotEnoughArguments() throws Exception {
     final String[] arguments = {"one", "two"};
     final boolean result = command.scheduleTask(arguments, mock(AbsSender.class));

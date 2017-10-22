@@ -49,7 +49,7 @@ public final class RepeatCommand extends BotCommand {
 
   boolean scheduleTask(final String[] arguments, @NonNull final AbsSender sender) {
     log.info("Got arguments {} for repeat task", Arrays.toString(arguments));
-    if (arguments.length < PARAMETERS_COUNT) {
+    if (arguments == null || arguments.length < PARAMETERS_COUNT) {
       return false;
     } else {
       final Optional<String> text = parseMessage(arguments);
