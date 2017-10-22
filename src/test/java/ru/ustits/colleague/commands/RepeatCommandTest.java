@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.quartz.CronExpression;
 import org.quartz.JobDetail;
+import org.quartz.Scheduler;
 import org.telegram.telegrambots.bots.AbsSender;
 
 import java.util.Optional;
@@ -20,7 +21,7 @@ public class RepeatCommandTest {
 
   @Before
   public void setUp() throws Exception {
-    command = new RepeatCommand("random");
+    command = new RepeatCommand("random", mock(Scheduler.class));
   }
 
   @Test

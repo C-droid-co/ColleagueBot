@@ -3,7 +3,6 @@ package ru.ustits.colleague.commands;
 import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
 import org.quartz.*;
-import org.quartz.impl.StdSchedulerFactory;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Chat;
 import org.telegram.telegrambots.api.objects.User;
@@ -28,21 +27,15 @@ public final class RepeatCommand extends BotCommand {
 
   private static final Integer PARAMETERS_COUNT = 7;
 
-  private Scheduler scheduler;
+  private final Scheduler scheduler;
 
-  public RepeatCommand(final String commandIdentifier) {
+  public RepeatCommand(final String commandIdentifier, final Scheduler scheduler) {
     super(commandIdentifier, "command for adding repeatable messages");
+    this.scheduler = scheduler;
   }
 
   @Override
   public void execute(final AbsSender absSender, final User user, final Chat chat, final String[] arguments) {
-    if (scheduler == null) {
-      try {
-        scheduler = StdSchedulerFactory.getDefaultScheduler();
-      } catch (SchedulerException e) {
-        log.error("Unable to build scheduler", e);
-      }
-    }
     try {
       final String message = scheduleTask(arguments, absSender) ?
               "Job scheduled" : "Failed to schedule job";
