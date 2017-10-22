@@ -2,8 +2,11 @@ package ru.ustits.colleague.commands;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.quartz.CronExpression;
 import org.quartz.JobDetail;
 import org.telegram.telegrambots.bots.AbsSender;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -28,4 +31,24 @@ public class RepeatCommandTest {
     assertThat(job.getJobDataMap()).containsValues(text, sender);
   }
 
+  @Test
+  public void testParseCron() throws Exception {
+    final String[] arguments = {"*", "1", "*", "?", "*", "*", "text"};
+    final Optional<CronExpression> expression = command.parseCron(arguments);
+    assertThat(expression).isPresent();
+  }
+
+  @Test
+  public void testParseCronWithNotEnoughArguments() throws Exception {
+    final String[] arguments = {"one", "two"};
+    final Optional<CronExpression> expression = command.parseCron(arguments);
+    assertThat(expression).isNotPresent();
+  }
+
+  @Test
+  public void testParseCronWithNotValidCron() throws Exception {
+    final String[] arguments = {"*", "error", "*", "?", "*", "*", "text"};
+    final Optional<CronExpression> expression = command.parseCron(arguments);
+    assertThat(expression).isNotPresent();
+  }
 }

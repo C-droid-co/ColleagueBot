@@ -12,8 +12,10 @@ import org.telegram.telegrambots.bots.commandbot.commands.BotCommand;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 import ru.ustits.colleague.tasks.RepeatTask;
 
+import java.text.ParseException;
 import java.util.Optional;
 
+import static org.quartz.CronExpression.isValidExpression;
 import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.JobBuilder.newJob;
 import static org.quartz.TriggerBuilder.newTrigger;
@@ -23,6 +25,8 @@ import static org.quartz.TriggerBuilder.newTrigger;
  */
 @Log4j2
 public final class RepeatCommand extends BotCommand {
+
+  private static final Integer PARAMETERS_COUNT = 7;
 
   private Scheduler scheduler;
 
@@ -42,9 +46,11 @@ public final class RepeatCommand extends BotCommand {
 
     final Optional<String> text = parseMessage(arguments);
     final Optional<CronExpression> cron = parseCron(arguments);
+    final boolean isScheduled = text.isPresent() && cron.isPresent()
+            && scheduleTask(text.get(), cron.get(), absSender);
 
     try {
-      if (scheduleTask(text.get(), cron.get(), absSender)) {
+      if (isScheduled) {
         log.info("{} was scheduled in {}", text, cron);
         absSender.execute(new SendMessage(chat.getId(), "Job scheduled"));
       } else {
@@ -56,7 +62,7 @@ public final class RepeatCommand extends BotCommand {
   }
 
   private boolean scheduleTask(final String text, final CronExpression cron,
-                       @NonNull final AbsSender sender) {
+                               @NonNull final AbsSender sender) {
     final JobDetail job = buildJob(text, sender);
     final Trigger trigger = buildTrigger(cron, job);
     return scheduleTask(job, trigger);
@@ -93,7 +99,21 @@ public final class RepeatCommand extends BotCommand {
     throw new UnsupportedOperationException();
   }
 
-  private Optional<CronExpression> parseCron(final String[] arguments) {
-    throw new UnsupportedOperationException();
+  Optional<CronExpression> parseCron(final String[] arguments) {
+    if (arguments.length < PARAMETERS_COUNT) {
+      return Optional.empty();
+    }
+    String expression = arguments[0];
+    for (int i = 1; i < PARAMETERS_COUNT - 1; i++) {
+      expression = String.join(" ", expression, arguments[i]);
+    }
+    if (isValidExpression(expression)) {
+      try {
+        return Optional.of(new CronExpression(expression));
+      } catch (ParseException e) {
+        throw new IllegalStateException("Error occurred, though the expression was validated", e);
+      }
+    }
+    return Optional.empty();
   }
 }
