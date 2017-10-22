@@ -52,4 +52,11 @@ public class RepeatCommandTest {
     final Optional<CronExpression> expression = command.parseCron(arguments);
     assertThat(expression).isNotPresent();
   }
+
+  @Test
+  public void testParseMessage() throws Exception {
+    final String[] arguments = {"*", "1", "*", "?", "*", "*", "some", "text"};
+    final Optional<String> text = command.parseMessage(arguments);
+    assertThat(text).isPresent().contains("some text");
+  }
 }

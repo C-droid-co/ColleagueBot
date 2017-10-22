@@ -14,6 +14,7 @@ import ru.ustits.colleague.tasks.RepeatTask;
 import java.text.ParseException;
 import java.util.Optional;
 
+import static java.util.Arrays.copyOfRange;
 import static org.quartz.CronExpression.isValidExpression;
 import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.JobBuilder.newJob;
@@ -91,8 +92,10 @@ public final class RepeatCommand extends BotCommand {
             .build();
   }
 
-  private Optional<String> parseMessage(final String[] arguments) {
-    throw new UnsupportedOperationException();
+  Optional<String> parseMessage(final String[] arguments) {
+    final String[] text = copyOfRange(arguments, PARAMETERS_COUNT - 1,
+            arguments.length);
+    return Optional.of(String.join(" ", text));
   }
 
   Optional<CronExpression> parseCron(final String[] arguments) {
