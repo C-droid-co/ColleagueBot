@@ -39,10 +39,10 @@ public class RepeatCommandTest {
   }
 
   @Test
-  public void testParseCronWithNotEnoughArguments() throws Exception {
+  public void testScheduleTaskWithNotEnoughArguments() throws Exception {
     final String[] arguments = {"one", "two"};
-    final Optional<CronExpression> expression = command.parseCron(arguments);
-    assertThat(expression).isNotPresent();
+    final boolean result = command.scheduleTask(arguments, mock(AbsSender.class));
+    assertThat(result).isFalse();
   }
 
   @Test

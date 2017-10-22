@@ -43,21 +43,26 @@ public final class RepeatCommand extends BotCommand {
         log.error("Unable to build scheduler", e);
       }
     }
-
-    final Optional<String> text = parseMessage(arguments);
-    final Optional<CronExpression> cron = parseCron(arguments);
-    final boolean isScheduled = text.isPresent() && cron.isPresent()
-            && scheduleTask(text.get(), cron.get(), absSender);
-
+    final boolean isScheduled = scheduleTask(arguments, absSender);
     try {
       if (isScheduled) {
-        log.info("{} was scheduled in {}", text, cron);
         absSender.execute(new SendMessage(chat.getId(), "Job scheduled"));
       } else {
         absSender.execute(new SendMessage(chat.getId(), "Failed to schedule job"));
       }
     } catch (TelegramApiException e) {
       log.error("Unable to inform about job", e);
+    }
+  }
+
+  boolean scheduleTask(final String[] arguments, @NonNull final AbsSender sender) {
+    if (arguments.length < PARAMETERS_COUNT) {
+      return false;
+    } else {
+      final Optional<String> text = parseMessage(arguments);
+      final Optional<CronExpression> cron = parseCron(arguments);
+      return text.isPresent() && cron.isPresent()
+              && scheduleTask(text.get(), cron.get(), sender);
     }
   }
 
@@ -71,6 +76,7 @@ public final class RepeatCommand extends BotCommand {
   private boolean scheduleTask(final JobDetail job, final Trigger trigger) {
     try {
       scheduler.scheduleJob(job, trigger);
+      log.info("Scheduled job {} with {}", job, trigger);
     } catch (SchedulerException e) {
       log.error("Unable to start job", e);
       return false;
@@ -100,9 +106,6 @@ public final class RepeatCommand extends BotCommand {
   }
 
   Optional<CronExpression> parseCron(final String[] arguments) {
-    if (arguments.length < PARAMETERS_COUNT) {
-      return Optional.empty();
-    }
     String expression = arguments[0];
     for (int i = 1; i < PARAMETERS_COUNT - 1; i++) {
       expression = String.join(" ", expression, arguments[i]);
