@@ -12,6 +12,7 @@ import org.telegram.telegrambots.exceptions.TelegramApiException;
 import ru.ustits.colleague.tasks.RepeatTask;
 
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.Optional;
 
 import static java.util.Arrays.copyOfRange;
@@ -47,6 +48,7 @@ public final class RepeatCommand extends BotCommand {
   }
 
   boolean scheduleTask(final String[] arguments, @NonNull final AbsSender sender) {
+    log.info("Got arguments {} for repeat task", Arrays.toString(arguments));
     if (arguments.length < PARAMETERS_COUNT) {
       return false;
     } else {
@@ -67,7 +69,7 @@ public final class RepeatCommand extends BotCommand {
   private boolean scheduleTask(final JobDetail job, final Trigger trigger) {
     try {
       scheduler.scheduleJob(job, trigger);
-      log.info("Scheduled job {} with {}", job, trigger);
+      log.info("Scheduled new job");
     } catch (SchedulerException e) {
       log.error("Unable to start job", e);
       return false;
@@ -93,9 +95,11 @@ public final class RepeatCommand extends BotCommand {
   }
 
   Optional<String> parseMessage(final String[] arguments) {
-    final String[] text = copyOfRange(arguments, PARAMETERS_COUNT - 1,
+    final String[] textArgs = copyOfRange(arguments, PARAMETERS_COUNT - 1,
             arguments.length);
-    return Optional.of(String.join(" ", text));
+    final String text = String.join(" ", textArgs);
+    log.info("Parsed repeat task text: {}", text);
+    return Optional.of(text);
   }
 
   Optional<CronExpression> parseCron(final String[] arguments) {
@@ -105,11 +109,14 @@ public final class RepeatCommand extends BotCommand {
     }
     if (isValidExpression(expression)) {
       try {
+        log.info("Parsed repeat task cron expression [{}]", expression);
         return Optional.of(new CronExpression(expression));
       } catch (ParseException e) {
         throw new IllegalStateException("Error occurred, though the expression was validated", e);
       }
+    } else {
+      log.info("[{}] is not valid cron expression", expression);
+      return Optional.empty();
     }
-    return Optional.empty();
   }
 }
