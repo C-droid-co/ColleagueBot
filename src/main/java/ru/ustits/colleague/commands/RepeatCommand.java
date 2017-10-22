@@ -43,13 +43,10 @@ public final class RepeatCommand extends BotCommand {
         log.error("Unable to build scheduler", e);
       }
     }
-    final boolean isScheduled = scheduleTask(arguments, absSender);
     try {
-      if (isScheduled) {
-        absSender.execute(new SendMessage(chat.getId(), "Job scheduled"));
-      } else {
-        absSender.execute(new SendMessage(chat.getId(), "Failed to schedule job"));
-      }
+      final String message = scheduleTask(arguments, absSender) ?
+              "Job scheduled" : "Failed to schedule job";
+      absSender.execute(new SendMessage(chat.getId(), message));
     } catch (TelegramApiException e) {
       log.error("Unable to inform about job", e);
     }
