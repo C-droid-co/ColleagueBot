@@ -9,6 +9,8 @@ import org.telegram.telegrambots.api.objects.Chat;
 import org.telegram.telegrambots.api.objects.User;
 import ru.ustits.colleague.tools.StringUtils;
 
+import static io.qala.datagen.RandomShortApi.alphanumeric;
+import static io.qala.datagen.RandomValue.length;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -18,7 +20,9 @@ import static org.junit.Assert.assertThat;
  */
 public class TriggerCommandTest {
 
-  private final TriggerCommand command = new TriggerCommand("random");
+  private static final int RANDOM_BOUND = 10;
+
+  private final TriggerCommand command = new TriggerCommand(alphanumeric(RANDOM_BOUND));
 
   @Mock
   private Chat chat;
@@ -46,23 +50,15 @@ public class TriggerCommandTest {
 
   @Test
   public void testResolveMessage() {
-    final String[] args = new String[] {"trigger", "message", "and", "another"};
+    final String[] args = length(RANDOM_BOUND).alphanumerics().toArray(new String[]{});
     final String result = command.resolveMessage(args);
     assertThat(result, is(StringUtils.asString(args, 1)));
   }
 
   @Test
   public void testResolveTrigger() throws Exception {
-    final String trigger = "trigger";
-    final String[] args = new String[]{trigger, "message"};
-    assertThat(command.resolveTrigger(args)).isEqualTo(trigger);
-  }
-
-  @Test
-  public void testResolveTriggerWithCapitalizedTrigger() throws Exception {
-    final String trigger = "TRIGGER";
-    final String[] args = new String[]{trigger, "message"};
-    final String result = command.resolveTrigger(args);
-    assertThat(result).isEqualTo(trigger.toLowerCase());
+    final String trigger = alphanumeric(RANDOM_BOUND);
+    final String[] args = new String[]{trigger, alphanumeric(RANDOM_BOUND)};
+    assertThat(command.resolveTrigger(args)).isEqualTo(trigger.toLowerCase());
   }
 }
