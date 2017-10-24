@@ -10,6 +10,7 @@ import org.telegram.telegrambots.bots.commandbot.commands.BotCommand;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 import ru.ustits.colleague.repositories.TriggerRepository;
 import ru.ustits.colleague.repositories.records.TriggerRecord;
+import ru.ustits.colleague.tools.StringUtils;
 
 import static java.lang.Integer.toUnsignedLong;
 
@@ -68,12 +69,8 @@ public class TriggerCommand extends BotCommand {
     return args[0].toLowerCase();
   }
 
-  protected String resolveMessage(final String[] array) {
-    final StringBuilder builder = new StringBuilder();
-    for (int i = 1; i < array.length; i++) {
-      builder.append(array[i]).append(" ");
-    }
-    return builder.substring(0, builder.length() - 1);
+  protected String resolveMessage(final String[] args) {
+    return StringUtils.asString(args, 1);
   }
 
   protected String failResult() {
