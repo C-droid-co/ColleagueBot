@@ -18,11 +18,11 @@ public final class CronRestriction {
 
   public Optional<CronExpression> restrictToHours() {
     final String expression = cron.getCronExpression();
-    final String[] args = expression.split(" ");
+    final String[] args = StringUtils.split(expression);
     args[0] = "0";
     args[1] = "0";
     try {
-      final CronExpression newCron = new CronExpression(String.join(" ", args));
+      final CronExpression newCron = new CronExpression(StringUtils.asString(args));
       return Optional.of(newCron);
     } catch (ParseException e) {
       log.error("Unable to restrict cron", e);

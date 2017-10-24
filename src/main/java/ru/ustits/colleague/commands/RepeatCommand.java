@@ -11,12 +11,12 @@ import org.telegram.telegrambots.bots.commandbot.commands.BotCommand;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 import ru.ustits.colleague.tasks.RepeatTask;
 import ru.ustits.colleague.tools.CronRestriction;
+import ru.ustits.colleague.tools.StringUtils;
 
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Optional;
 
-import static java.util.Arrays.copyOfRange;
 import static org.quartz.CronExpression.isValidExpression;
 import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.JobBuilder.newJob;
@@ -100,18 +100,13 @@ public final class RepeatCommand extends BotCommand {
   }
 
   Optional<String> parseMessage(final String[] arguments) {
-    final String[] textArgs = copyOfRange(arguments, PARAMETERS_COUNT - 1,
-            arguments.length);
-    final String text = String.join(" ", textArgs);
+    final String text = StringUtils.asString(arguments, PARAMETERS_COUNT - 1);
     log.info("Parsed repeat task text: {}", text);
     return Optional.of(text);
   }
 
   Optional<CronExpression> parseCron(final String[] arguments) {
-    String expression = arguments[0];
-    for (int i = 1; i < PARAMETERS_COUNT - 1; i++) {
-      expression = String.join(" ", expression, arguments[i]);
-    }
+    final String expression = StringUtils.asString(arguments, 0, PARAMETERS_COUNT - 1);
     if (isValidExpression(expression)) {
       try {
         log.info("Parsed repeat task cron expression [{}]", expression);
