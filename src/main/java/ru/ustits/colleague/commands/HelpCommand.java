@@ -19,7 +19,7 @@ import java.util.List;
  * @author ustits
  */
 @Log4j2
-public class HelpCommand extends BotCommand {
+public final class HelpCommand extends BotCommand {
 
   private final ICommandRegistry commandRegistry;
 

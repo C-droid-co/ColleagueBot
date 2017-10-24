@@ -18,7 +18,7 @@ import static java.lang.Integer.toUnsignedLong;
  * @author ustits
  */
 @Log4j2
-public class TriggerCommand extends BotCommand {
+public final class TriggerCommand extends BotCommand {
 
   @Autowired
   private TriggerRepository repository;

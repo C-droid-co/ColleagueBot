@@ -25,7 +25,7 @@ import static java.util.stream.Collectors.*;
  * @author ustits
  */
 @Log4j2
-public class StatsCommand extends BotCommand {
+public final class StatsCommand extends BotCommand {
 
   static final String NO_STAT_MESSAGE = "No statistic yet";
 

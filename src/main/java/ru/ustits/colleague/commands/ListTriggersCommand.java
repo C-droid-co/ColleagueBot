@@ -17,7 +17,7 @@ import java.util.List;
  * @author ustits
  */
 @Log4j2
-public class ListTriggersCommand extends BotCommand {
+public final class ListTriggersCommand extends BotCommand {
 
   static final String NO_TRIGGER_RESULT = "No triggers for current chat";
 
