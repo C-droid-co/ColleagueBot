@@ -3,6 +3,9 @@ package ru.ustits.colleague;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.dbutils.QueryRunner;
 import org.postgresql.ds.PGSimpleDataSource;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.impl.StdSchedulerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -32,13 +35,11 @@ public class AppContext {
   private static final String REPEAT_COMMAND = "repeat";
   private static final String STATS_COMMAND = "stats";
 
-  private static final int REPEAT_POOL_SIZE = 1;
-
   @Autowired
   private Environment env;
 
   @Bean
-  public ColleagueBot bot() {
+  public ColleagueBot bot() throws SchedulerException {
     final ColleagueBot bot = new ColleagueBot(botName());
     bot.registerAll(triggerCommand(),
             helpCommand(bot),
@@ -69,8 +70,10 @@ public class AppContext {
   }
 
   @Bean
-  public RepeatCommand repeatCommand() {
-    return new RepeatCommand(REPEAT_COMMAND, REPEAT_POOL_SIZE);
+  public RepeatCommand repeatCommand() throws SchedulerException {
+    final Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
+    scheduler.start();
+    return new RepeatCommand(REPEAT_COMMAND, scheduler);
   }
 
   @Bean
