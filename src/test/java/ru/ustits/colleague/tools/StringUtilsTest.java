@@ -51,11 +51,14 @@ public class StringUtilsTest {
 
   @Test
   public void testAsStringWithStart() throws Exception {
-    assertThat(StringUtils.asString(stringArray, 1)).isEqualTo("very long text");
+    final int start = 1;
+    assertThat(StringUtils.asString(stringArray, start)).isEqualTo("very long text");
   }
 
   @Test
   public void testAsStringWithStartAndEnd() throws Exception {
-    assertThat(StringUtils.asString(stringArray, 1, 3)).isEqualTo("very long");
+    final int start = 1;
+    final int end = 3;
+    assertThat(StringUtils.asString(stringArray, start, end)).isEqualTo("very long");
   }
 }

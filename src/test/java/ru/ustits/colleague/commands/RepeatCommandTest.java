@@ -20,7 +20,7 @@ import static org.mockito.Mockito.verify;
  */
 public class RepeatCommandTest {
 
-  private static final String[] GOOD_ARGS = {"*", "1", "*", "?", "*", "*", "some", "text"};
+  private static final String[] GOOD_ARGS = {"0-30", "1", "23", "?", "*", "1-5", "some", "text"};
 
   private RepeatCommand command;
   private Scheduler scheduler;
