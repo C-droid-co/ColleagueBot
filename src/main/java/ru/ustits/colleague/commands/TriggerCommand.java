@@ -39,7 +39,7 @@ public class TriggerCommand extends BotCommand {
   protected SendMessage createRecord(final User user, final Chat chat, final String[] arguments) {
     final SendMessage answer;
     if (enough(arguments)) {
-      final String trigger = arguments[0];
+      final String trigger = resolveTrigger(arguments);
       final String message = resolveMessage(arguments);
       final TriggerRecord result = repository.fetchOne(trigger, chat.getId(), toUnsignedLong(user.getId()));
 
@@ -62,6 +62,10 @@ public class TriggerCommand extends BotCommand {
 
   private boolean enough(final String[] arguments) {
     return arguments != null && arguments.length >= 2;
+  }
+
+  final String resolveTrigger(final String[] args) {
+    return args[0].toLowerCase();
   }
 
   protected String resolveMessage(final String[] array) {

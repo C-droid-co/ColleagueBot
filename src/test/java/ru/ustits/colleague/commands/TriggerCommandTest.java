@@ -8,6 +8,7 @@ import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Chat;
 import org.telegram.telegrambots.api.objects.User;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -51,5 +52,20 @@ public class TriggerCommandTest {
     final String[] array = new String[] {cmd, first, last};
     final String result = command.resolveMessage(array);
     assertThat(result, is(expected));
+  }
+
+  @Test
+  public void testResolveTrigger() throws Exception {
+    final String trigger = "trigger";
+    final String[] args = new String[]{trigger, "message"};
+    assertThat(command.resolveTrigger(args)).isEqualTo(trigger);
+  }
+
+  @Test
+  public void testResolveTriggerWithCapitalizedTrigger() throws Exception {
+    final String trigger = "TRIGGER";
+    final String[] args = new String[]{trigger, "message"};
+    final String result = command.resolveTrigger(args);
+    assertThat(result).isEqualTo(trigger.toLowerCase());
   }
 }
