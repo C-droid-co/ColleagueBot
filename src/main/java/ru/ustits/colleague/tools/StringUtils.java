@@ -7,6 +7,7 @@ import static java.util.Arrays.copyOfRange;
  */
 public class StringUtils {
 
+  public static final String ZERO = "0";
   private static final String SPACE = " ";
 
   private StringUtils() {

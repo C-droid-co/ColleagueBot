@@ -19,8 +19,8 @@ public final class CronRestriction {
   public Optional<CronExpression> restrictToHours() {
     final String expression = cron.getCronExpression();
     final String[] args = StringUtils.split(expression);
-    args[0] = "0";
-    args[1] = "0";
+    args[0] = StringUtils.ZERO;
+    args[1] = StringUtils.ZERO;
     try {
       final CronExpression newCron = new CronExpression(StringUtils.asString(args));
       return Optional.of(newCron);
