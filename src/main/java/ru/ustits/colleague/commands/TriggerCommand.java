@@ -20,6 +20,8 @@ import static java.lang.Integer.toUnsignedLong;
 @Log4j2
 public final class TriggerCommand extends BotCommand {
 
+  static final int MIN_ARGS = 2;
+
   @Autowired
   private TriggerRepository repository;
 
@@ -61,8 +63,8 @@ public final class TriggerCommand extends BotCommand {
     return answer.setChatId(chat.getId());
   }
 
-  private boolean enough(final String[] arguments) {
-    return arguments != null && arguments.length >= 2;
+  final boolean enough(final String[] arguments) {
+    return arguments != null && arguments.length >= MIN_ARGS;
   }
 
   final String resolveTrigger(final String[] args) {
