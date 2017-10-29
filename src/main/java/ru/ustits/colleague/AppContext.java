@@ -14,6 +14,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import ru.ustits.colleague.commands.*;
 import ru.ustits.colleague.repositories.*;
+import ru.ustits.colleague.repositories.services.RepeatService;
 import ru.ustits.colleague.tasks.RepeatScheduler;
 
 import javax.sql.DataSource;
@@ -72,7 +73,7 @@ public class AppContext {
 
   @Bean
   public RepeatCommand repeatCommand() throws SchedulerException {
-    return new RepeatCommand(REPEAT_COMMAND, scheduler(), repeatRepository());
+    return new RepeatCommand(REPEAT_COMMAND, scheduler(), repeatService());
   }
 
   @Bean
@@ -110,6 +111,11 @@ public class AppContext {
       log.error(e);
     }
     return null;
+  }
+
+  @Bean
+  public RepeatService repeatService() {
+    return new RepeatService(repeatRepository(), chatsRepository(), userRepository());
   }
 
   @Bean

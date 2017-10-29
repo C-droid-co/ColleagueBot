@@ -8,15 +8,13 @@ import org.telegram.telegrambots.api.objects.User;
 import org.telegram.telegrambots.bots.AbsSender;
 import org.telegram.telegrambots.bots.commandbot.commands.BotCommand;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
-import ru.ustits.colleague.repositories.RepeatRepository;
 import ru.ustits.colleague.repositories.records.RepeatRecord;
+import ru.ustits.colleague.repositories.services.RepeatService;
 import ru.ustits.colleague.tasks.RepeatScheduler;
 import ru.ustits.colleague.tools.StringUtils;
 
 import java.util.Arrays;
 import java.util.Optional;
-
-import static java.lang.Integer.toUnsignedLong;
 
 /**
  * @author ustits
@@ -27,19 +25,19 @@ public final class RepeatCommand extends BotCommand {
   private static final Integer PARAMETERS_COUNT = 7;
 
   private final RepeatScheduler scheduler;
-  private final RepeatRepository repository;
+  private final RepeatService service;
 
   public RepeatCommand(final String commandIdentifier, final RepeatScheduler scheduler,
-                       final RepeatRepository repository) {
+                       final RepeatService service) {
     super(commandIdentifier, "command for adding repeatable messages");
     this.scheduler = scheduler;
-    this.repository = repository;
+    this.service = service;
   }
 
   @Override
   public void execute(final AbsSender absSender, final User user, final Chat chat, final String[] arguments) {
     try {
-      final String message = scheduleTask(arguments, chat.getId(), user.getId(), absSender) ?
+      final String message = scheduleTask(arguments, chat, user, absSender) ?
               "Job scheduled" : "Failed to schedule job";
       absSender.execute(new SendMessage(chat.getId(), message));
     } catch (TelegramApiException e) {
@@ -47,8 +45,8 @@ public final class RepeatCommand extends BotCommand {
     }
   }
 
-  boolean scheduleTask(final String[] arguments, final Long chatId,
-                       final Integer userId, @NonNull final AbsSender sender) {
+  boolean scheduleTask(final String[] arguments, final Chat chat,
+                       final User user, @NonNull final AbsSender sender) {
     log.info("Got arguments {} for repeat task", Arrays.toString(arguments));
     if (arguments == null || arguments.length < PARAMETERS_COUNT) {
       return false;
@@ -56,14 +54,11 @@ public final class RepeatCommand extends BotCommand {
       final Optional<String> message = parseMessage(arguments);
       final Optional<String> cron = parseCron(arguments);
       if (message.isPresent() && cron.isPresent()) {
-        final RepeatRecord record = RepeatRecord.builder()
-                .message(message.get())
-                .chatId(chatId)
-                .userId(toUnsignedLong(userId))
-                .cron(cron.get()).build();
-        return repository.add(record) != null && scheduler.scheduleTask(record, sender);
+        final RepeatRecord record = service.addRepeat(message.get(), cron.get(), chat, user);
+        return record != null && scheduler.scheduleTask(record, sender);
+      } else {
+        return false;
       }
-      return false;
     }
   }
 
