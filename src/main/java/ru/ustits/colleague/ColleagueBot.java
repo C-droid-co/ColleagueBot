@@ -16,7 +16,10 @@ import ru.ustits.colleague.repositories.ChatsRepository;
 import ru.ustits.colleague.repositories.MessageRepository;
 import ru.ustits.colleague.repositories.TriggerRepository;
 import ru.ustits.colleague.repositories.UserRepository;
+import ru.ustits.colleague.repositories.records.RepeatRecord;
 import ru.ustits.colleague.repositories.records.TriggerRecord;
+import ru.ustits.colleague.repositories.services.RepeatService;
+import ru.ustits.colleague.tasks.RepeatScheduler;
 import ru.ustits.colleague.tools.TriggerProcessor;
 
 import java.util.List;
@@ -34,7 +37,11 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
   @Autowired
   private UserRepository userRepository;
   @Autowired
-  private TriggerRepository repository;
+  private TriggerRepository triggerRepository;
+  @Autowired
+  private RepeatService repeatService;
+  @Autowired
+  private RepeatScheduler scheduler;
   @Autowired
   private String botName;
   @Autowired
@@ -42,6 +49,11 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
 
   public ColleagueBot(final String botUsername) {
     super(new DefaultBotOptions(), true, botUsername);
+  }
+
+  void startRepeats() {
+    final List<RepeatRecord> records = repeatService.fetchAllRepeats();
+    scheduler.scheduleTasks(records, this);
   }
 
   @Override
@@ -97,7 +109,7 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
   private void findTriggers(final Update update) {
     final String text = update.getMessage().getText();
     final Long chatId = update.getMessage().getChatId();
-    final List<TriggerRecord> triggers = repository.fetchAll(chatId);
+    final List<TriggerRecord> triggers = triggerRepository.fetchAll(chatId);
     final TriggerProcessor processor = new TriggerProcessor(triggers);
     final List<SendMessage> messages = processor.process(text);
     for (final SendMessage message : messages) {

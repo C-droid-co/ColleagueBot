@@ -8,7 +8,6 @@ import org.quartz.JobExecutionException;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.bots.AbsSender;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
-import ru.ustits.colleague.commands.RepeatCommand;
 
 /**
  * @author ustits
@@ -19,9 +18,9 @@ public class RepeatTask implements Job {
   @Override
   public void execute(final JobExecutionContext jobExecutionContext) throws JobExecutionException {
     final JobDataMap data = jobExecutionContext.getJobDetail().getJobDataMap();
-    final AbsSender sender = (AbsSender) data.get(RepeatCommand.SENDER_KEY);
-    final String message = data.getString(RepeatCommand.MESSAGE_KEY);
-    final Long chatId = data.getLong(RepeatCommand.CHAT_KEY);
+    final AbsSender sender = (AbsSender) data.get(RepeatScheduler.SENDER_KEY);
+    final String message = data.getString(RepeatScheduler.MESSAGE_KEY);
+    final Long chatId = data.getLong(RepeatScheduler.CHAT_KEY);
     try {
       sender.execute(new SendMessage(chatId, message));
       log.info("Repeated: {} in chat: {}", message, chatId);

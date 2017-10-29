@@ -1,19 +1,24 @@
 package ru.ustits.colleague.repositories.records;
 
-import lombok.Value;
-
-import java.time.LocalTime;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NonNull;
 
 /**
  * @author ustits
  */
-@Value
-public class RepeatRecord {
+@Builder
+@Getter
+public final class RepeatRecord {
 
-  Integer id;
-  String message;
-  Long chatId;
-  Long userId;
-  LocalTime time;
+  private Integer id;
+  @NonNull
+  private String message;
+  @NonNull
+  private Long chatId;
+  @NonNull
+  private Long userId;
+  @NonNull
+  private String cron;
 
 }
