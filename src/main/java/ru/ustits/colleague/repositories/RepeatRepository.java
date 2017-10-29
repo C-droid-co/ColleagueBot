@@ -5,8 +5,9 @@ import ru.ustits.colleague.repositories.records.RepeatRecord;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Time;
-import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author ustits
@@ -19,20 +20,37 @@ public class RepeatRepository extends BotRepository<String, RepeatRecord> {
     return null;
   }
 
-  public RepeatRecord add(final String text, final Long chatId, final Long userId, final Time time) {
+  public RepeatRecord add(final RepeatRecord record) {
     try {
-      return sql().insert("INSERT INTO repeaters (message, chat_id, user_id, time) VALUES (?, ?, ?, ?)",
+      return sql().insert("INSERT INTO repeats (message, chat_id, user_id, cron) VALUES (?, ?, ?, ?)",
               resultSet -> {
                 resultSet.next();
-                final RepeatRecord record = toRecord(resultSet);
-                log.info(record);
-                return record;
+                final RepeatRecord result = toRecord(resultSet);
+                log.info(result);
+                return result;
               },
-              text, chatId, userId, time);
+              record.getMessage(), record.getChatId(), record.getUserId(), record.getCron());
     } catch (SQLException e) {
       log.error(e);
     }
     return null;
+  }
+
+  public List<RepeatRecord> fetchAll(final Long chatId) {
+    try {
+      return sql().query("SELECT * FROM repeats WHERE chat_id=?",
+              resultSet -> {
+                final List<RepeatRecord> records = new ArrayList<>();
+                while (resultSet.next()) {
+                  records.add(toRecord(resultSet));
+                }
+                return records;
+              },
+              chatId);
+    } catch (SQLException e) {
+      log.error("Unable to fetch messages", e);
+    }
+    return Collections.emptyList();
   }
 
   @Override
@@ -45,8 +63,13 @@ public class RepeatRepository extends BotRepository<String, RepeatRecord> {
     final String message = resultSet.getString(2);
     final Long chatId = resultSet.getLong(3);
     final Long userId = resultSet.getLong(4);
-    final Time time = resultSet.getTime(5);
-    final LocalTime localTime = time.toLocalTime();
-    return new RepeatRecord(id, message, chatId, userId, localTime);
+    final String cron = resultSet.getString(5);
+    return RepeatRecord.builder()
+            .id(id)
+            .message(message)
+            .chatId(chatId)
+            .userId(userId)
+            .cron(cron)
+            .build();
   }
 }
