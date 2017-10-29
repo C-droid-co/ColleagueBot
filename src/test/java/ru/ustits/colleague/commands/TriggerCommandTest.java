@@ -7,16 +7,20 @@ import org.mockito.MockitoAnnotations;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Chat;
 import org.telegram.telegrambots.api.objects.User;
+import ru.ustits.colleague.tools.StringUtils;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static ru.ustits.colleague.RandomUtils.string;
+import static ru.ustits.colleague.RandomUtils.values;
 
 /**
  * @author ustits
  */
 public class TriggerCommandTest {
 
-  private final TriggerCommand command = new TriggerCommand("random");
+  private final TriggerCommand command = new TriggerCommand(string());
 
   @Mock
   private Chat chat;
@@ -29,27 +33,47 @@ public class TriggerCommandTest {
   }
 
   @Test
-  public void testFailCommandWithFewArguments() {
+  public void testCreateRecordWithFewArguments() {
     final String[] arguments = new String[]{"/trigger"};
     final SendMessage message = command.createRecord(user, chat, arguments);
     assertThat(message.getText(), is(command.failResult()));
   }
 
   @Test
-  public void testFailCommandWithNullArguments() {
+  public void testCreateRecordWithNullArguments() {
     final String[] arguments = null;
     final SendMessage message = command.createRecord(user, chat, arguments);
     assertThat(message.getText(), is(command.failResult()));
   }
 
   @Test
-  public void testCorrectResponseStringBuilding() {
-    final String cmd = "command";
-    final String first = "first";
-    final String last = "last";
-    final String expected = String.format("%s %s", first, last);
-    final String[] array = new String[] {cmd, first, last};
-    final String result = command.resolveMessage(array);
-    assertThat(result, is(expected));
+  public void testEnough() throws Exception {
+    final String[] args = values();
+    assertThat(command.enough(args)).isTrue();
+  }
+
+  @Test
+  public void testNotEnough() throws Exception {
+    final String[] args = values(TriggerCommand.MIN_ARGS - 1);
+    assertThat(command.enough(args)).isFalse();
+  }
+
+  @Test
+  public void testEnoughWithNull() throws Exception {
+    assertThat(command.enough(null)).isFalse();
+  }
+
+  @Test
+  public void testResolveMessage() {
+    final String[] args = values();
+    final String result = command.resolveMessage(args);
+    assertThat(result, is(StringUtils.asString(args, 1)));
+  }
+
+  @Test
+  public void testResolveTrigger() throws Exception {
+    final String trigger = string();
+    final String[] args = new String[]{trigger, string()};
+    assertThat(command.resolveTrigger(args)).isEqualTo(trigger.toLowerCase());
   }
 }

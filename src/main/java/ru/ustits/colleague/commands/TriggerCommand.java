@@ -10,6 +10,7 @@ import org.telegram.telegrambots.bots.commandbot.commands.BotCommand;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 import ru.ustits.colleague.repositories.TriggerRepository;
 import ru.ustits.colleague.repositories.records.TriggerRecord;
+import ru.ustits.colleague.tools.StringUtils;
 
 import static java.lang.Integer.toUnsignedLong;
 
@@ -17,7 +18,9 @@ import static java.lang.Integer.toUnsignedLong;
  * @author ustits
  */
 @Log4j2
-public class TriggerCommand extends BotCommand {
+public final class TriggerCommand extends BotCommand {
+
+  static final int MIN_ARGS = 2;
 
   @Autowired
   private TriggerRepository repository;
@@ -39,7 +42,7 @@ public class TriggerCommand extends BotCommand {
   protected SendMessage createRecord(final User user, final Chat chat, final String[] arguments) {
     final SendMessage answer;
     if (enough(arguments)) {
-      final String trigger = arguments[0];
+      final String trigger = resolveTrigger(arguments);
       final String message = resolveMessage(arguments);
       final TriggerRecord result = repository.fetchOne(trigger, chat.getId(), toUnsignedLong(user.getId()));
 
@@ -60,16 +63,16 @@ public class TriggerCommand extends BotCommand {
     return answer.setChatId(chat.getId());
   }
 
-  private boolean enough(final String[] arguments) {
-    return arguments != null && arguments.length >= 2;
+  final boolean enough(final String[] arguments) {
+    return arguments != null && arguments.length >= MIN_ARGS;
   }
 
-  protected String resolveMessage(final String[] array) {
-    final StringBuilder builder = new StringBuilder();
-    for (int i = 1; i < array.length; i++) {
-      builder.append(array[i]).append(" ");
-    }
-    return builder.substring(0, builder.length() - 1);
+  final String resolveTrigger(final String[] args) {
+    return args[0].toLowerCase();
+  }
+
+  protected String resolveMessage(final String[] args) {
+    return StringUtils.asString(args, 1);
   }
 
   protected String failResult() {
