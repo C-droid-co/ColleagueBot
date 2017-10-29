@@ -39,6 +39,10 @@ public class RepeatService {
     return repeatRepository.add(record);
   }
 
+  public void deleteRepeat(final RepeatRecord record) {
+    repeatRepository.delete(record);
+  }
+
   public List<RepeatRecord> fetchAllRepeats() {
     final List<RepeatRecord> allRepeats = new ArrayList<>();
     final List<ChatRecord> chats = chatsRepository.fetchAll();

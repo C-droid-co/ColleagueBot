@@ -55,7 +55,13 @@ public final class RepeatCommand extends BotCommand {
       final Optional<String> cron = parseCron(arguments);
       if (message.isPresent() && cron.isPresent()) {
         final RepeatRecord record = service.addRepeat(message.get(), cron.get(), chat, user);
-        return record != null && scheduler.scheduleTask(record, sender);
+        final boolean isScheduled = scheduler.scheduleTask(record, sender);
+        if (!isScheduled) {
+          service.deleteRepeat(record);
+          return false;
+        } else {
+          return true;
+        }
       } else {
         return false;
       }

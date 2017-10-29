@@ -26,7 +26,7 @@ public class RepeatRepository extends BotRepository<String, RepeatRecord> {
               resultSet -> {
                 resultSet.next();
                 final RepeatRecord result = toRecord(resultSet);
-                log.info(result);
+                log.info("Added: " + result);
                 return result;
               },
               record.getMessage(), record.getChatId(), record.getUserId(), record.getCron());
@@ -48,7 +48,7 @@ public class RepeatRepository extends BotRepository<String, RepeatRecord> {
               },
               chatId);
     } catch (SQLException e) {
-      log.error("Unable to fetch messages", e);
+      log.error("Unable to fetch repeats", e);
     }
     return Collections.emptyList();
   }
@@ -56,6 +56,15 @@ public class RepeatRepository extends BotRepository<String, RepeatRecord> {
   @Override
   public boolean exists(final String entity) {
     return false;
+  }
+
+  public void delete(final RepeatRecord record) {
+    try {
+      sql().update("DELETE FROM repeats WHERE id=?", record.getId());
+      log.info("Deleted: " + record);
+    } catch (SQLException e) {
+      log.error("Unable to delete repeat", e);
+    }
   }
 
   private RepeatRecord toRecord(final ResultSet resultSet) throws SQLException {
