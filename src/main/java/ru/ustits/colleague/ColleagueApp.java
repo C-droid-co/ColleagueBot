@@ -26,6 +26,7 @@ public class ColleagueApp {
 
     try {
       api.registerBot(bot);
+      bot.startRepeats();
     } catch (TelegramApiRequestException e) {
       log.error(e);
     }
