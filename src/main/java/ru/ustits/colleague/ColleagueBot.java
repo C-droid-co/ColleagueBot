@@ -16,6 +16,7 @@ import ru.ustits.colleague.repositories.ChatsRepository;
 import ru.ustits.colleague.repositories.MessageRepository;
 import ru.ustits.colleague.repositories.TriggerRepository;
 import ru.ustits.colleague.repositories.UserRepository;
+import ru.ustits.colleague.repositories.records.RepeatRecord;
 import ru.ustits.colleague.repositories.records.TriggerRecord;
 import ru.ustits.colleague.repositories.services.RepeatService;
 import ru.ustits.colleague.tasks.RepeatScheduler;
@@ -51,9 +52,8 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
   }
 
   void startRepeats() {
-    repeatService.fetchAllRepeats()
-            .forEach(record ->
-                    scheduler.scheduleTask(record, this));
+    final List<RepeatRecord> records = repeatService.fetchAllRepeats();
+    scheduler.scheduleTasks(records, this);
   }
 
   @Override

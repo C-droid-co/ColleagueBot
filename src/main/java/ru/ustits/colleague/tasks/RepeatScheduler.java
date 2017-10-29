@@ -31,9 +31,7 @@ public class RepeatScheduler {
   private final Scheduler scheduler;
 
   public void scheduleTasks(final List<RepeatRecord> repeatRecords, @NonNull final AbsSender sender) {
-    for (final RepeatRecord repeat : repeatRecords) {
-      scheduleTask(repeat, sender);
-    }
+    repeatRecords.forEach(record -> scheduleTask(record, sender));
   }
 
   public boolean scheduleTask(final RepeatRecord repeat, @NonNull final AbsSender sender) {
