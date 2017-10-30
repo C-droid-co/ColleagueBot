@@ -1,11 +1,6 @@
 package ru.ustits.colleague.commands;
 
-import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.telegram.telegrambots.api.objects.Chat;
-import org.telegram.telegrambots.api.objects.User;
 import ru.ustits.colleague.repositories.TriggerRepository;
 import ru.ustits.colleague.tools.StringUtils;
 
@@ -21,16 +16,6 @@ import static ru.ustits.colleague.RandomUtils.values;
 public class TriggerCommandTest {
 
   private final TriggerCommand command = new TriggerCommand(string(), mock(TriggerRepository.class));
-
-  @Mock
-  private Chat chat;
-  @Mock
-  private User user;
-
-  @Before
-  public void setUp() throws Exception {
-    MockitoAnnotations.initMocks(this);
-  }
 
   @Test
   public void testResolveMessage() {
