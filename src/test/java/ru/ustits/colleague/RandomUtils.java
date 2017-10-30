@@ -2,8 +2,10 @@ package ru.ustits.colleague;
 
 import java.util.Arrays;
 
-import static io.qala.datagen.RandomShortApi.alphanumeric;
+import static io.qala.datagen.RandomShortApi.*;
 import static io.qala.datagen.RandomValue.length;
+
+import java.lang.Long;
 
 /**
  * @author ustits
@@ -26,5 +28,13 @@ public final class RandomUtils {
 
   public static String string() {
     return alphanumeric(RANDOM_BOUND);
+  }
+
+  public static Long aLong() {
+    return positiveLong();
+  }
+
+  public static Integer anInt() {
+    return positiveInteger();
   }
 }
