@@ -90,6 +90,16 @@ public class TriggerRepository extends BotRepository<String, TriggerRecord> {
     return 0;
   }
 
+  public void delete(final TriggerRecord record) {
+    try {
+      sql().update("DELETE FROM triggers WHERE trigger=? AND chat_id=? AND user_id=?",
+              record.getTrigger(), record.getChatId(), record.getUserId());
+      log.info("Deleted: {}", record);
+    } catch (SQLException e) {
+      log.error("Unable to delete trigger", e);
+    }
+  }
+
   private TriggerRecord toRecord(final ResultSet resultSet) throws SQLException {
     final Integer id = resultSet.getInt(1);
     final String trigger = resultSet.getString(2);
