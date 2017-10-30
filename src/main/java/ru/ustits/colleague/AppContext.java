@@ -53,7 +53,7 @@ public class AppContext {
 
   @Bean
   public TriggerCommand triggerCommand() {
-    return new TriggerCommand(TRIGGER_COMMAND);
+    return new TriggerCommand(TRIGGER_COMMAND, triggerRepository());
   }
 
   @Bean

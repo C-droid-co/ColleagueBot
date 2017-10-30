@@ -7,11 +7,13 @@ import org.mockito.MockitoAnnotations;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Chat;
 import org.telegram.telegrambots.api.objects.User;
+import ru.ustits.colleague.repositories.TriggerRepository;
 import ru.ustits.colleague.tools.StringUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 import static ru.ustits.colleague.RandomUtils.string;
 import static ru.ustits.colleague.RandomUtils.values;
 
@@ -20,7 +22,7 @@ import static ru.ustits.colleague.RandomUtils.values;
  */
 public class TriggerCommandTest {
 
-  private final TriggerCommand command = new TriggerCommand(string());
+  private final TriggerCommand command = new TriggerCommand(string(), mock(TriggerRepository.class));
 
   @Mock
   private Chat chat;
