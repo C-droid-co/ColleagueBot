@@ -1,11 +1,10 @@
 package ru.ustits.colleague;
 
+import java.lang.Long;
 import java.util.Arrays;
 
 import static io.qala.datagen.RandomShortApi.*;
 import static io.qala.datagen.RandomValue.length;
-
-import java.lang.Long;
 
 /**
  * @author ustits
@@ -36,5 +35,9 @@ public final class RandomUtils {
 
   public static Integer anInt() {
     return positiveInteger();
+  }
+
+  public static Integer anInt(final int bound) {
+    return positiveInteger() % bound;
   }
 }

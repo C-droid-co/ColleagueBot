@@ -18,14 +18,14 @@ import static java.lang.Integer.toUnsignedLong;
 @Log4j2
 public final class TriggerCommand extends AbstractTriggerCommand {
 
-  static final int MIN_ARGS = 2;
+  private static final int MIN_ARGS = 2;
 
   public TriggerCommand(final String commandIdentifier, final TriggerRepository repository) {
-    super(commandIdentifier, "add trigger", repository);
+    super(commandIdentifier, "add trigger", repository, MIN_ARGS);
   }
 
   @Override
-  public void execute(final AbsSender absSender, final User user, final Chat chat, final String[] arguments) {
+  protected void executeInternal(final AbsSender absSender, final User user, final Chat chat, final String[] arguments) {
     final SendMessage answer = createAnswer(user, chat, arguments);
     try {
       absSender.execute(answer);
@@ -35,39 +35,28 @@ public final class TriggerCommand extends AbstractTriggerCommand {
   }
 
   protected SendMessage createAnswer(final User user, final Chat chat, final String[] arguments) {
+    final String trigger = resolveTrigger(arguments);
+    final String message = resolveMessage(arguments);
+    final TriggerRecord result = getRepository().fetchOne(trigger, chat.getId(), toUnsignedLong(user.getId()));
+
+    final TriggerRecord record;
     final SendMessage answer;
-    if (enough(arguments)) {
-      final String trigger = resolveTrigger(arguments);
-      final String message = resolveMessage(arguments);
-      final TriggerRecord result = getRepository().fetchOne(trigger, chat.getId(), toUnsignedLong(user.getId()));
-
-      final TriggerRecord record;
-      if (result == null) {
-        record = getRepository().add(trigger, message, chat.getId(), toUnsignedLong(user.getId()));
-        answer = new SendMessage().setText(String.format("Trigger [%s] added", record.getTrigger()));
-      } else {
-        if (getRepository().update(message, result) <= 0) {
-          answer = new SendMessage().setText("Ooops, i couldn't update trigger");
-        } else {
-          answer = new SendMessage().setText(String.format("Trigger [%s] was updated", trigger));
-        }
-      }
+    if (result == null) {
+      record = getRepository().add(trigger, message, chat.getId(), toUnsignedLong(user.getId()));
+      answer = new SendMessage().setText(String.format("Trigger [%s] added", record.getTrigger()));
     } else {
-      answer = new SendMessage().setText(failResult());
+      if (getRepository().update(message, result) <= 0) {
+        answer = new SendMessage().setText("Ooops, i couldn't update trigger");
+      } else {
+        answer = new SendMessage().setText(String.format("Trigger [%s] was updated", trigger));
+      }
     }
-    return answer.setChatId(chat.getId());
-  }
 
-  final boolean enough(final String[] arguments) {
-    return arguments != null && arguments.length >= MIN_ARGS;
+    return answer.setChatId(chat.getId());
   }
 
   protected String resolveMessage(final String[] args) {
     return StringUtils.asString(args, 1);
   }
 
-  protected String failResult() {
-    return String.format("Couldn't add trigger. Please use \"/%s trigger response_text\" construction",
-            getCommandIdentifier());
-  }
 }
