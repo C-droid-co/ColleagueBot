@@ -35,16 +35,16 @@ public class TriggerCommandTest {
   }
 
   @Test
-  public void testCreateRecordWithFewArguments() {
+  public void testCreateAnswerWithFewArguments() {
     final String[] arguments = new String[]{"/trigger"};
-    final SendMessage message = command.createRecord(user, chat, arguments);
+    final SendMessage message = command.createAnswer(user, chat, arguments);
     assertThat(message.getText(), is(command.failResult()));
   }
 
   @Test
-  public void testCreateRecordWithNullArguments() {
+  public void testCreateAnswerWithNullArguments() {
     final String[] arguments = null;
-    final SendMessage message = command.createRecord(user, chat, arguments);
+    final SendMessage message = command.createAnswer(user, chat, arguments);
     assertThat(message.getText(), is(command.failResult()));
   }
 

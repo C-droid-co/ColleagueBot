@@ -26,7 +26,7 @@ public final class TriggerCommand extends AbstractTriggerCommand {
 
   @Override
   public void execute(final AbsSender absSender, final User user, final Chat chat, final String[] arguments) {
-    final SendMessage answer = createRecord(user, chat, arguments);
+    final SendMessage answer = createAnswer(user, chat, arguments);
     try {
       absSender.execute(answer);
     } catch (TelegramApiException e) {
@@ -34,7 +34,7 @@ public final class TriggerCommand extends AbstractTriggerCommand {
     }
   }
 
-  protected SendMessage createRecord(final User user, final Chat chat, final String[] arguments) {
+  protected SendMessage createAnswer(final User user, final Chat chat, final String[] arguments) {
     final SendMessage answer;
     if (enough(arguments)) {
       final String trigger = resolveTrigger(arguments);
