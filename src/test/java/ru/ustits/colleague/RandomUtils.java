@@ -1,6 +1,5 @@
 package ru.ustits.colleague;
 
-import java.lang.Long;
 import java.util.Arrays;
 
 import static io.qala.datagen.RandomShortApi.*;

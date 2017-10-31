@@ -1,5 +1,6 @@
 package ru.ustits.colleague.commands;
 
+import lombok.extern.log4j.Log4j2;
 import org.junit.Before;
 import org.junit.Test;
 import org.telegram.telegrambots.api.objects.Chat;
@@ -14,6 +15,7 @@ import static ru.ustits.colleague.RandomUtils.*;
 /**
  * @author ustits
  */
+@Log4j2
 public class AbstractTriggerCommandTest {
 
   private static final int MIN_ARGS_BOUND = 10;
@@ -56,6 +58,7 @@ public class AbstractTriggerCommandTest {
       @Override
       protected void executeInternal(final AbsSender absSender, final User user, final Chat chat,
                                      final String[] arguments) {
+        log.info("Executing");
       }
     };
   }
