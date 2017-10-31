@@ -33,6 +33,7 @@ public class AppContext {
 
   private static final String TRIGGER_COMMAND = "trigger";
   private static final String TRIGGER_LIST_COMMAND = "trigger_ls";
+  private static final String DELETE_TRIGGER_COMMAND = "trigger_rm";
   private static final String HELP_COMMAND = "help";
   private static final String REPEAT_COMMAND = "repeat";
   private static final String STATS_COMMAND = "stats";
@@ -47,13 +48,14 @@ public class AppContext {
             helpCommand(bot),
             repeatCommand(),
             listTriggersCommand(),
-            statsCommand());
+            statsCommand(),
+            new DeleteTriggerCommand(DELETE_TRIGGER_COMMAND, triggerRepository()));
     return bot;
   }
 
   @Bean
   public TriggerCommand triggerCommand() {
-    return new TriggerCommand(TRIGGER_COMMAND);
+    return new TriggerCommand(TRIGGER_COMMAND, triggerRepository());
   }
 
   @Bean
