@@ -5,6 +5,7 @@
 # Colleague bot for Telegram
 ## Supported Commands
 * `/trigger [trigger] [message]` - shows the message if the trigger was written in the chat
+* `/trigger_rm [trigger]` - delete trigger
 * `/trigger_ls` - show all triggers available for current chat
 * `/stats` - show message statistics for current chat
 * `/repeat [cron_patter] [message]` - repeat message by [cron](http://www.quartz-scheduler.org/documentation/quartz-2.x/tutorials/crontrigger.html)
