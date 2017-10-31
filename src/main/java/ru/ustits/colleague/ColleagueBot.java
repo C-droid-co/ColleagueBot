@@ -1,86 +1,148 @@
 package ru.ustits.colleague;
 
+import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.api.methods.send.SendDocument;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.methods.send.SendSticker;
+import org.telegram.telegrambots.api.objects.CallbackQuery;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
-import org.telegram.telegrambots.bots.TelegramLongPollingCommandBot;
+import org.telegram.telegrambots.bots.DefaultBotOptions;
+import org.telegram.telegrambots.bots.commandbot.TelegramLongPollingCommandBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
-import ru.ustits.colleague.commands.HelpCommand;
-import ru.ustits.colleague.commands.TriggerCommand;
+import ru.ustits.colleague.repositories.ChatsRepository;
+import ru.ustits.colleague.repositories.MessageRepository;
+import ru.ustits.colleague.repositories.TriggerRepository;
+import ru.ustits.colleague.repositories.UserRepository;
+import ru.ustits.colleague.repositories.records.RepeatRecord;
+import ru.ustits.colleague.repositories.records.TriggerRecord;
+import ru.ustits.colleague.repositories.services.RepeatService;
+import ru.ustits.colleague.tasks.RepeatScheduler;
+import ru.ustits.colleague.tools.TriggerProcessor;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.List;
 
 /**
  * @author ustits
  */
+@Log4j2
 public class ColleagueBot extends TelegramLongPollingCommandBot {
 
-    private final Map<String, PartialBotApiMethod> triggers;
+  @Autowired
+  private MessageRepository messageRepository;
+  @Autowired
+  private ChatsRepository chatsRepository;
+  @Autowired
+  private UserRepository userRepository;
+  @Autowired
+  private TriggerRepository triggerRepository;
+  @Autowired
+  private RepeatService repeatService;
+  @Autowired
+  private RepeatScheduler scheduler;
+  @Autowired
+  private String botName;
+  @Autowired
+  private String botToken;
 
-    private TriggerCommand triggerCommand;
+  public ColleagueBot(final String botUsername) {
+    super(new DefaultBotOptions(), true, botUsername);
+  }
 
-    public ColleagueBot() {
-        triggers = new HashMap<>();
-        triggerCommand = new TriggerCommand(triggers);
+  void startRepeats() {
+    final List<RepeatRecord> records = repeatService.fetchAllRepeats();
+    scheduler.scheduleTasks(records, this);
+  }
+
+  @Override
+  public void processNonCommandUpdate(final Update update) {
+    log.info(update);
+    if (update.hasCallbackQuery()) {
+      processCallback(update.getCallbackQuery());
+    } else if (hasMessage(update)) {
+      addMessage(update);
+      if (isMessage(update)) {
+        findTriggers(update);
+      }
+    }
+  }
+
+  @Override
+  public void onClosing() {
+    log.info("Closing");
+  }
+
+  private boolean hasMessage(final Update update) {
+    return isMessage(update) || isEditMessage(update);
+  }
+
+  private boolean isMessage(final Update update) {
+    return update.hasMessage() && update.getMessage().hasText();
+  }
+
+  private boolean isEditMessage(final Update update) {
+    return update.hasEditedMessage() && update.getEditedMessage().hasText();
+  }
+
+  private void addMessage(final Update update) {
+    if (isMessage(update)) {
+      addMessage(update.getMessage());
+    } else if (isEditMessage(update)) {
+      addMessage(update.getEditedMessage());
+    }
+  }
+
+  private void addMessage(final Message message) {
+    if (!chatsRepository.exists(message.getChat())) {
+      chatsRepository.add(message.getChat());
     }
 
-    @Override
-    public void processNonCommandUpdate(Update update) {
-        System.out.println(update);
-        if (isNotEditedMessage(update)) {
-            register(triggerCommand);
-            register(new HelpCommand(this));
-            if (update.hasMessage() && update.getMessage().hasText()) {
-                processMessage(update.getMessage());
-            }
-        }
+    if (!userRepository.exists(message.getFrom())) {
+      userRepository.add(message.getFrom());
     }
 
-    private boolean isNotEditedMessage(Update update) {
-        return update.getEditedMessage() == null;
-    }
+    messageRepository.add(message);
+  }
 
-    private void processMessage(Message message) {
-        for (Map.Entry<String, PartialBotApiMethod> trigger : triggers.entrySet()) {
-            Pattern pattern = Pattern.compile(Pattern.quote(trigger.getKey()),
-                    Pattern.CASE_INSENSITIVE + Pattern.UNICODE_CASE);
-            Matcher matcher = pattern.matcher(message.getText());
-            if (matcher.find()) {
-                sendMessage(message.getChatId(), trigger.getValue());
-            }
-        }
+  private void findTriggers(final Update update) {
+    final String text = update.getMessage().getText();
+    final Long chatId = update.getMessage().getChatId();
+    final List<TriggerRecord> triggers = triggerRepository.fetchAll(chatId);
+    final TriggerProcessor processor = new TriggerProcessor(triggers);
+    final List<SendMessage> messages = processor.process(text);
+    for (final SendMessage message : messages) {
+      sendMessage(update.getMessage().getChatId(), message);
     }
+  }
 
-    private void sendMessage(Long chatId, PartialBotApiMethod object) {
-        try {
-            if (object instanceof SendMessage) {
-                SendMessage message = ((SendMessage) object).setChatId(chatId);
-                sendMessage(message);
-            } else if (object instanceof SendSticker) {
-                SendSticker sticker = ((SendSticker) object).setChatId(chatId);
-                sendSticker(sticker);
-            } else if (object instanceof SendDocument) {
-                SendDocument document = ((SendDocument) object).setChatId(chatId);
-                sendDocument(document);
-            }
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
-    }
+  private void processCallback(final CallbackQuery callback) {
+    final SendMessage helpMessage = new SendMessage();
+    helpMessage.setText(callback.getData());
+    helpMessage.enableMarkdown(true);
+    sendMessage(callback.getMessage().getChatId(), helpMessage);
+  }
 
-    @Override
-    public String getBotToken() {
-        return BotContext.getBotToken();
+  private void sendMessage(final Long chatId, final PartialBotApiMethod object) {
+    try {
+      if (object instanceof SendMessage) {
+        final SendMessage message = ((SendMessage) object).setChatId(chatId);
+        execute(message);
+      } else if (object instanceof SendSticker) {
+        final SendSticker sticker = ((SendSticker) object).setChatId(chatId);
+        sendSticker(sticker);
+      } else if (object instanceof SendDocument) {
+        final SendDocument document = ((SendDocument) object).setChatId(chatId);
+        sendDocument(document);
+      }
+    } catch (TelegramApiException e) {
+      log.error(e);
     }
+  }
 
-    @Override
-    public String getBotUsername() {
-        return BotContext.getBotName();
-    }
+  @Override
+  public String getBotToken() {
+    return botToken;
+  }
 }

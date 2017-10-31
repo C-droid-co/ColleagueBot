@@ -1,72 +1,62 @@
 package ru.ustits.colleague.commands;
 
-import org.telegram.telegrambots.api.methods.PartialBotApiMethod;
+import lombok.extern.log4j.Log4j2;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Chat;
 import org.telegram.telegrambots.api.objects.User;
 import org.telegram.telegrambots.bots.AbsSender;
-import org.telegram.telegrambots.bots.commands.BotCommand;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
-import org.telegram.telegrambots.logging.BotLogger;
+import ru.ustits.colleague.repositories.TriggerRepository;
+import ru.ustits.colleague.repositories.records.TriggerRecord;
+import ru.ustits.colleague.tools.StringUtils;
 
-import java.util.Map;
+import static java.lang.Integer.toUnsignedLong;
 
 /**
  * @author ustits
  */
-public class TriggerCommand extends BotCommand {
+@Log4j2
+public final class TriggerCommand extends AbstractTriggerCommand {
 
-    private static final String COMMAND_TAG = "trigger";
+  private static final int MIN_ARGS = 2;
 
-    private final Map<String, PartialBotApiMethod> triggers;
+  public TriggerCommand(final String commandIdentifier, final TriggerRepository repository) {
+    super(commandIdentifier, "add trigger", repository, MIN_ARGS);
+  }
 
-    public TriggerCommand(Map<String, PartialBotApiMethod> triggers) {
-        super(COMMAND_TAG, "add trigger");
-        this.triggers = triggers;
+  @Override
+  protected void executeInternal(final AbsSender absSender, final User user, final Chat chat, final String[] arguments) {
+    final SendMessage answer = createAnswer(user, chat, arguments);
+    try {
+      absSender.execute(answer);
+    } catch (TelegramApiException e) {
+      log.error(getCommandIdentifier(), e);
+    }
+  }
+
+  protected SendMessage createAnswer(final User user, final Chat chat, final String[] arguments) {
+    final String trigger = resolveTrigger(arguments);
+    final String message = resolveMessage(arguments);
+    final TriggerRecord result = getRepository().fetchOne(trigger, chat.getId(), toUnsignedLong(user.getId()));
+
+    final TriggerRecord record;
+    final SendMessage answer;
+    if (result == null) {
+      record = getRepository().add(trigger, message, chat.getId(), toUnsignedLong(user.getId()));
+      answer = new SendMessage().setText(String.format("Trigger [%s] added", record.getTrigger()));
+    } else {
+      if (getRepository().update(message, result) <= 0) {
+        answer = new SendMessage().setText("Ooops, i couldn't update trigger");
+      } else {
+        answer = new SendMessage().setText(String.format("Trigger [%s] was updated", trigger));
+      }
     }
 
-    public void execute(AbsSender absSender, User user, Chat chat, String[] arguments) {
-        SendMessage answer = processArgumentsAndSetResponse(arguments);
-        try {
-            absSender.sendMessage(answer.setChatId(chat.getId().toString()));
-        } catch (TelegramApiException e) {
-            BotLogger.error(COMMAND_TAG, e);
-        }
-    }
+    return answer.setChatId(chat.getId());
+  }
 
-    private SendMessage processArgumentsAndSetResponse(String[] arguments) {
-        SendMessage commandResult = new SendMessage();
-        if (arguments.length >= 2) {
-            String trigger = addTrigger(arguments);
-            commandResult.setText(String.format("Trigger [%s] successfully added", trigger));
-        } else {
-            commandResult.setText(failResult());
-        }
-        return commandResult;
-    }
+  protected String resolveMessage(final String[] args) {
+    return StringUtils.asString(args, 1);
+  }
 
-    private String addTrigger(String[] arguments) {
-        String trigger = arguments[0];
-        String response = convertStringArrayToString(arguments);
-
-        SendMessage message = new SendMessage();
-        message.setText(response);
-
-        triggers.put(trigger, message);
-        return trigger;
-    }
-
-    private String convertStringArrayToString(String[] array) {
-        StringBuilder builder = new StringBuilder();
-        for (int i = 1; i < array.length; i++) {
-            builder.append(array[i]).append(" ");
-        }
-        builder.substring(0, builder.length() - 1);
-        return builder.toString();
-    }
-
-    private String failResult() {
-        return String.format("Couldn't add trigger. Please use \"/%s trigger response_text\" construction",
-                COMMAND_TAG);
-    }
 }
