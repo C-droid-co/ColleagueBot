@@ -13,7 +13,7 @@ import java.util.List;
  * @author ustits
  */
 @Log4j2
-public class RepeatRepository extends BotRepository<String, RepeatRecord> {
+public class RepeatRepository extends AbstractRepository<String, RepeatRecord> {
 
   @Override
   public RepeatRecord add(final String entity) {

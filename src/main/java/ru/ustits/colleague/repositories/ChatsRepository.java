@@ -16,7 +16,7 @@ import java.util.List;
  */
 @Log4j2
 @Repository
-public class ChatsRepository extends BotRepository<Chat, ChatRecord> {
+public class ChatsRepository extends AbstractRepository<Chat, ChatRecord> {
 
   @Override
   public boolean exists(final Chat entity) {

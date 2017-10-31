@@ -14,7 +14,7 @@ import java.util.List;
  * @author ustits
  */
 @Log4j2
-public class UserRepository extends BotRepository<User, UserRecord> {
+public class UserRepository extends AbstractRepository<User, UserRecord> {
 
   @Override
   public boolean exists(final User entity) {

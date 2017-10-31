@@ -13,7 +13,7 @@ import java.util.List;
  * @author ustits
  */
 @Log4j2
-public class TriggerRepository extends BotRepository<String, TriggerRecord> {
+public class TriggerRepository extends AbstractRepository<String, TriggerRecord> {
 
   @Override
   public boolean exists(final String entity) {

@@ -15,7 +15,7 @@ import java.util.List;
  * @author ustits
  */
 @Log4j2
-public class MessageRepository extends BotRepository<Message, MessageRecord> {
+public class MessageRepository extends AbstractRepository<Message, MessageRecord> {
 
   @Override
   public boolean exists(final Message entity) {
