@@ -7,8 +7,10 @@ import ru.ustits.colleague.repositories.records.TriggerRecord;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static ru.ustits.colleague.RandomUtils.string;
 
 /**
  * @author ustits
@@ -51,5 +53,19 @@ public class TriggerProcessorTest {
     final String text = "text";
     final SendMessage message = processor.createMessage(text);
     assertThat(message.getText()).isEqualTo(text);
+  }
+
+  @Test
+  public void testPrepareRegexp() throws Exception {
+    final String text = string();
+    final String regexp = processor.prepareRegexp(text);
+    assertThat(Pattern.compile(regexp)).isNotNull();
+  }
+
+  @Test
+  public void testPrepareRegexpWithBrace() throws Exception {
+    final String text = "{";
+    final String regexp = processor.prepareRegexp(text);
+    assertThat(Pattern.compile(regexp)).isNotNull();
   }
 }
