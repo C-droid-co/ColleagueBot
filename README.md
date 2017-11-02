@@ -12,4 +12,4 @@
 * `/help` - lists all available commands
 
 ## Version
-0.1
+0.1.1
