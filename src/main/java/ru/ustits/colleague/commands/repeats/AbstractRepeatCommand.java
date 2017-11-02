@@ -35,7 +35,7 @@ public abstract class AbstractRepeatCommand extends ArgsAwareCommand {
   }
 
   @Override
-  protected void executeInternal(final AbsSender absSender, final User user, final Chat chat,
+  protected final void executeInternal(final AbsSender absSender, final User user, final Chat chat,
                                  final String[] arguments) {
     try {
       final String message = scheduleTask(arguments, chat, user, absSender) ?
@@ -46,7 +46,7 @@ public abstract class AbstractRepeatCommand extends ArgsAwareCommand {
     }
   }
 
-  boolean scheduleTask(final String[] arguments, final Chat chat,
+  final boolean scheduleTask(final String[] arguments, final Chat chat,
                        final User user, @NonNull final AbsSender sender) {
     log.info("Got arguments {} for repeat task", Arrays.toString(arguments));
     final Optional<String> message = parseMessage(arguments);
@@ -67,13 +67,13 @@ public abstract class AbstractRepeatCommand extends ArgsAwareCommand {
 
   protected abstract String transformCron(final String cron);
 
-  Optional<String> parseMessage(final String[] arguments) {
+  final Optional<String> parseMessage(final String[] arguments) {
     final String text = asString(arguments, getMinArgsLen() - 1);
     log.info("Parsed repeat task text: {}", text);
     return Optional.of(text);
   }
 
-  Optional<String> parseCron(final String[] arguments) {
+  final Optional<String> parseCron(final String[] arguments) {
     return Optional.of(
             asString(arguments, 0, getMinArgsLen() - 1));
   }
