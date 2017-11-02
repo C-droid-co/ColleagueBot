@@ -10,7 +10,8 @@ import ru.ustits.colleague.repositories.TriggerRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
-import static ru.ustits.colleague.RandomUtils.*;
+import static ru.ustits.colleague.RandomUtils.anInt;
+import static ru.ustits.colleague.RandomUtils.string;
 
 /**
  * @author ustits
@@ -18,32 +19,12 @@ import static ru.ustits.colleague.RandomUtils.*;
 @Log4j2
 public class AbstractTriggerCommandTest {
 
-  private static final int MIN_ARGS_BOUND = 10;
 
   private AbstractTriggerCommand command;
-  private int minArgs;
 
   @Before
   public void setUp() throws Exception {
-    minArgs = anInt(MIN_ARGS_BOUND) + 1;
     command = mockCommand();
-  }
-
-  @Test
-  public void testEnough() throws Exception {
-    final String[] args = values(minArgs + 1);
-    assertThat(command.enough(args)).isTrue();
-  }
-
-  @Test
-  public void testNotEnough() throws Exception {
-    final String[] args = values(minArgs - 1);
-    assertThat(command.enough(args)).isFalse();
-  }
-
-  @Test
-  public void testEnoughWithNull() throws Exception {
-    assertThat(command.enough(null)).isFalse();
   }
 
   @Test
@@ -54,7 +35,7 @@ public class AbstractTriggerCommandTest {
   }
 
   private AbstractTriggerCommand mockCommand() {
-    return new AbstractTriggerCommand(string(), string(), mock(TriggerRepository.class), minArgs) {
+    return new AbstractTriggerCommand(string(), string(), mock(TriggerRepository.class), anInt()) {
       @Override
       protected void executeInternal(final AbsSender absSender, final User user, final Chat chat,
                                      final String[] arguments) {
