@@ -7,7 +7,6 @@ import org.mockito.MockitoAnnotations;
 import org.telegram.telegrambots.api.objects.Chat;
 import org.telegram.telegrambots.api.objects.User;
 import org.telegram.telegrambots.bots.AbsSender;
-import ru.ustits.colleague.commands.RepeatCommand;
 import ru.ustits.colleague.repositories.records.RepeatRecord;
 import ru.ustits.colleague.repositories.services.RepeatService;
 import ru.ustits.colleague.tasks.RepeatScheduler;

@@ -1,7 +1,6 @@
-package ru.ustits.colleague.commands;
+package ru.ustits.colleague.commands.repeats;
 
 import lombok.extern.log4j.Log4j2;
-import ru.ustits.colleague.commands.repeats.AbstractRepeatCommand;
 import ru.ustits.colleague.repositories.services.RepeatService;
 import ru.ustits.colleague.tasks.RepeatScheduler;
 

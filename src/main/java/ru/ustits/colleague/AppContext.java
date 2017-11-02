@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import ru.ustits.colleague.commands.*;
+import ru.ustits.colleague.commands.repeats.RepeatCommand;
 import ru.ustits.colleague.repositories.*;
 import ru.ustits.colleague.repositories.services.RepeatService;
 import ru.ustits.colleague.tasks.RepeatScheduler;
