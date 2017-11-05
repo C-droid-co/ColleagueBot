@@ -9,6 +9,10 @@ public final class WorkDaysStrategy extends RepeatStrategyWrapper {
 
   private static final String WORK_DAYS = "2-6";
 
+  public WorkDaysStrategy() {
+    super(new DailyStrategy());
+  }
+
   public WorkDaysStrategy(final DailyStrategy innerStrategy) {
     super(innerStrategy);
   }

@@ -9,6 +9,10 @@ public final class WeekendsStrategy extends RepeatStrategyWrapper {
 
   private static final String WEEKENDS = "1,7";
 
+  public WeekendsStrategy() {
+    super(new DailyStrategy());
+  }
+
   public WeekendsStrategy(final DailyStrategy innerStrategy) {
     super(innerStrategy);
   }
