@@ -3,6 +3,7 @@ package ru.ustits.colleague.tools;
 import lombok.NonNull;
 
 import static org.quartz.CronExpression.isValidExpression;
+import static ru.ustits.colleague.tools.CronFields.*;
 import static ru.ustits.colleague.tools.StringUtils.asString;
 import static ru.ustits.colleague.tools.StringUtils.split;
 
@@ -26,12 +27,12 @@ public final class CronBuilder {
   private CronBuilder() {}
 
   private CronBuilder(final String[] args) {
-    seconds = args[0];
-    minutes = args[1];
-    hours = args[2];
-    dayOfMonth = args[3];
-    month = args[4];
-    dayOfWeek = args[5];
+    seconds = args[SECONDS.getFieldNumber()];
+    minutes = args[MINUTES.getFieldNumber()];
+    hours = args[HOURS.getFieldNumber()];
+    dayOfMonth = args[DAY_OF_MONTH.getFieldNumber()];
+    month = args[MONTH.getFieldNumber()];
+    dayOfWeek = args[DAY_OF_WEEK.getFieldNumber()];
   }
 
   public static CronBuilder builder() {
