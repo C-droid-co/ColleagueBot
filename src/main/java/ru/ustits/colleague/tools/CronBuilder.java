@@ -1,6 +1,10 @@
 package ru.ustits.colleague.tools;
 
+import lombok.NonNull;
+
+import static org.quartz.CronExpression.isValidExpression;
 import static ru.ustits.colleague.tools.StringUtils.asString;
+import static ru.ustits.colleague.tools.StringUtils.split;
 
 /**
  * @author ustits
@@ -10,6 +14,7 @@ public final class CronBuilder {
 
   private static final String ALL_VALUES = "*";
   private static final String NO_SPECIFIC_VALUE = "?";
+  private static final int ARGS_COUNT = 6;
 
   private String seconds = ALL_VALUES;
   private String minutes = ALL_VALUES;
@@ -20,8 +25,26 @@ public final class CronBuilder {
 
   private CronBuilder() {}
 
+  private CronBuilder(final String[] args) {
+    seconds = args[0];
+    minutes = args[1];
+    hours = args[2];
+    dayOfMonth = args[3];
+    month = args[4];
+    dayOfWeek = args[5];
+  }
+
   public static CronBuilder builder() {
     return new CronBuilder();
+  }
+
+  public static CronBuilder builder(@NonNull final String cron) {
+    final String[] args = split(cron);
+    if (args.length == ARGS_COUNT && isValidExpression(cron)) {
+      return new CronBuilder(args);
+    } else {
+      throw new IllegalStateException("Wrong cron format: " + cron);
+    }
   }
 
   public String build() {
