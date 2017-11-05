@@ -13,13 +13,9 @@ import java.util.List;
  * @author ustits
  */
 @Log4j2
-public class RepeatRepository extends AbstractRepository<String, RepeatRecord> {
+public class RepeatRepository extends AbstractRepository<RepeatRecord> {
 
   @Override
-  public RepeatRecord add(final String entity) {
-    return null;
-  }
-
   public RepeatRecord add(final RepeatRecord record) {
     try {
       return sql().insert("INSERT INTO repeats (message, chat_id, user_id, cron) VALUES (?, ?, ?, ?)",
@@ -34,6 +30,21 @@ public class RepeatRepository extends AbstractRepository<String, RepeatRecord> {
       log.error(e);
     }
     return null;
+  }
+
+  @Override
+  public boolean exists(final RepeatRecord entity) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public RepeatRecord fetchOne(final RepeatRecord entity) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public int update(final RepeatRecord entity) {
+    throw new UnsupportedOperationException();
   }
 
   public List<RepeatRecord> fetchAll(final Long chatId) {
@@ -54,10 +65,6 @@ public class RepeatRepository extends AbstractRepository<String, RepeatRecord> {
   }
 
   @Override
-  public boolean exists(final String entity) {
-    return false;
-  }
-
   public void delete(final RepeatRecord record) {
     try {
       sql().update("DELETE FROM repeats WHERE id=?", record.getId());

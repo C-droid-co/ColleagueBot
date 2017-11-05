@@ -15,9 +15,8 @@ import java.util.List;
  * @author ustits
  */
 @Log4j2
-public class MessageRepository extends AbstractRepository<Message, MessageRecord> {
+public class MessageRepository extends AbstractRepository<MessageRecord> {
 
-  @Override
   public boolean exists(final Message entity) {
     try {
       return sql().query("SELECT * FROM messages WHERE text=?",
@@ -29,6 +28,30 @@ public class MessageRepository extends AbstractRepository<Message, MessageRecord
   }
 
   @Override
+  public MessageRecord add(final MessageRecord entity) {
+    return null;
+  }
+
+  @Override
+  public boolean exists(final MessageRecord entity) {
+    return false;
+  }
+
+  @Override
+  public MessageRecord fetchOne(final MessageRecord entity) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public int update(final MessageRecord entity) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void delete(final MessageRecord entity) {
+    throw new UnsupportedOperationException();
+  }
+
   public MessageRecord add(final Message entity) {
     try {
       return sql().insert("INSERT INTO messages (msg_id, date, text, is_edited, chat_id, user_id) " +

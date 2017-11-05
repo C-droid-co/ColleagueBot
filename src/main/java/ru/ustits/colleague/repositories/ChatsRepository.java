@@ -16,9 +16,8 @@ import java.util.List;
  */
 @Log4j2
 @Repository
-public class ChatsRepository extends AbstractRepository<Chat, ChatRecord> {
+public class ChatsRepository extends AbstractRepository<ChatRecord> {
 
-  @Override
   public boolean exists(final Chat entity) {
     try {
       return sql().query("SELECT * FROM chats WHERE id=?", ResultSet::next, entity.getId());
@@ -29,10 +28,30 @@ public class ChatsRepository extends AbstractRepository<Chat, ChatRecord> {
   }
 
   @Override
+  public boolean exists(final ChatRecord entity) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public ChatRecord fetchOne(final ChatRecord entity) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public int update(final ChatRecord entity) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void delete(final ChatRecord entity) {
+    throw new UnsupportedOperationException();
+  }
+
   public ChatRecord add(final Chat entity) {
     return add(new ChatRecord(entity.getId(), null, entity.getTitle()));
   }
 
+  @Override
   public ChatRecord add(final ChatRecord record) {
     try {
       final ChatRecord result = sql().insert("INSERT INTO chats (id, title) VALUES (?, ?)",

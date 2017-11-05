@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 @Accessors(fluent = true)
 @Getter(AccessLevel.PROTECTED)
-public abstract class AbstractRepository<T, V> implements Repository<T, V> {
+public abstract class AbstractRepository<T> implements Repository<T> {
 
   @Autowired
   private QueryRunner sql;

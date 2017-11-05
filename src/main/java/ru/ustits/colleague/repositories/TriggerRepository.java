@@ -13,13 +13,14 @@ import java.util.List;
  * @author ustits
  */
 @Log4j2
-public class TriggerRepository extends AbstractRepository<TriggerRecord, TriggerRecord> {
+public class TriggerRepository extends AbstractRepository<TriggerRecord> {
 
   @Override
   public boolean exists(final TriggerRecord record) {
     return fetchOne(record) != null;
   }
 
+  @Override
   public TriggerRecord fetchOne(final TriggerRecord record) {
     try {
       return sql().query("SELECT * FROM triggers WHERE chat_id=? AND user_id=? AND trigger=?",
@@ -71,6 +72,7 @@ public class TriggerRepository extends AbstractRepository<TriggerRecord, Trigger
     return null;
   }
 
+  @Override
   public int update(final TriggerRecord record) {
     try {
       final int rows = sql().update("UPDATE triggers SET message=? WHERE trigger=? AND chat_id=? AND user_id=?",
@@ -83,6 +85,7 @@ public class TriggerRepository extends AbstractRepository<TriggerRecord, Trigger
     return 0;
   }
 
+  @Override
   public void delete(final TriggerRecord record) {
     try {
       sql().update("DELETE FROM triggers WHERE trigger=? AND chat_id=? AND user_id=?",

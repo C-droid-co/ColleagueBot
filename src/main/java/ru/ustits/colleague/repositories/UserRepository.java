@@ -14,9 +14,8 @@ import java.util.List;
  * @author ustits
  */
 @Log4j2
-public class UserRepository extends AbstractRepository<User, UserRecord> {
+public class UserRepository extends AbstractRepository<UserRecord> {
 
-  @Override
   public boolean exists(final User entity) {
     try {
       return sql().query("SELECT * FROM users WHERE id=?", ResultSet::next, entity.getId());
@@ -27,6 +26,30 @@ public class UserRepository extends AbstractRepository<User, UserRecord> {
   }
 
   @Override
+  public UserRecord add(final UserRecord entity) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public boolean exists(final UserRecord entity) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public UserRecord fetchOne(final UserRecord entity) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public int update(final UserRecord entity) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void delete(final UserRecord entity) {
+    throw new UnsupportedOperationException();
+  }
+
   public UserRecord add(final User entity) {
     try {
       return sql().insert("INSERT INTO users (id, first_name, last_name, user_name) VALUES (?, ?, ?, ?)",
