@@ -16,11 +16,6 @@ import java.util.List;
 public class TriggerRepository extends AbstractRepository<TriggerRecord> {
 
   @Override
-  public boolean exists(final TriggerRecord record) {
-    return fetchOne(record) != null;
-  }
-
-  @Override
   public TriggerRecord fetchOne(final TriggerRecord record) {
     try {
       return sql().query("SELECT * FROM triggers WHERE chat_id=? AND user_id=? AND trigger=?",

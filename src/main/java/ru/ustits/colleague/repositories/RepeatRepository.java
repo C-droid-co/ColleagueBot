@@ -33,11 +33,6 @@ public class RepeatRepository extends AbstractRepository<RepeatRecord> {
   }
 
   @Override
-  public boolean exists(final RepeatRecord entity) {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
   public RepeatRecord fetchOne(final RepeatRecord entity) {
     throw new UnsupportedOperationException();
   }

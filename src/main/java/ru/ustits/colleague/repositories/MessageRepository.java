@@ -33,11 +33,6 @@ public class MessageRepository extends AbstractRepository<MessageRecord> {
   }
 
   @Override
-  public boolean exists(final MessageRecord entity) {
-    return false;
-  }
-
-  @Override
   public MessageRecord fetchOne(final MessageRecord entity) {
     throw new UnsupportedOperationException();
   }

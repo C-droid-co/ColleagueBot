@@ -28,11 +28,6 @@ public class ChatsRepository extends AbstractRepository<ChatRecord> {
   }
 
   @Override
-  public boolean exists(final ChatRecord entity) {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
   public ChatRecord fetchOne(final ChatRecord entity) {
     throw new UnsupportedOperationException();
   }

@@ -15,4 +15,9 @@ public abstract class AbstractRepository<T> implements Repository<T> {
 
   @Autowired
   private QueryRunner sql;
+
+  @Override
+  public boolean exists(final T entity) {
+    return fetchOne(entity) != null;
+  }
 }

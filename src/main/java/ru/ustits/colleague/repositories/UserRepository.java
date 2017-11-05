@@ -31,11 +31,6 @@ public class UserRepository extends AbstractRepository<UserRecord> {
   }
 
   @Override
-  public boolean exists(final UserRecord entity) {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
   public UserRecord fetchOne(final UserRecord entity) {
     throw new UnsupportedOperationException();
   }
