@@ -14,6 +14,6 @@ public class WeekendsStrategyTest {
     final RepeatStrategy strategy = new WeekendsStrategy();
     final String cron = "14 20";
     final String result = strategy.transformCron(cron);
-    assertThat(result).isEqualTo("* 20 14 ? * 1,7");
+    assertThat(result).isEqualTo("0 20 14 ? * 1,7");
   }
 }

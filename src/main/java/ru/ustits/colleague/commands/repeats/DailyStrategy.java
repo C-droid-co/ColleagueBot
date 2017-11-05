@@ -1,6 +1,7 @@
 package ru.ustits.colleague.commands.repeats;
 
 import ru.ustits.colleague.tools.CronBuilder;
+import ru.ustits.colleague.tools.StringUtils;
 
 import static ru.ustits.colleague.tools.StringUtils.split;
 
@@ -17,6 +18,7 @@ public final class DailyStrategy implements RepeatStrategy {
     final String hours = args[0];
     final String minutes = args[1];
     return CronBuilder.builder()
+            .withSeconds(StringUtils.ZERO)
             .withHours(hours)
             .withMinutes(minutes)
             .build();
