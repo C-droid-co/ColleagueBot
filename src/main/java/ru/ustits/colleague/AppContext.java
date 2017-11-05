@@ -13,9 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import ru.ustits.colleague.commands.*;
-import ru.ustits.colleague.commands.repeats.PlainStrategy;
-import ru.ustits.colleague.commands.repeats.RepeatCommand;
-import ru.ustits.colleague.commands.repeats.RepeatStrategy;
+import ru.ustits.colleague.commands.repeats.*;
 import ru.ustits.colleague.repositories.*;
 import ru.ustits.colleague.repositories.services.RepeatService;
 import ru.ustits.colleague.tasks.RepeatScheduler;
@@ -39,6 +37,9 @@ public class AppContext {
   private static final String DELETE_TRIGGER_COMMAND = "trigger_rm";
   private static final String HELP_COMMAND = "help";
   private static final String REPEAT_COMMAND = "repeat";
+  private static final String REPEAT_DAILY_COMMAND = "repeat_d";
+  private static final String REPEAT_WORKDAYS_COMMAND = "repeat_wd";
+  private static final String REPEAT_WEEKENDS_COMMAND = "repeat_we";
   private static final String STATS_COMMAND = "stats";
 
   @Autowired
@@ -49,7 +50,10 @@ public class AppContext {
     final ColleagueBot bot = new ColleagueBot(botName());
     bot.registerAll(triggerCommand(),
             helpCommand(bot),
-            repeatCommand("command for adding repeatable messages", new PlainStrategy()),
+            repeatCommand(REPEAT_COMMAND,"repeat message with cron expression", new PlainStrategy()),
+            repeatCommand(REPEAT_DAILY_COMMAND,"repeat message everyday", new DailyStrategy()),
+            repeatCommand(REPEAT_WORKDAYS_COMMAND,"repeat message every work day", new WorkDaysStrategy()),
+            repeatCommand(REPEAT_WEEKENDS_COMMAND,"repeat message every weekend", new WeekendsStrategy()),
             listTriggersCommand(),
             statsCommand(),
             new DeleteTriggerCommand(DELETE_TRIGGER_COMMAND, triggerRepository()));
@@ -76,10 +80,9 @@ public class AppContext {
     return new StatsCommand(STATS_COMMAND);
   }
 
-  @Bean
-  public RepeatCommand repeatCommand(final String description , final RepeatStrategy strategy)
-          throws SchedulerException {
-    return new RepeatCommand(REPEAT_COMMAND, description, strategy, scheduler(), repeatService());
+  public RepeatCommand repeatCommand(final String command, final String description,
+                                     final RepeatStrategy strategy) throws SchedulerException {
+    return new RepeatCommand(command, description, strategy, scheduler(), repeatService());
   }
 
   @Bean
