@@ -37,15 +37,15 @@ public final class TriggerCommand extends AbstractTriggerCommand {
   protected SendMessage createAnswer(final User user, final Chat chat, final String[] arguments) {
     final String trigger = resolveTrigger(arguments);
     final String message = resolveMessage(arguments);
-    final TriggerRecord result = getRepository().fetchOne(trigger, chat.getId(), toUnsignedLong(user.getId()));
-
+    final TriggerRecord toAdd = new TriggerRecord(trigger, message, chat.getId(), toUnsignedLong(user.getId()));
+    final boolean exists = getRepository().exists(toAdd);
     final TriggerRecord record;
     final SendMessage answer;
-    if (result == null) {
-      record = getRepository().add(trigger, message, chat.getId(), toUnsignedLong(user.getId()));
+    if (exists) {
+      record = getRepository().add(toAdd);
       answer = new SendMessage().setText(String.format("Trigger [%s] added", record.getTrigger()));
     } else {
-      if (getRepository().update(message, result) <= 0) {
+      if (getRepository().update(toAdd) <= 0) {
         answer = new SendMessage().setText("Ooops, i couldn't update trigger");
       } else {
         answer = new SendMessage().setText(String.format("Trigger [%s] was updated", trigger));

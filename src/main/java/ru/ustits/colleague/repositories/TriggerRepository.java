@@ -13,18 +13,14 @@ import java.util.List;
  * @author ustits
  */
 @Log4j2
-public class TriggerRepository extends AbstractRepository<String, TriggerRecord> {
+public class TriggerRepository extends AbstractRepository<TriggerRecord, TriggerRecord> {
 
   @Override
-  public boolean exists(final String entity) {
-    return false;
+  public boolean exists(final TriggerRecord record) {
+    return fetchOne(record) != null;
   }
 
-  public boolean exists(final String trigger, final Long chatId, final Long userId) {
-    return fetchOne(trigger, chatId, userId) != null;
-  }
-
-  public TriggerRecord fetchOne(final String trigger, final Long chatId, final Long userId) {
+  public TriggerRecord fetchOne(final TriggerRecord record) {
     try {
       return sql().query("SELECT * FROM triggers WHERE chat_id=? AND user_id=? AND trigger=?",
               resultSet -> {
@@ -33,7 +29,7 @@ public class TriggerRepository extends AbstractRepository<String, TriggerRecord>
                 }
                 return null;
               },
-              chatId, userId, trigger);
+              record.getChatId(), record.getUserId(), record.getTrigger());
     } catch (SQLException e) {
       log.error(e);
     }
@@ -58,31 +54,28 @@ public class TriggerRepository extends AbstractRepository<String, TriggerRecord>
   }
 
   @Override
-  public TriggerRecord add(final String entity) {
-    return null;
-  }
-
-  public TriggerRecord add(final String trigger, final String message, final Long chatId, final Long userId) {
+  public TriggerRecord add(final TriggerRecord record) {
     try {
       return sql().insert("INSERT INTO triggers (trigger, message, chat_id, user_id) VALUES (?, ?, ?, ?)",
               resultSet -> {
                 resultSet.next();
-                final TriggerRecord record = toRecord(resultSet);
-                log.info(record);
-                return record;
+                final TriggerRecord dbRecord = toRecord(resultSet);
+                log.info(dbRecord);
+                return dbRecord;
               },
-              trigger, message, chatId, userId);
+              record.getTrigger(), record.getMessage(),
+              record.getChatId(), record.getUserId());
     } catch (SQLException e) {
       log.error(e);
     }
     return null;
   }
 
-  public int update(final String message, final TriggerRecord trigger) {
+  public int update(final TriggerRecord record) {
     try {
       final int rows = sql().update("UPDATE triggers SET message=? WHERE trigger=? AND chat_id=? AND user_id=?",
-              message, trigger.getTrigger(), trigger.getChatId(), trigger.getUserId());
-      log.info("Updated trigger: " + trigger.getTrigger());
+              record.getMessage(), record.getTrigger(), record.getChatId(), record.getUserId());
+      log.info("Updated trigger: " + record.getTrigger());
       return rows;
     } catch (SQLException e) {
       log.error(e);
