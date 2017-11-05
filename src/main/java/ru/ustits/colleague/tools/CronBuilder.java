@@ -19,8 +19,8 @@ public final class CronBuilder {
   private String seconds = ALL_VALUES;
   private String minutes = ALL_VALUES;
   private String hours = ALL_VALUES;
-  private String dayOfMonth = ALL_VALUES;
-  private String month = NO_SPECIFIC_VALUE;
+  private String dayOfMonth = NO_SPECIFIC_VALUE;
+  private String month = ALL_VALUES;
   private String dayOfWeek = ALL_VALUES;
 
   private CronBuilder() {}

@@ -14,7 +14,7 @@ public class DailyStrategyTest {
     final DailyStrategy command = new DailyStrategy();
     final String cron = "14 20";
     final String result = command.transformCron(cron);
-    assertThat(result).isEqualTo("* 20 14 * ? *");
+    assertThat(result).isEqualTo("* 20 14 ? * *");
   }
 
 }
