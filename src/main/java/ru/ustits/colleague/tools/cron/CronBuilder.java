@@ -1,11 +1,11 @@
-package ru.ustits.colleague.tools;
+package ru.ustits.colleague.tools.cron;
 
 import lombok.NonNull;
 
 import static org.quartz.CronExpression.isValidExpression;
-import static ru.ustits.colleague.tools.CronFields.*;
 import static ru.ustits.colleague.tools.StringUtils.asString;
 import static ru.ustits.colleague.tools.StringUtils.split;
+import static ru.ustits.colleague.tools.cron.CronFields.*;
 
 /**
  * @author ustits

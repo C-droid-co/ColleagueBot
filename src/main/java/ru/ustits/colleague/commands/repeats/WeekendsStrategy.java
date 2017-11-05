@@ -1,6 +1,6 @@
 package ru.ustits.colleague.commands.repeats;
 
-import ru.ustits.colleague.tools.CronBuilder;
+import ru.ustits.colleague.tools.cron.CronBuilder;
 
 /**
  * @author ustits

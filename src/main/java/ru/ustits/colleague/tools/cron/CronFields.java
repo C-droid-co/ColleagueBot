@@ -1,4 +1,4 @@
-package ru.ustits.colleague.tools;
+package ru.ustits.colleague.tools.cron;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
