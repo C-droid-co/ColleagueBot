@@ -13,7 +13,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import ru.ustits.colleague.commands.*;
+import ru.ustits.colleague.commands.repeats.PlainStrategy;
 import ru.ustits.colleague.commands.repeats.RepeatCommand;
+import ru.ustits.colleague.commands.repeats.RepeatStrategy;
 import ru.ustits.colleague.repositories.*;
 import ru.ustits.colleague.repositories.services.RepeatService;
 import ru.ustits.colleague.tasks.RepeatScheduler;
@@ -47,7 +49,7 @@ public class AppContext {
     final ColleagueBot bot = new ColleagueBot(botName());
     bot.registerAll(triggerCommand(),
             helpCommand(bot),
-            repeatCommand(),
+            repeatCommand("command for adding repeatable messages", new PlainStrategy()),
             listTriggersCommand(),
             statsCommand(),
             new DeleteTriggerCommand(DELETE_TRIGGER_COMMAND, triggerRepository()));
@@ -75,8 +77,9 @@ public class AppContext {
   }
 
   @Bean
-  public RepeatCommand repeatCommand() throws SchedulerException {
-    return new RepeatCommand(REPEAT_COMMAND, scheduler(), repeatService());
+  public RepeatCommand repeatCommand(final String description , final RepeatStrategy strategy)
+          throws SchedulerException {
+    return new RepeatCommand(REPEAT_COMMAND, description, strategy, scheduler(), repeatService());
   }
 
   @Bean
