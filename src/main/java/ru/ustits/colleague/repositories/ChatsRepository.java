@@ -2,7 +2,6 @@ package ru.ustits.colleague.repositories;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Repository;
-import org.telegram.telegrambots.api.objects.Chat;
 import ru.ustits.colleague.repositories.records.ChatRecord;
 
 import java.sql.ResultSet;
@@ -18,18 +17,21 @@ import java.util.List;
 @Repository
 public class ChatsRepository extends AbstractRepository<ChatRecord> {
 
-  public boolean exists(final Chat entity) {
-    try {
-      return sql().query("SELECT * FROM chats WHERE id=?", ResultSet::next, entity.getId());
-    } catch (SQLException e) {
-      log.error(e);
-    }
-    return false;
-  }
-
   @Override
   public ChatRecord fetchOne(final ChatRecord entity) {
-    throw new UnsupportedOperationException();
+    try {
+      return sql().query("SELECT * FROM chats WHERE id=?",
+              resultSet -> {
+                if (resultSet.next()) {
+                  return toRecord(resultSet);
+                }
+                return null;
+              },
+              entity.getId());
+    } catch (SQLException e) {
+      log.error("Unable to fetch chat record", e);
+    }
+    return null;
   }
 
   @Override
@@ -42,26 +44,20 @@ public class ChatsRepository extends AbstractRepository<ChatRecord> {
     throw new UnsupportedOperationException();
   }
 
-  public ChatRecord add(final Chat entity) {
-    return add(new ChatRecord(entity.getId(), null, entity.getTitle()));
-  }
-
   @Override
   public ChatRecord add(final ChatRecord record) {
     try {
-      final ChatRecord result = sql().insert("INSERT INTO chats (id, title) VALUES (?, ?)",
+      return sql().insert("INSERT INTO chats (id, title) VALUES (?, ?)",
               resultSet -> {
                 resultSet.next();
-                final Long id = resultSet.getLong(1);
-                final String title = resultSet.getString(3);
-                return new ChatRecord(id, null, title);
+                final ChatRecord dbRecord = toRecord(resultSet);
+                log.info(dbRecord);
+                return dbRecord;
               },
               record.getId(),
               record.getTitle());
-      log.info(result);
-      return result;
     } catch (SQLException e) {
-      log.error(e);
+      log.error("Unable to add char record", e);
     }
     return null;
   }

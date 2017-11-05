@@ -8,6 +8,7 @@ import ru.ustits.colleague.repositories.RepeatRepository;
 import ru.ustits.colleague.repositories.UserRepository;
 import ru.ustits.colleague.repositories.records.ChatRecord;
 import ru.ustits.colleague.repositories.records.RepeatRecord;
+import ru.ustits.colleague.repositories.records.UserRecord;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,11 +26,14 @@ public class RepeatService {
   private final UserRepository userRepository;
 
   public RepeatRecord addRepeat(final String message, final String cron, final Chat chat, final User user) {
-    if (!chatsRepository.exists(chat)) {
-      chatsRepository.add(chat);
+    final ChatRecord chatRecord = new ChatRecord(chat.getId(), null, chat.getTitle());
+    if (!chatsRepository.exists(chatRecord)) {
+      chatsRepository.add(chatRecord);
     }
-    if (!userRepository.exists(user)) {
-      userRepository.add(user);
+    final UserRecord userRecord = new UserRecord(toUnsignedLong(user.getId()),
+            user.getFirstName(), user.getLastName(), user.getUserName());
+    if (!userRepository.exists(userRecord)) {
+      userRepository.add(userRecord);
     }
     final RepeatRecord record = RepeatRecord.builder()
             .message(message)
