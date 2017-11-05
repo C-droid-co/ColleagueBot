@@ -1,6 +1,7 @@
 package ru.ustits.colleague.repositories;
 
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.dbutils.QueryRunner;
 import ru.ustits.colleague.repositories.records.TriggerRecord;
 
 import java.sql.ResultSet;
@@ -14,6 +15,10 @@ import java.util.List;
  */
 @Log4j2
 public class TriggerRepository extends AbstractRepository<TriggerRecord> {
+
+  public TriggerRepository(final QueryRunner sql) {
+    super(sql);
+  }
 
   @Override
   public TriggerRecord fetchOne(final TriggerRecord record) {

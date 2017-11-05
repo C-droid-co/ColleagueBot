@@ -1,6 +1,7 @@
 package ru.ustits.colleague.repositories;
 
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.dbutils.QueryRunner;
 import ru.ustits.colleague.repositories.records.MessageRecord;
 
 import java.sql.ResultSet;
@@ -15,6 +16,10 @@ import java.util.List;
  */
 @Log4j2
 public class MessageRepository extends AbstractRepository<MessageRecord> {
+
+  public MessageRepository(final QueryRunner sql) {
+    super(sql);
+  }
 
   @Override
   public MessageRecord add(final MessageRecord entity) {
