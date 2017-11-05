@@ -1,4 +1,4 @@
-package ru.ustits.colleague.commands;
+package ru.ustits.colleague.commands.repeats;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -17,6 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
+import static ru.ustits.colleague.RandomUtils.string;
 
 /**
  * @author ustits
@@ -40,7 +41,9 @@ public class RepeatCommandTest {
     when(scheduler.scheduleTask(any(RepeatRecord.class), any(AbsSender.class))).thenReturn(true);
     when(service.addRepeat(anyString(), anyString(),
             any(Chat.class), any(User.class))).thenReturn(mockRecord());
-    command = new RepeatCommand("random", scheduler, service);
+    final RepeatStrategy strategy  = new PlainStrategy();
+    command = new RepeatCommand(string(), string(), strategy, scheduler, service);
+
   }
 
   @Test
@@ -48,19 +51,6 @@ public class RepeatCommandTest {
     final boolean result = command.scheduleTask(GOOD_ARGS, chat, user, mock(AbsSender.class));
     assertThat(result).isTrue();
     verify(scheduler).scheduleTask(any(RepeatRecord.class), any(AbsSender.class));
-  }
-
-  @Test
-  public void testScheduleTaskWithNullArguments() throws Exception {
-    final boolean result = command.scheduleTask(null, chat, user, mock(AbsSender.class));
-    assertThat(result).isFalse();
-  }
-
-  @Test
-  public void testScheduleTaskWithNotEnoughArguments() throws Exception {
-    final String[] arguments = {"one", "two"};
-    final boolean result = command.scheduleTask(arguments, chat, user, mock(AbsSender.class));
-    assertThat(result).isFalse();
   }
 
   @Test

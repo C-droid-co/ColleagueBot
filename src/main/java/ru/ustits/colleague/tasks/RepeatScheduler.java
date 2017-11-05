@@ -6,7 +6,7 @@ import lombok.extern.log4j.Log4j2;
 import org.quartz.*;
 import org.telegram.telegrambots.bots.AbsSender;
 import ru.ustits.colleague.repositories.records.RepeatRecord;
-import ru.ustits.colleague.tools.CronRestriction;
+import ru.ustits.colleague.tools.cron.CronRestriction;
 
 import java.text.ParseException;
 import java.util.List;
