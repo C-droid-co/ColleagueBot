@@ -79,13 +79,13 @@ public class StatsCommandTest {
   @Test
   public void testBuildStatsWithNullMessages() throws Exception {
     assertThatThrownBy(() -> command.buildStats(null, emptyList()))
-            .isInstanceOf(NullPointerException.class);
+            .isInstanceOf(IllegalArgumentException.class);
   }
 
   @Test
   public void testBuildStatsWithNullUsers() throws Exception {
     assertThatThrownBy(() -> command.buildStats(emptyList(), null))
-            .isInstanceOf(NullPointerException.class);
+            .isInstanceOf(IllegalArgumentException.class);
   }
 
   @Test
@@ -124,7 +124,7 @@ public class StatsCommandTest {
   @Test
   public void testBuildTextWithNull() throws Exception {
     assertThatThrownBy(() -> command.buildText(null))
-            .isInstanceOf(NullPointerException.class);
+            .isInstanceOf(IllegalArgumentException.class);
   }
 
   private void addMessage(final String text, final Long userId) {

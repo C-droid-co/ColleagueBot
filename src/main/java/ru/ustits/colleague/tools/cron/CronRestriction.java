@@ -1,8 +1,9 @@
-package ru.ustits.colleague.tools;
+package ru.ustits.colleague.tools.cron;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.quartz.CronExpression;
+import ru.ustits.colleague.tools.StringUtils;
 
 import java.text.ParseException;
 import java.util.Optional;
