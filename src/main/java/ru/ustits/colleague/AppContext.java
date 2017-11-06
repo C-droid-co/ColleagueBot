@@ -129,27 +129,27 @@ public class AppContext {
 
   @Bean
   public MessageRepository messageRepository() {
-    return new MessageRepository();
+    return new MessageRepository(sql());
   }
 
   @Bean
   public ChatsRepository chatsRepository() {
-    return new ChatsRepository();
+    return new ChatsRepository(sql());
   }
 
   @Bean
   public UserRepository userRepository() {
-    return new UserRepository();
+    return new UserRepository(sql());
   }
 
   @Bean
   public TriggerRepository triggerRepository() {
-    return new TriggerRepository();
+    return new TriggerRepository(sql());
   }
 
   @Bean
   public RepeatRepository repeatRepository() {
-    return new RepeatRepository();
+    return new RepeatRepository(sql());
   }
 
   @Bean

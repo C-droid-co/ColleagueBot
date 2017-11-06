@@ -128,13 +128,13 @@ public class StatsCommandTest {
   }
 
   private void addMessage(final String text, final Long userId) {
-    final MessageRecord record = new MessageRecord(1, 1L, new Timestamp(10L),
+    final MessageRecord record = new MessageRecord(1L, new Timestamp(10L),
             text, false, 1L, userId);
     messages.add(record);
   }
 
   private void addEditedMessage(final String text, final Long userId) {
-    final MessageRecord record = new MessageRecord(1, 1L, new Timestamp(10L),
+    final MessageRecord record = new MessageRecord(1L, new Timestamp(10L),
             text, true, 1L, userId);
     messages.add(record);
   }

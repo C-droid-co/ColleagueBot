@@ -6,9 +6,7 @@ import org.telegram.telegrambots.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.api.methods.send.SendDocument;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.methods.send.SendSticker;
-import org.telegram.telegrambots.api.objects.CallbackQuery;
-import org.telegram.telegrambots.api.objects.Message;
-import org.telegram.telegrambots.api.objects.Update;
+import org.telegram.telegrambots.api.objects.*;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.bots.commandbot.TelegramLongPollingCommandBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
@@ -16,13 +14,15 @@ import ru.ustits.colleague.repositories.ChatsRepository;
 import ru.ustits.colleague.repositories.MessageRepository;
 import ru.ustits.colleague.repositories.TriggerRepository;
 import ru.ustits.colleague.repositories.UserRepository;
-import ru.ustits.colleague.repositories.records.RepeatRecord;
-import ru.ustits.colleague.repositories.records.TriggerRecord;
+import ru.ustits.colleague.repositories.records.*;
 import ru.ustits.colleague.repositories.services.RepeatService;
 import ru.ustits.colleague.tasks.RepeatScheduler;
 import ru.ustits.colleague.tools.TriggerProcessor;
 
+import java.sql.Timestamp;
 import java.util.List;
+
+import static java.lang.Integer.toUnsignedLong;
 
 /**
  * @author ustits
@@ -95,15 +95,27 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
   }
 
   private void addMessage(final Message message) {
-    if (!chatsRepository.exists(message.getChat())) {
-      chatsRepository.add(message.getChat());
+    final Chat chat = message.getChat();
+    final ChatRecord chatRecord = new ChatRecord(chat.getId(), null, chat.getTitle());
+    if (!chatsRepository.exists(chatRecord)) {
+      chatsRepository.add(chatRecord);
     }
 
-    if (!userRepository.exists(message.getFrom())) {
-      userRepository.add(message.getFrom());
+    final User user = message.getFrom();
+    final UserRecord userRecord = new UserRecord(toUnsignedLong(user.getId()),
+            user.getFirstName(), user.getLastName(), user.getUserName());
+    if (!userRepository.exists(userRecord)) {
+      userRepository.add(userRecord);
     }
-
-    messageRepository.add(message);
+    final MessageRecord messageRecord =
+            new MessageRecord(
+                    toUnsignedLong(message.getMessageId()),
+                    new Timestamp((long) message.getDate() * 1000),
+                    message.getText(),
+                    message.getEditDate() != null,
+                    chat.getId(),
+                    toUnsignedLong(user.getId()));
+    messageRepository.add(messageRecord);
   }
 
   private void findTriggers(final Update update) {
