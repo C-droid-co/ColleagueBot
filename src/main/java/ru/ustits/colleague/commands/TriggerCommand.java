@@ -41,7 +41,7 @@ public final class TriggerCommand extends AbstractTriggerCommand {
     final boolean exists = getRepository().exists(toAdd);
     final TriggerRecord record;
     final SendMessage answer;
-    if (exists) {
+    if (!exists) {
       record = getRepository().add(toAdd);
       answer = new SendMessage().setText(String.format("Trigger [%s] added", record.getTrigger()));
     } else {
