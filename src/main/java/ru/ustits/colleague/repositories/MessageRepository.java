@@ -7,7 +7,6 @@ import ru.ustits.colleague.repositories.records.MessageRecord;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -26,12 +25,7 @@ public class MessageRepository extends AbstractRepository<MessageRecord> {
     try {
       return sql().insert("INSERT INTO messages (msg_id, date, text, is_edited, chat_id, user_id) " +
                       "VALUES (?, ?, ?, ?, ?, ?)",
-              resultSet -> {
-                resultSet.next();
-                final MessageRecord dbRecord = toRecord(resultSet);
-                log.info(dbRecord);
-                return dbRecord;
-              },
+              this::addRecord,
               entity.getMessageId(), entity.getDate(), entity.getText(),
               entity.getIsEdited(), entity.getChatId(), entity.getUserId());
     } catch (SQLException e) {
@@ -58,13 +52,7 @@ public class MessageRepository extends AbstractRepository<MessageRecord> {
   public List<MessageRecord> fetchAll(final Long chatId) {
     try {
       return sql().query("SELECT * FROM messages WHERE chat_id=?",
-              resultSet -> {
-                final List<MessageRecord> records = new ArrayList<>();
-                while (resultSet.next()) {
-                  records.add(toRecord(resultSet));
-                }
-                return records;
-              },
+              this::fetchAllRecords,
               chatId);
     } catch (SQLException e) {
       log.error("Unable to fetch messages", e);
@@ -72,7 +60,8 @@ public class MessageRepository extends AbstractRepository<MessageRecord> {
     return Collections.emptyList();
   }
 
-  private MessageRecord toRecord(final ResultSet resultSet) throws SQLException {
+  @Override
+  protected MessageRecord toRecord(final ResultSet resultSet) throws SQLException {
     final Integer id = resultSet.getInt(1);
     final Long messageId = resultSet.getLong(2);
     final Timestamp date = resultSet.getTimestamp(3);

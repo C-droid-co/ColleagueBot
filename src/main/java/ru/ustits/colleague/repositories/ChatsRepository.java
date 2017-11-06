@@ -6,7 +6,6 @@ import ru.ustits.colleague.repositories.records.ChatRecord;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -24,12 +23,7 @@ public class ChatsRepository extends AbstractRepository<ChatRecord> {
   public ChatRecord fetchOne(final ChatRecord entity) {
     try {
       return sql().query("SELECT * FROM chats WHERE id=?",
-              resultSet -> {
-                if (resultSet.next()) {
-                  return toRecord(resultSet);
-                }
-                return null;
-              },
+              this::fetchOneRecord,
               entity.getId());
     } catch (SQLException e) {
       log.error("Unable to fetch chat record", e);
@@ -51,12 +45,7 @@ public class ChatsRepository extends AbstractRepository<ChatRecord> {
   public ChatRecord add(final ChatRecord record) {
     try {
       return sql().insert("INSERT INTO chats (id, title) VALUES (?, ?)",
-              resultSet -> {
-                resultSet.next();
-                final ChatRecord dbRecord = toRecord(resultSet);
-                log.info(dbRecord);
-                return dbRecord;
-              },
+              this::addRecord,
               record.getId(),
               record.getTitle());
     } catch (SQLException e) {
@@ -68,20 +57,15 @@ public class ChatsRepository extends AbstractRepository<ChatRecord> {
   public List<ChatRecord> fetchAll() {
     try {
       return sql().query("SELECT * FROM chats",
-              resultSet -> {
-                final List<ChatRecord> records = new ArrayList<>();
-                while (resultSet.next()) {
-                  records.add(toRecord(resultSet));
-                }
-                return records;
-              });
+              this::fetchAllRecords);
     } catch (SQLException e) {
       log.error("Unable to fetch messages", e);
     }
     return Collections.emptyList();
   }
 
-  private ChatRecord toRecord(final ResultSet resultSet) throws SQLException {
+  @Override
+  protected ChatRecord toRecord(final ResultSet resultSet) throws SQLException {
     final Long id = resultSet.getLong(1);
     final String title = resultSet.getString(3);
     return new ChatRecord(id, null, title);

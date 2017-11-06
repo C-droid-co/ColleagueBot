@@ -6,7 +6,6 @@ import ru.ustits.colleague.repositories.records.TriggerRecord;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -24,12 +23,7 @@ public class TriggerRepository extends AbstractRepository<TriggerRecord> {
   public TriggerRecord fetchOne(final TriggerRecord record) {
     try {
       return sql().query("SELECT * FROM triggers WHERE chat_id=? AND user_id=? AND trigger=?",
-              resultSet -> {
-                if (resultSet.next()) {
-                  return toRecord(resultSet);
-                }
-                return null;
-              },
+              this::fetchOneRecord,
               record.getChatId(), record.getUserId(), record.getTrigger());
     } catch (SQLException e) {
       log.error(e);
@@ -40,13 +34,7 @@ public class TriggerRepository extends AbstractRepository<TriggerRecord> {
   public List<TriggerRecord> fetchAll(final Long chatId) {
     try {
       return sql().query("SELECT * FROM triggers WHERE chat_id=?",
-              resultSet -> {
-                final List<TriggerRecord> records = new ArrayList<>();
-                while (resultSet.next()) {
-                  records.add(toRecord(resultSet));
-                }
-                return records;
-              },
+              this::fetchAllRecords,
               chatId);
     } catch (SQLException e) {
       log.error(e);
@@ -58,12 +46,7 @@ public class TriggerRepository extends AbstractRepository<TriggerRecord> {
   public TriggerRecord add(final TriggerRecord record) {
     try {
       return sql().insert("INSERT INTO triggers (trigger, message, chat_id, user_id) VALUES (?, ?, ?, ?)",
-              resultSet -> {
-                resultSet.next();
-                final TriggerRecord dbRecord = toRecord(resultSet);
-                log.info(dbRecord);
-                return dbRecord;
-              },
+              this::addRecord,
               record.getTrigger(), record.getMessage(),
               record.getChatId(), record.getUserId());
     } catch (SQLException e) {
@@ -96,7 +79,8 @@ public class TriggerRepository extends AbstractRepository<TriggerRecord> {
     }
   }
 
-  private TriggerRecord toRecord(final ResultSet resultSet) throws SQLException {
+  @Override
+  protected TriggerRecord toRecord(final ResultSet resultSet) throws SQLException {
     final Integer id = resultSet.getInt(1);
     final String trigger = resultSet.getString(2);
     final String message = resultSet.getString(3);
