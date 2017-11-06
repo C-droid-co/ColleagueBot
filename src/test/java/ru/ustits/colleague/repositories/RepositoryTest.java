@@ -16,6 +16,7 @@ import static ru.ustits.colleague.RandomUtils.string;
  */
 public abstract class RepositoryTest {
 
+  protected static final int FETCH_ALL_RESULT = 3;
   private static final String DB_SCRIPT = "db.sql";
   private static final String BUILD_SCRIPT = System.getProperty("user.dir") + "/db/" + DB_SCRIPT;
   private static final String TEST_ENV = "test-env.sql";

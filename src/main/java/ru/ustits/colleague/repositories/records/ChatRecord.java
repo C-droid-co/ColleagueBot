@@ -20,6 +20,10 @@ public final class ChatRecord {
     this(null, title);
   }
 
+  public ChatRecord(final Long id) {
+    this(id, null);
+  }
+
   public ChatRecord(final Long id, final String title) {
     this(id, null, title);
   }

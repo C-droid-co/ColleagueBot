@@ -37,7 +37,7 @@ public class RepeatRepositoryTest extends RepositoryTest {
   @Override
   public void testFetchAll() throws Exception {
     final List<RepeatRecord> repeats = repository.fetchAll(1L);
-    assertThat(repeats).hasSize(3);
+    assertThat(repeats).hasSize(FETCH_ALL_RESULT);
   }
 
   @Test

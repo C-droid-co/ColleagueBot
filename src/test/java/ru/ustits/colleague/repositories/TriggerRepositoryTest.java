@@ -35,7 +35,7 @@ public class TriggerRepositoryTest extends RepositoryTest {
   @Test
   @Override
   public void testFetchOne() throws Exception {
-    final TriggerRecord record = new TriggerRecord("trigger1", 1L, 1L);
+    final TriggerRecord record = existingRecord();
     final TriggerRecord dbRecord = repository.fetchOne(record);
     assertThat(record.getId()).isNull();
     assertThat(dbRecord.getId()).isNotNull();
@@ -44,7 +44,7 @@ public class TriggerRepositoryTest extends RepositoryTest {
   @Test
   @Override
   public void testExists() throws Exception {
-    final TriggerRecord record = new TriggerRecord("trigger1", 1L, 1L);
+    final TriggerRecord record = existingRecord();
     assertThat(repository.exists(record)).isTrue();
   }
 
@@ -52,14 +52,14 @@ public class TriggerRepositoryTest extends RepositoryTest {
   @Override
   public void testFetchAll() throws Exception {
     final List<TriggerRecord> records = repository.fetchAll(1L);
-    assertThat(records).hasSize(3);
+    assertThat(records).hasSize(FETCH_ALL_RESULT);
   }
 
   @Test
   @Override
   public void testUpdate() throws Exception {
     final String newMessage = string();
-    final TriggerRecord record = new TriggerRecord("trigger1", newMessage, 1L, 1L);
+    final TriggerRecord record = new TriggerRecord("trigger2", newMessage, 1L, 1L);
     final int updateCount = repository.update(record);
     assertThat(updateCount).isEqualTo(1);
     final TriggerRecord updatedRecord = repository.fetchOne(record);
@@ -69,9 +69,13 @@ public class TriggerRepositoryTest extends RepositoryTest {
   @Test
   @Override
   public void testDelete() throws Exception {
-    final TriggerRecord record = new TriggerRecord("trigger1", 1L, 1L);
+    final TriggerRecord record = existingRecord();
     assertThat(repository.exists(record)).isTrue();
     repository.delete(record);
     assertThat(repository.exists(record)).isFalse();
+  }
+
+  private TriggerRecord existingRecord() {
+    return new TriggerRecord("trigger1", 1L, 1L);
   }
 }

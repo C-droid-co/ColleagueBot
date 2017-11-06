@@ -40,7 +40,7 @@ public class MessageRepositoryTest extends RepositoryTest {
   @Override
   public void testFetchAll() throws Exception {
     final List<MessageRecord> messages = repository.fetchAll(1L);
-    assertThat(messages).hasSize(3);
+    assertThat(messages).hasSize(FETCH_ALL_RESULT);
   }
 
   @Test

@@ -52,7 +52,7 @@ public class UserRepositoryTest extends RepositoryTest {
   @Override
   public void testFetchAll() throws Exception {
     final List<UserRecord> users = repository.fetchAll();
-    assertThat(users).hasSize(3);
+    assertThat(users).hasSize(FETCH_ALL_RESULT);
   }
 
   @Test

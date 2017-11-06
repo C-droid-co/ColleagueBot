@@ -28,7 +28,7 @@ public class ChatsRepositoryTest extends RepositoryTest {
   @Test
   @Override
   public void testAdd() throws Exception {
-    final ChatRecord record = new ChatRecord(aLong(), null, string());
+    final ChatRecord record = new ChatRecord(aLong(), string());
     final ChatRecord dbRecord = repository.add(record);
     assertThat(dbRecord).isEqualTo(record);
   }
@@ -36,7 +36,7 @@ public class ChatsRepositoryTest extends RepositoryTest {
   @Test
   @Override
   public void testFetchOne() throws Exception {
-    final ChatRecord record = new ChatRecord(1L, null, null);
+    final ChatRecord record = new ChatRecord(1L);
     final ChatRecord dbRecord = repository.fetchOne(record);
     assertThat(dbRecord.getTitle()).isNotNull();
   }
@@ -45,7 +45,7 @@ public class ChatsRepositoryTest extends RepositoryTest {
   @Override
   public void testFetchAll() throws Exception {
     final List<ChatRecord> records = repository.fetchAll();
-    assertThat(records).hasSize(3);
+    assertThat(records).hasSize(FETCH_ALL_RESULT);
   }
 
   @Test
