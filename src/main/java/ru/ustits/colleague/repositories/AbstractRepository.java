@@ -41,7 +41,12 @@ public abstract class AbstractRepository<T> implements Repository<T> {
   @Override
   public final T fetchOne(final T entity) {
     try {
-      return innerFetchOne(entity);
+      final T record = innerFetchOne(entity);
+      if (record == null) {
+        log.info("Fetched nothing for {}", entity);
+      } else {
+        return record;
+      }
     } catch (SQLException e) {
       log.error("Unable to fetch record: " + entity, e);
     }
