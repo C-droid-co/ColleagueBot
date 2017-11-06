@@ -27,11 +27,8 @@ public class RepeatRepositoryTest extends RepositoryTest {
   @Test
   @Override
   public void testAdd() throws Exception {
-    final RepeatRecord record = RepeatRecord.builder()
-            .message(string())
-            .cron(string())
-            .chatId(1L)
-            .userId(1L).build();
+    final RepeatRecord record = new RepeatRecord(string(), string(),
+            1L, 1L);
     final RepeatRecord dbRecord = repository.add(record);
     assertThat(dbRecord.getId()).isNotNull();
   }

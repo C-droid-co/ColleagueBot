@@ -36,7 +36,7 @@ public class UserRepositoryTest extends RepositoryTest {
   @Test
   @Override
   public void testFetchOne() throws Exception {
-    final UserRecord record = new UserRecord(1L, null, null, null);
+    final UserRecord record = new UserRecord(1L);
     final UserRecord dbRecord = repository.fetchOne(record);
     assertThat(dbRecord).isNotNull();
   }
@@ -44,7 +44,7 @@ public class UserRepositoryTest extends RepositoryTest {
   @Test
   @Override
   public void testExists() throws Exception {
-    final UserRecord record = new UserRecord(1L, null, null, null);
+    final UserRecord record = new UserRecord(1L);
     assertThat(repository.exists(record)).isTrue();
   }
 

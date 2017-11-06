@@ -17,6 +17,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
+import static ru.ustits.colleague.RandomUtils.aLong;
+import static ru.ustits.colleague.RandomUtils.string;
 
 /**
  * @author ustits
@@ -76,11 +78,6 @@ public class RepeatCommandTest {
   }
 
   private RepeatRecord mockRecord() {
-   return RepeatRecord.builder()
-           .chatId(1L)
-           .cron("cron")
-           .message("message")
-           .userId(1L)
-           .build();
+    return new RepeatRecord(string(), string(), aLong(), aLong());
   }
 }

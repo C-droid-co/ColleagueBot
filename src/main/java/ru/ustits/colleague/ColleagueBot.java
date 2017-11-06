@@ -109,7 +109,6 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
     }
     final MessageRecord messageRecord =
             new MessageRecord(
-                    0,
                     toUnsignedLong(message.getMessageId()),
                     new Timestamp((long) message.getDate() * 1000),
                     message.getText(),

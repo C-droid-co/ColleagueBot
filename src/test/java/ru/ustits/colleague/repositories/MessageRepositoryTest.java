@@ -29,7 +29,7 @@ public class MessageRepositoryTest extends RepositoryTest {
   @Test
   @Override
   public void testAdd() throws Exception {
-    final MessageRecord record = new MessageRecord(null, aLong(),
+    final MessageRecord record = new MessageRecord(aLong(),
             new Timestamp(System.currentTimeMillis()), string(),
             false, 1L, 1L);
     final MessageRecord dbRecord = repository.add(record);

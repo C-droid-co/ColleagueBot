@@ -1,11 +1,15 @@
 package ru.ustits.colleague.repositories.records;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 
 /**
  * @author ustits
  */
 @Getter
+@ToString
+@EqualsAndHashCode
 public final class TriggerRecord {
 
   private final Integer id;

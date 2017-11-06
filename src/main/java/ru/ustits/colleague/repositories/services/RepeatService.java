@@ -26,7 +26,7 @@ public class RepeatService {
   private final UserRepository userRepository;
 
   public RepeatRecord addRepeat(final String message, final String cron, final Chat chat, final User user) {
-    final ChatRecord chatRecord = new ChatRecord(chat.getId(), null, chat.getTitle());
+    final ChatRecord chatRecord = new ChatRecord(chat.getId(), chat.getTitle());
     if (!chatsRepository.exists(chatRecord)) {
       chatsRepository.add(chatRecord);
     }
@@ -35,11 +35,7 @@ public class RepeatService {
     if (!userRepository.exists(userRecord)) {
       userRepository.add(userRecord);
     }
-    final RepeatRecord record = RepeatRecord.builder()
-            .message(message)
-            .chatId(chat.getId())
-            .userId(toUnsignedLong(user.getId()))
-            .cron(cron).build();
+    final RepeatRecord record = new RepeatRecord(message, cron, chat.getId(), toUnsignedLong(user.getId()));
     return repeatRepository.add(record);
   }
 

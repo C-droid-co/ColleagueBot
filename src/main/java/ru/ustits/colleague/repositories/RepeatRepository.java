@@ -59,12 +59,6 @@ public class RepeatRepository extends AbstractRepository<RepeatRecord> {
     final Long chatId = resultSet.getLong(3);
     final Long userId = resultSet.getLong(4);
     final String cron = resultSet.getString(5);
-    return RepeatRecord.builder()
-            .id(id)
-            .message(message)
-            .chatId(chatId)
-            .userId(userId)
-            .cron(cron)
-            .build();
+    return new RepeatRecord(id, message, cron, chatId, userId);
   }
 }

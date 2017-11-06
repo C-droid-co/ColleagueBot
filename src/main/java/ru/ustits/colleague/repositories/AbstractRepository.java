@@ -52,7 +52,7 @@ public abstract class AbstractRepository<T> implements Repository<T> {
   public final int update(final T entity) {
     try {
       final int rows = innerUpdate(entity);
-      log.info("Updated record: {}" + entity);
+      log.info("Updated record: {}", entity);
       return rows;
     } catch (SQLException e) {
       log.error("Unable to update record: " + entity, e);
