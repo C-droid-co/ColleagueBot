@@ -25,14 +25,14 @@ public final class RepeatRecord {
   }
 
   public RepeatRecord(final Integer id,
-                      @NonNull final String cron,
                       @NonNull final String message,
+                      @NonNull final String cron,
                       @NonNull final Long chatId,
                       @NonNull final Long userId) {
     this.id = id;
     this.message = message;
+    this.cron = cron;
     this.chatId = chatId;
     this.userId = userId;
-    this.cron = cron;
   }
 }
