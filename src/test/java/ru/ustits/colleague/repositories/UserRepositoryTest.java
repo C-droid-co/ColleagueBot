@@ -1,7 +1,6 @@
 package ru.ustits.colleague.repositories;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import ru.ustits.colleague.repositories.records.UserRecord;
 
@@ -26,7 +25,6 @@ public class UserRepositoryTest extends RepositoryTest {
   }
 
   @Test
-  @Override
   public void testAdd() throws Exception {
     final UserRecord user = new UserRecord(aLong(), string(), string(), string());
     final UserRecord dbRecord = repository.add(user);
@@ -34,7 +32,6 @@ public class UserRepositoryTest extends RepositoryTest {
   }
 
   @Test
-  @Override
   public void testFetchOne() throws Exception {
     final UserRecord record = new UserRecord(1L);
     final UserRecord dbRecord = repository.fetchOne(record);
@@ -42,30 +39,15 @@ public class UserRepositoryTest extends RepositoryTest {
   }
 
   @Test
-  @Override
   public void testExists() throws Exception {
     final UserRecord record = new UserRecord(1L);
     assertThat(repository.exists(record)).isTrue();
   }
 
   @Test
-  @Override
   public void testFetchAll() throws Exception {
     final List<UserRecord> users = repository.fetchAll();
     assertThat(users).hasSize(FETCH_ALL_RESULT);
   }
 
-  @Test
-  @Ignore
-  @Override
-  public void testUpdate() throws Exception {
-
-  }
-
-  @Test
-  @Ignore
-  @Override
-  public void testDelete() throws Exception {
-
-  }
 }

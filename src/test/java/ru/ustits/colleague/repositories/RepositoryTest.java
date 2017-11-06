@@ -41,18 +41,6 @@ public abstract class RepositoryTest {
     sql = new QueryRunner(dataSource());
   }
 
-  public abstract void testAdd() throws Exception;
-
-  public abstract void testFetchOne() throws Exception;
-
-  public abstract void testExists() throws Exception;
-
-  public abstract void testFetchAll() throws Exception;
-
-  public abstract void testUpdate() throws Exception;
-
-  public abstract void testDelete() throws Exception;
-
   private DataSource dataSource() {
     final PGSimpleDataSource dataSource = new PGSimpleDataSource();
     dataSource.setServerName(container.getContainerIpAddress());

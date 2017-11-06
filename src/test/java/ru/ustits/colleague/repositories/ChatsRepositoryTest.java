@@ -1,7 +1,6 @@
 package ru.ustits.colleague.repositories;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import ru.ustits.colleague.repositories.records.ChatRecord;
 
@@ -26,7 +25,6 @@ public class ChatsRepositoryTest extends RepositoryTest {
   }
 
   @Test
-  @Override
   public void testAdd() throws Exception {
     final ChatRecord record = new ChatRecord(aLong(), string());
     final ChatRecord dbRecord = repository.add(record);
@@ -34,7 +32,6 @@ public class ChatsRepositoryTest extends RepositoryTest {
   }
 
   @Test
-  @Override
   public void testFetchOne() throws Exception {
     final ChatRecord record = new ChatRecord(1L);
     final ChatRecord dbRecord = repository.fetchOne(record);
@@ -42,30 +39,9 @@ public class ChatsRepositoryTest extends RepositoryTest {
   }
 
   @Test
-  @Override
   public void testFetchAll() throws Exception {
     final List<ChatRecord> records = repository.fetchAll();
     assertThat(records).hasSize(FETCH_ALL_RESULT);
   }
 
-  @Test
-  @Ignore
-  @Override
-  public void testExists() throws Exception {
-
-  }
-
-  @Test
-  @Ignore
-  @Override
-  public void testUpdate() throws Exception {
-
-  }
-
-  @Test
-  @Ignore
-  @Override
-  public void testDelete() throws Exception {
-
-  }
 }
