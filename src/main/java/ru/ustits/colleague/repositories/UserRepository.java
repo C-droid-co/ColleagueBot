@@ -20,39 +20,29 @@ public class UserRepository extends AbstractRepository<UserRecord> {
   }
 
   @Override
-  public UserRecord add(final UserRecord entity) {
-    try {
-      return sql().insert("INSERT INTO users (id, first_name, last_name, user_name) VALUES (?, ?, ?, ?)",
-              this::addRecord,
-              entity.getId(),
-              entity.getFirstName(),
-              entity.getLastName(),
-              entity.getUserName());
-    } catch (SQLException e) {
-      log.error("Unable to add user record", e);
-    }
-    return null;
+  public UserRecord innerAdd(final UserRecord entity) throws SQLException {
+    return sql().insert("INSERT INTO users (id, first_name, last_name, user_name) VALUES (?, ?, ?, ?)",
+            this::addRecord,
+            entity.getId(),
+            entity.getFirstName(),
+            entity.getLastName(),
+            entity.getUserName());
   }
 
   @Override
-  public UserRecord fetchOne(final UserRecord entity) {
-    try {
-      return sql().query("SELECT * FROM users WHERE id=?",
-              this::fetchOneRecord,
-              entity.getId());
-    } catch (SQLException e) {
-      log.error("Unable to fetch user record", e);
-    }
-    return null;
+  public UserRecord innerFetchOne(final UserRecord entity) throws SQLException {
+    return sql().query("SELECT * FROM users WHERE id=?",
+            this::fetchOneRecord,
+            entity.getId());
   }
 
   @Override
-  public int update(final UserRecord entity) {
+  public int innerUpdate(final UserRecord entity) throws SQLException {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  public void delete(final UserRecord entity) {
+  public void innerDelete(final UserRecord entity) throws SQLException {
     throw new UnsupportedOperationException();
   }
 

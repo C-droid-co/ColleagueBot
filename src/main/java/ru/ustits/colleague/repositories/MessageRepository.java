@@ -21,31 +21,26 @@ public class MessageRepository extends AbstractRepository<MessageRecord> {
   }
 
   @Override
-  public MessageRecord add(final MessageRecord entity) {
-    try {
-      return sql().insert("INSERT INTO messages (msg_id, date, text, is_edited, chat_id, user_id) " +
-                      "VALUES (?, ?, ?, ?, ?, ?)",
-              this::addRecord,
-              entity.getMessageId(), entity.getDate(), entity.getText(),
-              entity.getIsEdited(), entity.getChatId(), entity.getUserId());
-    } catch (SQLException e) {
-      log.error("Unable to add message", e);
-    }
-    return null;
+  public MessageRecord innerAdd(final MessageRecord entity) throws SQLException {
+    return sql().insert("INSERT INTO messages (msg_id, date, text, is_edited, chat_id, user_id) " +
+                    "VALUES (?, ?, ?, ?, ?, ?)",
+            this::addRecord,
+            entity.getMessageId(), entity.getDate(), entity.getText(),
+            entity.getIsEdited(), entity.getChatId(), entity.getUserId());
   }
 
   @Override
-  public MessageRecord fetchOne(final MessageRecord entity) {
+  public MessageRecord innerFetchOne(final MessageRecord entity) throws SQLException {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  public int update(final MessageRecord entity) {
+  public int innerUpdate(final MessageRecord entity) throws SQLException {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  public void delete(final MessageRecord entity) {
+  public void innerDelete(final MessageRecord entity) throws SQLException {
     throw new UnsupportedOperationException();
   }
 

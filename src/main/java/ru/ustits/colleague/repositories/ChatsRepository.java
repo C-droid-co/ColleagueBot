@@ -20,38 +20,28 @@ public class ChatsRepository extends AbstractRepository<ChatRecord> {
   }
 
   @Override
-  public ChatRecord fetchOne(final ChatRecord entity) {
-    try {
-      return sql().query("SELECT * FROM chats WHERE id=?",
-              this::fetchOneRecord,
-              entity.getId());
-    } catch (SQLException e) {
-      log.error("Unable to fetch chat record", e);
-    }
-    return null;
+  public ChatRecord innerFetchOne(final ChatRecord entity) throws SQLException {
+    return sql().query("SELECT * FROM chats WHERE id=?",
+            this::fetchOneRecord,
+            entity.getId());
   }
 
   @Override
-  public int update(final ChatRecord entity) {
+  public int innerUpdate(final ChatRecord entity) throws SQLException {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  public void delete(final ChatRecord entity) {
+  public void innerDelete(final ChatRecord entity) throws SQLException {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  public ChatRecord add(final ChatRecord record) {
-    try {
-      return sql().insert("INSERT INTO chats (id, title) VALUES (?, ?)",
-              this::addRecord,
-              record.getId(),
-              record.getTitle());
-    } catch (SQLException e) {
-      log.error("Unable to add char record", e);
-    }
-    return null;
+  public ChatRecord innerAdd(final ChatRecord record) throws SQLException {
+    return sql().insert("INSERT INTO chats (id, title) VALUES (?, ?)",
+            this::addRecord,
+            record.getId(),
+            record.getTitle());
   }
 
   public List<ChatRecord> fetchAll() {

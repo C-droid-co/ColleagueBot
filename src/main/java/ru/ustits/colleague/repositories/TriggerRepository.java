@@ -20,15 +20,10 @@ public class TriggerRepository extends AbstractRepository<TriggerRecord> {
   }
 
   @Override
-  public TriggerRecord fetchOne(final TriggerRecord record) {
-    try {
-      return sql().query("SELECT * FROM triggers WHERE chat_id=? AND user_id=? AND trigger=?",
-              this::fetchOneRecord,
-              record.getChatId(), record.getUserId(), record.getTrigger());
-    } catch (SQLException e) {
-      log.error(e);
-    }
-    return null;
+  public TriggerRecord innerFetchOne(final TriggerRecord record) throws SQLException {
+    return sql().query("SELECT * FROM triggers WHERE chat_id=? AND user_id=? AND trigger=?",
+            this::fetchOneRecord,
+            record.getChatId(), record.getUserId(), record.getTrigger());
   }
 
   public List<TriggerRecord> fetchAll(final Long chatId) {
@@ -43,40 +38,23 @@ public class TriggerRepository extends AbstractRepository<TriggerRecord> {
   }
 
   @Override
-  public TriggerRecord add(final TriggerRecord record) {
-    try {
-      return sql().insert("INSERT INTO triggers (trigger, message, chat_id, user_id) VALUES (?, ?, ?, ?)",
-              this::addRecord,
-              record.getTrigger(), record.getMessage(),
-              record.getChatId(), record.getUserId());
-    } catch (SQLException e) {
-      log.error(e);
-    }
-    return null;
+  public TriggerRecord innerAdd(final TriggerRecord record) throws SQLException {
+    return sql().insert("INSERT INTO triggers (trigger, message, chat_id, user_id) VALUES (?, ?, ?, ?)",
+            this::addRecord,
+            record.getTrigger(), record.getMessage(),
+            record.getChatId(), record.getUserId());
   }
 
   @Override
-  public int update(final TriggerRecord record) {
-    try {
-      final int rows = sql().update("UPDATE triggers SET message=? WHERE trigger=? AND chat_id=? AND user_id=?",
-              record.getMessage(), record.getTrigger(), record.getChatId(), record.getUserId());
-      log.info("Updated trigger: " + record.getTrigger());
-      return rows;
-    } catch (SQLException e) {
-      log.error(e);
-    }
-    return 0;
+  protected int innerUpdate(final TriggerRecord entity) throws SQLException {
+    return sql().update("UPDATE triggers SET message=? WHERE trigger=? AND chat_id=? AND user_id=?",
+            entity.getMessage(), entity.getTrigger(), entity.getChatId(), entity.getUserId());
   }
 
   @Override
-  public void delete(final TriggerRecord record) {
-    try {
-      sql().update("DELETE FROM triggers WHERE trigger=? AND chat_id=? AND user_id=?",
-              record.getTrigger(), record.getChatId(), record.getUserId());
-      log.info("Deleted: {}", record);
-    } catch (SQLException e) {
-      log.error("Unable to delete trigger", e);
-    }
+  public void innerDelete(final TriggerRecord record) throws SQLException {
+    sql().update("DELETE FROM triggers WHERE trigger=? AND chat_id=? AND user_id=?",
+            record.getTrigger(), record.getChatId(), record.getUserId());
   }
 
   @Override

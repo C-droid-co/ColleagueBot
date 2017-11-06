@@ -20,24 +20,19 @@ public class RepeatRepository extends AbstractRepository<RepeatRecord> {
   }
 
   @Override
-  public RepeatRecord add(final RepeatRecord record) {
-    try {
-      return sql().insert("INSERT INTO repeats (message, chat_id, user_id, cron) VALUES (?, ?, ?, ?)",
-              this::addRecord,
-              record.getMessage(), record.getChatId(), record.getUserId(), record.getCron());
-    } catch (SQLException e) {
-      log.error(e);
-    }
-    return null;
+  public RepeatRecord innerAdd(final RepeatRecord record) throws SQLException {
+    return sql().insert("INSERT INTO repeats (message, chat_id, user_id, cron) VALUES (?, ?, ?, ?)",
+            this::addRecord,
+            record.getMessage(), record.getChatId(), record.getUserId(), record.getCron());
   }
 
   @Override
-  public RepeatRecord fetchOne(final RepeatRecord entity) {
+  public RepeatRecord innerFetchOne(final RepeatRecord entity) throws SQLException {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  public int update(final RepeatRecord entity) {
+  public int innerUpdate(final RepeatRecord entity) throws SQLException {
     throw new UnsupportedOperationException();
   }
 
@@ -53,13 +48,8 @@ public class RepeatRepository extends AbstractRepository<RepeatRecord> {
   }
 
   @Override
-  public void delete(final RepeatRecord record) {
-    try {
-      sql().update("DELETE FROM repeats WHERE id=?", record.getId());
-      log.info("Deleted: " + record);
-    } catch (SQLException e) {
-      log.error("Unable to delete repeat", e);
-    }
+  public void innerDelete(final RepeatRecord record) throws SQLException {
+    sql().update("DELETE FROM repeats WHERE id=?", record.getId());
   }
 
   @Override
