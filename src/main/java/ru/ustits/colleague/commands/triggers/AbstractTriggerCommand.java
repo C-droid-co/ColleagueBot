@@ -1,8 +1,9 @@
-package ru.ustits.colleague.commands;
+package ru.ustits.colleague.commands.triggers;
 
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
+import ru.ustits.colleague.commands.ArgsAwareCommand;
 import ru.ustits.colleague.repositories.TriggerRepository;
 
 /**
