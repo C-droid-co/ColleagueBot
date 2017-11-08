@@ -153,6 +153,11 @@ public class AppContext {
   }
 
   @Bean
+  public Long adminId() {
+    return Long.parseLong(env.getRequiredProperty("admin.id"));
+  }
+
+  @Bean
   public String botName() {
     return env.getRequiredProperty("bot.name");
   }
