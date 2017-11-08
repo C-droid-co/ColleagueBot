@@ -13,9 +13,9 @@ import static ru.ustits.colleague.RandomUtils.values;
 /**
  * @author ustits
  */
-public class TriggerCommandTest {
+public class AddTriggerCommandTest {
 
-  private final TriggerCommand command = new TriggerCommand(string(), mock(TriggerRepository.class));
+  private final AddTriggerCommand command = new AddTriggerCommand(string(), mock(TriggerRepository.class));
 
   @Test
   public void testResolveMessage() {

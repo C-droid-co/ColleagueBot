@@ -16,11 +16,11 @@ import static java.lang.Integer.toUnsignedLong;
  * @author ustits
  */
 @Log4j2
-public final class TriggerCommand extends AbstractTriggerCommand {
+public final class AddTriggerCommand extends AbstractTriggerCommand {
 
   private static final int MIN_ARGS = 2;
 
-  public TriggerCommand(final String commandIdentifier, final TriggerRepository repository) {
+  public AddTriggerCommand(final String commandIdentifier, final TriggerRepository repository) {
     super(commandIdentifier, "add trigger", repository, MIN_ARGS);
   }
 

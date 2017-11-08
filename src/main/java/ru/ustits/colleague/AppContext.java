@@ -15,9 +15,9 @@ import org.springframework.core.env.Environment;
 import ru.ustits.colleague.commands.HelpCommand;
 import ru.ustits.colleague.commands.StatsCommand;
 import ru.ustits.colleague.commands.repeats.*;
+import ru.ustits.colleague.commands.triggers.AddTriggerCommand;
 import ru.ustits.colleague.commands.triggers.DeleteTriggerCommand;
 import ru.ustits.colleague.commands.triggers.ListTriggersCommand;
-import ru.ustits.colleague.commands.triggers.TriggerCommand;
 import ru.ustits.colleague.repositories.*;
 import ru.ustits.colleague.repositories.services.RepeatService;
 import ru.ustits.colleague.tasks.RepeatScheduler;
@@ -65,8 +65,8 @@ public class AppContext {
   }
 
   @Bean
-  public TriggerCommand triggerCommand() {
-    return new TriggerCommand(TRIGGER_COMMAND, triggerRepository());
+  public AddTriggerCommand triggerCommand() {
+    return new AddTriggerCommand(TRIGGER_COMMAND, triggerRepository());
   }
 
   @Bean
