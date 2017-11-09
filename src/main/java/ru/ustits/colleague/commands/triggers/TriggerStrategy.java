@@ -1,16 +1,13 @@
 package ru.ustits.colleague.commands.triggers;
 
+import ru.ustits.colleague.commands.CommandStrategy;
 import ru.ustits.colleague.repositories.records.TriggerRecord;
 import ru.ustits.colleague.tools.StringUtils;
 
 /**
  * @author ustits
  */
-public interface TriggerStrategy {
-
-  TriggerRecord buildRecord(final Long userId, final Long chatId, final String[] arguments);
-
-  int parametersCount();
+public interface TriggerStrategy extends CommandStrategy<TriggerRecord> {
 
   default String parseTrigger(final String[] args) {
     return args[0].toLowerCase();
