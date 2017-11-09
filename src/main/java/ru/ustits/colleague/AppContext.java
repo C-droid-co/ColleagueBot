@@ -18,6 +18,7 @@ import ru.ustits.colleague.commands.repeats.*;
 import ru.ustits.colleague.commands.triggers.AddTriggerCommand;
 import ru.ustits.colleague.commands.triggers.DeleteTriggerCommand;
 import ru.ustits.colleague.commands.triggers.ListTriggersCommand;
+import ru.ustits.colleague.commands.triggers.UserStrategy;
 import ru.ustits.colleague.repositories.*;
 import ru.ustits.colleague.repositories.services.RepeatService;
 import ru.ustits.colleague.tasks.RepeatScheduler;
@@ -66,7 +67,7 @@ public class AppContext {
 
   @Bean
   public AddTriggerCommand triggerCommand() {
-    return new AddTriggerCommand(TRIGGER_COMMAND, triggerRepository());
+    return new AddTriggerCommand(TRIGGER_COMMAND, triggerRepository(), new UserStrategy());
   }
 
   @Bean
