@@ -5,7 +5,7 @@ import ru.ustits.colleague.repositories.records.TriggerRecord;
 /**
  * @author ustits
  */
-public final class UserStrategy implements TriggerStrategy {
+public class UserStrategy implements TriggerStrategy {
 
   @Override
   public TriggerRecord buildRecord(final Long userId, final Long chatId, final String[] arguments) {
