@@ -13,9 +13,8 @@ import ru.ustits.colleague.repositories.services.RepeatService;
 import ru.ustits.colleague.tasks.RepeatScheduler;
 
 import java.util.Arrays;
-import java.util.Optional;
 
-import static ru.ustits.colleague.tools.StringUtils.asString;
+import static java.lang.Integer.toUnsignedLong;
 
 /**
  * @author ustits
@@ -51,13 +50,13 @@ public final class RepeatCommand extends ArgsAwareCommand {
   final boolean scheduleTask(final String[] arguments, final Chat chat,
                        final User user, @NonNull final AbsSender sender) {
     log.info("Got arguments {} for repeat task", Arrays.toString(arguments));
-    final Optional<String> message = parseMessage(arguments);
-    final Optional<String> cron = parseCron(arguments);
-    if (message.isPresent() && cron.isPresent()) {
-      final RepeatRecord record = service.addRepeat(message.get(), transformCron(cron.get()), chat, user);
-      final boolean isScheduled = scheduler.scheduleTask(record, sender);
+    final RepeatRecord record = repeatStrategy.buildRecord(
+            toUnsignedLong(user.getId()), chat.getId(), arguments);
+    if (record != null) {
+      final RepeatRecord dbRecord = service.addRepeat(record, chat, user);
+      final boolean isScheduled = scheduler.scheduleTask(dbRecord, sender);
       if (!isScheduled) {
-        service.deleteRepeat(record);
+        service.deleteRepeat(dbRecord);
         return false;
       } else {
         return true;
@@ -67,18 +66,4 @@ public final class RepeatCommand extends ArgsAwareCommand {
     }
   }
 
-  protected String transformCron(final String cron) {
-    return repeatStrategy.transformCron(cron);
-  }
-
-  final Optional<String> parseMessage(final String[] arguments) {
-    final String text = asString(arguments, getMinArgsLen() - 1);
-    log.info("Parsed repeat task text: {}", text);
-    return Optional.of(text);
-  }
-
-  final Optional<String> parseCron(final String[] arguments) {
-    return Optional.of(
-            asString(arguments, 0, getMinArgsLen() - 1));
-  }
 }

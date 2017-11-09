@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
  * @author ustits
  */
 @RequiredArgsConstructor
-public abstract class RepeatStrategyWrapper implements RepeatStrategy {
+public abstract class RepeatStrategyWrapper extends RepeatStrategy {
 
   private final RepeatStrategy innerStrategy;
 
