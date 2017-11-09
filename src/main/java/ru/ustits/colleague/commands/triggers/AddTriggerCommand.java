@@ -17,9 +17,9 @@ public final class AddTriggerCommand extends AbstractTriggerCommand {
 
   private final TriggerStrategy commandStrategy;
 
-  public AddTriggerCommand(final String commandIdentifier, final TriggerRepository repository,
-                           final UserStrategy commandStrategy) {
-    super(commandIdentifier, "add trigger", repository, commandStrategy.parametersCount());
+  public AddTriggerCommand(final String commandIdentifier, final String description,
+                           final TriggerRepository repository, final TriggerStrategy commandStrategy) {
+    super(commandIdentifier, description, repository, commandStrategy.parametersCount());
     this.commandStrategy = commandStrategy;
   }
 

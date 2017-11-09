@@ -15,10 +15,7 @@ import org.springframework.core.env.Environment;
 import ru.ustits.colleague.commands.HelpCommand;
 import ru.ustits.colleague.commands.StatsCommand;
 import ru.ustits.colleague.commands.repeats.*;
-import ru.ustits.colleague.commands.triggers.AddTriggerCommand;
-import ru.ustits.colleague.commands.triggers.DeleteTriggerCommand;
-import ru.ustits.colleague.commands.triggers.ListTriggersCommand;
-import ru.ustits.colleague.commands.triggers.UserStrategy;
+import ru.ustits.colleague.commands.triggers.*;
 import ru.ustits.colleague.repositories.*;
 import ru.ustits.colleague.repositories.services.RepeatService;
 import ru.ustits.colleague.tasks.RepeatScheduler;
@@ -37,7 +34,8 @@ import java.sql.SQLException;
 @PropertySource("classpath:bot_config.properties")
 public class AppContext {
 
-  private static final String TRIGGER_COMMAND = "trigger";
+  private static final String ADD_TRIGGER_COMMAND = "trigger";
+  private static final String ADMIN_ADD_TRIGGER_COMMAND = "a_trigger";
   private static final String TRIGGER_LIST_COMMAND = "trigger_ls";
   private static final String DELETE_TRIGGER_COMMAND = "trigger_rm";
   private static final String HELP_COMMAND = "help";
@@ -53,7 +51,10 @@ public class AppContext {
   @Bean
   public ColleagueBot bot() throws SchedulerException {
     final ColleagueBot bot = new ColleagueBot(botName());
-    bot.registerAll(triggerCommand(),
+    bot.registerAll(
+            triggerCommand(ADD_TRIGGER_COMMAND, "add trigger to a specific message", new UserStrategy()),
+            triggerCommand(ADMIN_ADD_TRIGGER_COMMAND, "add trigger to a specific message and chat",
+                    new AdminStrategy(adminId())),
             helpCommand(bot),
             repeatCommand(REPEAT_COMMAND,"repeat message with cron expression", new PlainStrategy()),
             repeatCommand(REPEAT_DAILY_COMMAND,"repeat message everyday", new DailyStrategy()),
@@ -65,9 +66,9 @@ public class AppContext {
     return bot;
   }
 
-  @Bean
-  public AddTriggerCommand triggerCommand() {
-    return new AddTriggerCommand(TRIGGER_COMMAND, triggerRepository(), new UserStrategy());
+  public AddTriggerCommand triggerCommand(final String command, final String description,
+                                          final TriggerStrategy strategy) {
+    return new AddTriggerCommand(command, description, triggerRepository(), strategy);
   }
 
   @Bean
