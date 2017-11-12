@@ -9,8 +9,7 @@ import ru.ustits.colleague.repositories.records.TriggerRecord;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
-import static ru.ustits.colleague.RandomUtils.aLong;
-import static ru.ustits.colleague.RandomUtils.string;
+import static ru.ustits.colleague.RandomUtils.*;
 
 /**
  * @author ustits
@@ -23,7 +22,7 @@ public class DeleteTriggerCommandTest {
   @Before
   public void setUp() throws Exception {
     repository = mock(TriggerRepository.class);
-    command = new DeleteTriggerCommand(string(), string(), repository, mock(TriggerParser.class));
+    command = new DeleteTriggerCommand(string(), string(), repository, new TriggerParser(anInt()));
   }
 
   @Test
