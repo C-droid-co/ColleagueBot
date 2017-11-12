@@ -15,12 +15,9 @@ import ru.ustits.colleague.repositories.records.TriggerRecord;
 @Log4j2
 public final class AddTriggerCommand extends AbstractTriggerCommand {
 
-  private final TriggerStrategy commandStrategy;
-
   public AddTriggerCommand(final String commandIdentifier, final String description,
                            final TriggerRepository repository, final TriggerStrategy commandStrategy) {
-    super(commandIdentifier, description, repository);
-    this.commandStrategy = commandStrategy;
+    super(commandIdentifier, description, repository, commandStrategy);
   }
 
   @Override
@@ -34,7 +31,7 @@ public final class AddTriggerCommand extends AbstractTriggerCommand {
   }
 
   protected SendMessage createAnswer(final User user, final Chat chat, final String[] arguments) {
-    final TriggerRecord toAdd = commandStrategy.buildRecord(
+    final TriggerRecord toAdd = getCommandStrategy().buildRecord(
             Integer.toUnsignedLong(user.getId()), chat.getId(), arguments);
     final SendMessage answer;
     if (toAdd == null) {
