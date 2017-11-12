@@ -2,7 +2,7 @@ package ru.ustits.colleague.commands.triggers.delete;
 
 import org.junit.Before;
 import org.junit.Test;
-import ru.ustits.colleague.commands.triggers.add.UserParser;
+import ru.ustits.colleague.commands.triggers.TriggerParser;
 import ru.ustits.colleague.repositories.TriggerRepository;
 import ru.ustits.colleague.repositories.records.TriggerRecord;
 
@@ -23,7 +23,7 @@ public class DeleteTriggerCommandTest {
   @Before
   public void setUp() throws Exception {
     repository = mock(TriggerRepository.class);
-    command = new DeleteTriggerCommand(string(), repository, new UserParser());
+    command = new DeleteTriggerCommand(string(), repository, mock(TriggerParser.class));
   }
 
   @Test

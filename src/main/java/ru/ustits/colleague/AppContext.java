@@ -13,18 +13,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.telegram.telegrambots.bots.commandbot.commands.BotCommand;
-import ru.ustits.colleague.commands.AdminAwareCommand;
-import ru.ustits.colleague.commands.ArgsAwareCommand;
-import ru.ustits.colleague.commands.HelpCommand;
-import ru.ustits.colleague.commands.StatsCommand;
+import ru.ustits.colleague.commands.*;
 import ru.ustits.colleague.commands.repeats.*;
 import ru.ustits.colleague.commands.triggers.ListTriggersCommand;
 import ru.ustits.colleague.commands.triggers.TriggerParser;
 import ru.ustits.colleague.commands.triggers.add.AddTriggerCommand;
-import ru.ustits.colleague.commands.triggers.add.AdminParser;
-import ru.ustits.colleague.commands.triggers.add.UserParser;
 import ru.ustits.colleague.commands.triggers.delete.DeleteTriggerCommand;
 import ru.ustits.colleague.repositories.*;
+import ru.ustits.colleague.repositories.records.TriggerRecord;
 import ru.ustits.colleague.repositories.services.RepeatService;
 import ru.ustits.colleague.tasks.RepeatScheduler;
 
@@ -61,11 +57,15 @@ public class AppContext {
     final ColleagueBot bot = new ColleagueBot(botName());
     bot.registerAll(
             new AdminAwareCommand(
-                    triggerCommand(ADMIN_ADD_TRIGGER_COMMAND, "add trigger to a specific message and chat",
-                            new AdminParser()),
+                    triggerCommand(
+                            ADMIN_ADD_TRIGGER_COMMAND,
+                            "add trigger to a specific message and chat",
+                            new ChatIdParser<>(
+                                    new TriggerParser(3, 1))),
                     adminId()
             ),
-            triggerCommand(ADD_TRIGGER_COMMAND, "add trigger to a specific message", new UserParser()),
+            triggerCommand(ADD_TRIGGER_COMMAND, "add trigger to a specific message",
+                    new TriggerParser(2)),
             helpCommand(bot),
             repeatCommand(REPEAT_COMMAND, "repeat message with cron expression", new PlainParser()),
             repeatCommand(REPEAT_DAILY_COMMAND, "repeat message everyday", new DailyParser()),
@@ -73,12 +73,12 @@ public class AppContext {
             repeatCommand(REPEAT_WEEKENDS_COMMAND, "repeat message every weekend", new WeekendsParser()),
             listTriggersCommand(),
             statsCommand(),
-            new DeleteTriggerCommand(DELETE_TRIGGER_COMMAND, triggerRepository(), new UserParser()));
+            new DeleteTriggerCommand(DELETE_TRIGGER_COMMAND, triggerRepository(), new TriggerParser(1)));
     return bot;
   }
 
   public BotCommand triggerCommand(final String command, final String description,
-                                   final TriggerParser strategy) {
+                                   final Parser<TriggerRecord> strategy) {
     return new ArgsAwareCommand(
             new AddTriggerCommand(command, description, triggerRepository(), strategy),
             strategy.parametersCount());

@@ -6,8 +6,8 @@ import org.telegram.telegrambots.api.objects.Chat;
 import org.telegram.telegrambots.api.objects.User;
 import org.telegram.telegrambots.bots.AbsSender;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
+import ru.ustits.colleague.commands.Parser;
 import ru.ustits.colleague.commands.triggers.AbstractTriggerCommand;
-import ru.ustits.colleague.commands.triggers.TriggerParser;
 import ru.ustits.colleague.repositories.TriggerRepository;
 import ru.ustits.colleague.repositories.records.TriggerRecord;
 
@@ -18,7 +18,7 @@ import ru.ustits.colleague.repositories.records.TriggerRecord;
 public final class AddTriggerCommand extends AbstractTriggerCommand {
 
   public AddTriggerCommand(final String commandIdentifier, final String description,
-                           final TriggerRepository repository, final TriggerParser parser) {
+                           final TriggerRepository repository, final Parser<TriggerRecord> parser) {
     super(commandIdentifier, description, repository, parser);
   }
 

@@ -6,8 +6,8 @@ import org.telegram.telegrambots.api.objects.Chat;
 import org.telegram.telegrambots.api.objects.User;
 import org.telegram.telegrambots.bots.AbsSender;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
+import ru.ustits.colleague.commands.Parser;
 import ru.ustits.colleague.commands.triggers.AbstractTriggerCommand;
-import ru.ustits.colleague.commands.triggers.TriggerParser;
 import ru.ustits.colleague.repositories.TriggerRepository;
 import ru.ustits.colleague.repositories.records.TriggerRecord;
 
@@ -20,7 +20,7 @@ import static java.lang.Integer.toUnsignedLong;
 public final class DeleteTriggerCommand extends AbstractTriggerCommand {
 
   public DeleteTriggerCommand(final String commandIdentifier, final TriggerRepository repository,
-                              final TriggerParser parser) {
+                              final Parser<TriggerRecord> parser) {
     super(commandIdentifier, "delete trigger", repository, parser);
   }
 
