@@ -61,4 +61,25 @@ public class StringUtilsTest {
     final int end = 3;
     assertThat(StringUtils.asString(stringArray, start, end)).isEqualTo("very long");
   }
+
+  @Test
+  public void testAsStringWithStartBiggerThanEnd() throws Exception {
+    final int start = 3;
+    final int end = 1;
+    assertThat(StringUtils.asString(stringArray, start, end)).isEmpty();
+  }
+
+  @Test
+  public void testAsStringWithStartEqualsEnd() throws Exception {
+    final int start = 3;
+    final int end = 3;
+    assertThat(StringUtils.asString(stringArray, start, end)).isEmpty();
+  }
+
+  @Test
+  public void testAsStringWithArrayLengthSmallerThanEnd() throws Exception {
+    final int start = 0;
+    final int end = 1000;
+    assertThat(StringUtils.asString(stringArray, start, end)).isEqualTo("some very long text");
+  }
 }
