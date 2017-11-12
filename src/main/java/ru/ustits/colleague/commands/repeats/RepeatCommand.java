@@ -6,8 +6,8 @@ import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Chat;
 import org.telegram.telegrambots.api.objects.User;
 import org.telegram.telegrambots.bots.AbsSender;
+import org.telegram.telegrambots.bots.commandbot.commands.BotCommand;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
-import ru.ustits.colleague.commands.ArgsAwareCommand;
 import ru.ustits.colleague.repositories.records.RepeatRecord;
 import ru.ustits.colleague.repositories.services.RepeatService;
 import ru.ustits.colleague.tasks.RepeatScheduler;
@@ -20,7 +20,7 @@ import static java.lang.Integer.toUnsignedLong;
  * @author ustits
  */
 @Log4j2
-public final class RepeatCommand extends ArgsAwareCommand {
+public final class RepeatCommand extends BotCommand {
 
   private final RepeatStrategy repeatStrategy;
   private final RepeatScheduler scheduler;
@@ -29,14 +29,14 @@ public final class RepeatCommand extends ArgsAwareCommand {
   public RepeatCommand(final String commandIdentifier, final String description,
                        final RepeatStrategy repeatStrategy, final RepeatScheduler scheduler,
                        final RepeatService service) {
-    super(commandIdentifier, description, repeatStrategy.parametersCount());
+    super(commandIdentifier, description);
     this.repeatStrategy = repeatStrategy;
     this.scheduler = scheduler;
     this.service = service;
   }
 
   @Override
-  protected final void executeInternal(final AbsSender absSender, final User user, final Chat chat,
+  public final void execute(final AbsSender absSender, final User user, final Chat chat,
                                  final String[] arguments) {
     try {
       final String message = scheduleTask(arguments, chat, user, absSender) ?

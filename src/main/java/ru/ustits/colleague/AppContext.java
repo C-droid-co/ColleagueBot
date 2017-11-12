@@ -12,6 +12,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.telegram.telegrambots.bots.commandbot.commands.BotCommand;
+import ru.ustits.colleague.commands.ArgsAwareCommand;
 import ru.ustits.colleague.commands.HelpCommand;
 import ru.ustits.colleague.commands.StatsCommand;
 import ru.ustits.colleague.commands.repeats.*;
@@ -56,19 +58,21 @@ public class AppContext {
             triggerCommand(ADMIN_ADD_TRIGGER_COMMAND, "add trigger to a specific message and chat",
                     new AdminStrategy(adminId())),
             helpCommand(bot),
-            repeatCommand(REPEAT_COMMAND,"repeat message with cron expression", new PlainStrategy()),
-            repeatCommand(REPEAT_DAILY_COMMAND,"repeat message everyday", new DailyStrategy()),
-            repeatCommand(REPEAT_WORKDAYS_COMMAND,"repeat message every work day", new WorkDaysStrategy()),
-            repeatCommand(REPEAT_WEEKENDS_COMMAND,"repeat message every weekend", new WeekendsStrategy()),
+            repeatCommand(REPEAT_COMMAND, "repeat message with cron expression", new PlainStrategy()),
+            repeatCommand(REPEAT_DAILY_COMMAND, "repeat message everyday", new DailyStrategy()),
+            repeatCommand(REPEAT_WORKDAYS_COMMAND, "repeat message every work day", new WorkDaysStrategy()),
+            repeatCommand(REPEAT_WEEKENDS_COMMAND, "repeat message every weekend", new WeekendsStrategy()),
             listTriggersCommand(),
             statsCommand(),
             new DeleteTriggerCommand(DELETE_TRIGGER_COMMAND, triggerRepository()));
     return bot;
   }
 
-  public AddTriggerCommand triggerCommand(final String command, final String description,
-                                          final TriggerStrategy strategy) {
-    return new AddTriggerCommand(command, description, triggerRepository(), strategy);
+  public BotCommand triggerCommand(final String command, final String description,
+                                   final TriggerStrategy strategy) {
+    return new ArgsAwareCommand(
+            new AddTriggerCommand(command, description, triggerRepository(), strategy),
+            strategy.parametersCount());
   }
 
   @Bean
@@ -86,9 +90,11 @@ public class AppContext {
     return new StatsCommand(STATS_COMMAND);
   }
 
-  public RepeatCommand repeatCommand(final String command, final String description,
-                                     final RepeatStrategy strategy) throws SchedulerException {
-    return new RepeatCommand(command, description, strategy, scheduler(), repeatService());
+  public BotCommand repeatCommand(final String command, final String description,
+                                  final RepeatStrategy strategy) throws SchedulerException {
+    return new ArgsAwareCommand(
+            new RepeatCommand(command, description, strategy, scheduler(), repeatService()),
+            strategy.parametersCount());
   }
 
   @Bean

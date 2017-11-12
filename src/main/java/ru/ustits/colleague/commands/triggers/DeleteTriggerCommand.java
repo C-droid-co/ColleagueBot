@@ -17,14 +17,12 @@ import static java.lang.Integer.toUnsignedLong;
 @Log4j2
 public final class DeleteTriggerCommand extends AbstractTriggerCommand {
 
-  private static final Integer MIN_ARGS = 1;
-
   public DeleteTriggerCommand(final String commandIdentifier, final TriggerRepository repository) {
-    super(commandIdentifier, "delete trigger", repository, MIN_ARGS);
+    super(commandIdentifier, "delete trigger", repository);
   }
 
   @Override
-  protected void executeInternal(final AbsSender absSender, final User user, final Chat chat,
+  public void execute(final AbsSender absSender, final User user, final Chat chat,
                                        final String[] arguments) {
     final String trigger = resolveTrigger(arguments);
     final boolean isDeleted = deleteTrigger(trigger, chat.getId(), toUnsignedLong(user.getId()));

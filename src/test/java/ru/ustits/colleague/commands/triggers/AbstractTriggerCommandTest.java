@@ -10,7 +10,6 @@ import ru.ustits.colleague.repositories.TriggerRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
-import static ru.ustits.colleague.RandomUtils.anInt;
 import static ru.ustits.colleague.RandomUtils.string;
 
 /**
@@ -35,9 +34,9 @@ public class AbstractTriggerCommandTest {
   }
 
   private AbstractTriggerCommand mockCommand() {
-    return new AbstractTriggerCommand(string(), string(), mock(TriggerRepository.class), anInt()) {
+    return new AbstractTriggerCommand(string(), string(), mock(TriggerRepository.class)) {
       @Override
-      protected void executeInternal(final AbsSender absSender, final User user, final Chat chat,
+      public void execute(final AbsSender absSender, final User user, final Chat chat,
                                      final String[] arguments) {
         log.info("Executing");
       }

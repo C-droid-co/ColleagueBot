@@ -3,7 +3,7 @@ package ru.ustits.colleague.commands.triggers;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
-import ru.ustits.colleague.commands.ArgsAwareCommand;
+import org.telegram.telegrambots.bots.commandbot.commands.BotCommand;
 import ru.ustits.colleague.repositories.TriggerRepository;
 
 /**
@@ -11,13 +11,13 @@ import ru.ustits.colleague.repositories.TriggerRepository;
  */
 @Log4j2
 @Getter(AccessLevel.PROTECTED)
-public abstract class AbstractTriggerCommand extends ArgsAwareCommand {
+public abstract class AbstractTriggerCommand extends BotCommand {
 
   private final TriggerRepository repository;
 
   public AbstractTriggerCommand(final String commandIdentifier, final String description,
-                                final TriggerRepository repository, final int minArgsLen) {
-    super(commandIdentifier, description, minArgsLen);
+                                final TriggerRepository repository) {
+    super(commandIdentifier, description);
     this.repository = repository;
   }
 

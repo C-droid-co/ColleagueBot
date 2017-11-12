@@ -19,12 +19,12 @@ public final class AddTriggerCommand extends AbstractTriggerCommand {
 
   public AddTriggerCommand(final String commandIdentifier, final String description,
                            final TriggerRepository repository, final TriggerStrategy commandStrategy) {
-    super(commandIdentifier, description, repository, commandStrategy.parametersCount());
+    super(commandIdentifier, description, repository);
     this.commandStrategy = commandStrategy;
   }
 
   @Override
-  protected void executeInternal(final AbsSender absSender, final User user, final Chat chat, final String[] arguments) {
+  public void execute(final AbsSender absSender, final User user, final Chat chat, final String[] arguments) {
     final SendMessage answer = createAnswer(user, chat, arguments);
     try {
       absSender.execute(answer);

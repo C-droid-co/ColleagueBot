@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.telegram.telegrambots.api.objects.Chat;
 import org.telegram.telegrambots.api.objects.User;
 import org.telegram.telegrambots.bots.AbsSender;
+import org.telegram.telegrambots.bots.commandbot.commands.BotCommand;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static ru.ustits.colleague.RandomUtils.*;
@@ -45,13 +46,13 @@ public class ArgsAwareCommandTest {
   }
 
   private ArgsAwareCommand mockCommand() {
-    return new ArgsAwareCommand(string(), string(), minArgs) {
+    final BotCommand command = new BotCommand(string(), string()) {
       @Override
-      protected void executeInternal(final AbsSender absSender, final User user, final Chat chat,
-                                     final String[] arguments) {
+      public void execute(final AbsSender absSender, final User user, final Chat chat, final String[] arguments) {
         log.info("Executing");
       }
     };
+    return new ArgsAwareCommand(command, minArgs);
   }
 
 }
