@@ -40,7 +40,7 @@ public class RepeatCommandTest {
     when(scheduler.scheduleTask(any(RepeatRecord.class), any(AbsSender.class))).thenReturn(true);
     when(service.addRepeat(anyString(), anyString(),
             any(Chat.class), any(User.class))).thenReturn(mockRecord());
-    final RepeatStrategy strategy  = new PlainStrategy();
+    final RepeatParser strategy  = new PlainParser();
     command = new RepeatCommand(string(), string(), strategy, scheduler, service);
 
   }

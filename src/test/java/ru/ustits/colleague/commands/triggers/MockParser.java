@@ -9,7 +9,7 @@ import ru.ustits.colleague.repositories.records.TriggerRecord;
  */
 @Log4j2
 @RequiredArgsConstructor
-public class MockStrategy implements TriggerStrategy {
+public class MockParser implements TriggerParser {
 
   private final int parametersCount;
 

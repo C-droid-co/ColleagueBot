@@ -7,7 +7,7 @@ import org.telegram.telegrambots.api.objects.User;
 import org.telegram.telegrambots.bots.AbsSender;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 import ru.ustits.colleague.commands.triggers.AbstractTriggerCommand;
-import ru.ustits.colleague.commands.triggers.TriggerStrategy;
+import ru.ustits.colleague.commands.triggers.TriggerParser;
 import ru.ustits.colleague.repositories.TriggerRepository;
 import ru.ustits.colleague.repositories.records.TriggerRecord;
 
@@ -18,8 +18,8 @@ import ru.ustits.colleague.repositories.records.TriggerRecord;
 public final class AddTriggerCommand extends AbstractTriggerCommand {
 
   public AddTriggerCommand(final String commandIdentifier, final String description,
-                           final TriggerRepository repository, final TriggerStrategy commandStrategy) {
-    super(commandIdentifier, description, repository, commandStrategy);
+                           final TriggerRepository repository, final TriggerParser parser) {
+    super(commandIdentifier, description, repository, parser);
   }
 
   @Override
@@ -33,7 +33,7 @@ public final class AddTriggerCommand extends AbstractTriggerCommand {
   }
 
   protected SendMessage createAnswer(final User user, final Chat chat, final String[] arguments) {
-    final TriggerRecord toAdd = getCommandStrategy().buildRecord(
+    final TriggerRecord toAdd = getParser().buildRecord(
             Integer.toUnsignedLong(user.getId()), chat.getId(), arguments);
     final SendMessage answer;
     if (toAdd == null) {

@@ -1,13 +1,13 @@
 package ru.ustits.colleague.commands.triggers;
 
-import ru.ustits.colleague.commands.CommandStrategy;
+import ru.ustits.colleague.commands.Parser;
 import ru.ustits.colleague.repositories.records.TriggerRecord;
 import ru.ustits.colleague.tools.StringUtils;
 
 /**
  * @author ustits
  */
-public interface TriggerStrategy extends CommandStrategy<TriggerRecord> {
+public interface TriggerParser extends Parser<TriggerRecord> {
 
   default String parseTrigger(final String[] args) {
     return args[0].toLowerCase();

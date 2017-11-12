@@ -13,20 +13,20 @@ import static ru.ustits.colleague.RandomUtils.string;
 /**
  * @author ustits
  */
-public class AdminStrategyTest {
+public class AdminParserTest {
 
-  private AdminStrategy strategy;
+  private AdminParser parser;
   private Long chatId;
 
   @Before
   public void setUp() throws Exception {
     chatId = aLong();
-    strategy = new AdminStrategy();
+    parser = new AdminParser();
   }
 
   @Test
   public void testBuildRecord() throws Exception {
-    final TriggerRecord record = strategy.buildRecord(aLong(), aLong(), goodArgs());
+    final TriggerRecord record = parser.buildRecord(aLong(), aLong(), goodArgs());
     assertThat(record.getChatId()).isEqualTo(chatId);
     assertThat(record.getMessage()).isNotEmpty();
     assertThat(record.getTrigger()).isNotEmpty();
@@ -34,13 +34,13 @@ public class AdminStrategyTest {
 
   @Test
   public void testParseChatId() throws Exception {
-    final Optional<Long> parsedChatId = strategy.parseChatId(goodArgs());
+    final Optional<Long> parsedChatId = parser.parseChatId(goodArgs());
     assertThat(parsedChatId).isPresent().hasValue(chatId);
   }
 
   @Test
   public void testParseChatIdIfNotNumberPassed() throws Exception {
-    final Optional<Long> parsedChatId = strategy.parseChatId(badArgs());
+    final Optional<Long> parsedChatId = parser.parseChatId(badArgs());
     assertThat(parsedChatId).isNotPresent();
   }
 

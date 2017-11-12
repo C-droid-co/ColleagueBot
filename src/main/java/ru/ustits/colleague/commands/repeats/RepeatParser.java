@@ -1,7 +1,7 @@
 package ru.ustits.colleague.commands.repeats;
 
 import lombok.extern.log4j.Log4j2;
-import ru.ustits.colleague.commands.CommandStrategy;
+import ru.ustits.colleague.commands.Parser;
 import ru.ustits.colleague.repositories.records.RepeatRecord;
 
 import java.util.Optional;
@@ -12,7 +12,7 @@ import static ru.ustits.colleague.tools.StringUtils.asString;
  * @author ustits
  */
 @Log4j2
-public abstract class RepeatStrategy implements CommandStrategy<RepeatRecord> {
+public abstract class RepeatParser implements Parser<RepeatRecord> {
 
   public final RepeatRecord buildRecord(final Long userId, final Long chatId, final String[] arguments) {
     final Optional<String> message = parseMessage(arguments);

@@ -11,9 +11,9 @@ import static ru.ustits.colleague.RandomUtils.valuesMoreThan;
 /**
  * @author ustits
  */
-public class UserStrategyTest {
+public class UserParserTest {
 
-  private UserStrategy strategy;
+  private UserParser parser;
   private Long chatId;
   private Long userId;
   private String[] args;
@@ -22,13 +22,13 @@ public class UserStrategyTest {
   public void setUp() throws Exception {
     chatId = aLong();
     userId = aLong();
-    strategy = new UserStrategy();
-    args = valuesMoreThan(strategy.parametersCount());
+    parser = new UserParser();
+    args = valuesMoreThan(parser.parametersCount());
   }
 
   @Test
   public void testBuildRecord() throws Exception {
-    final TriggerRecord record = strategy.buildRecord(userId, chatId, args);
+    final TriggerRecord record = parser.buildRecord(userId, chatId, args);
     assertThat(record.getUserId()).isEqualTo(userId);
     assertThat(record.getChatId()).isEqualTo(chatId);
     assertThat(record.getMessage()).isNotEmpty();

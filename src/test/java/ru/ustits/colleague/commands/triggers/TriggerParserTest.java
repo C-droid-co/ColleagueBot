@@ -10,16 +10,16 @@ import static ru.ustits.colleague.RandomUtils.valuesMoreThan;
 /**
  * @author ustits
  */
-public class TriggerStrategyTest {
+public class TriggerParserTest {
 
   private int parametersCount;
-  private TriggerStrategy strategy;
+  private TriggerParser strategy;
   private String[] args;
 
   @Before
   public void setUp() throws Exception {
     parametersCount = 3;
-    strategy = new MockStrategy(parametersCount);
+    strategy = new MockParser(parametersCount);
     args = valuesMoreThan(parametersCount);
   }
 

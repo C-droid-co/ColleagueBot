@@ -6,7 +6,7 @@ import lombok.extern.log4j.Log4j2;
  * @author ustits
  */
 @Log4j2
-public final class PlainStrategy extends RepeatStrategy {
+public final class PlainParser extends RepeatParser {
 
   private static final Integer PARAMETERS_COUNT = 7;
 

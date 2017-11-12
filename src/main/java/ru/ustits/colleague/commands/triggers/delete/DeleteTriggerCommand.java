@@ -7,7 +7,7 @@ import org.telegram.telegrambots.api.objects.User;
 import org.telegram.telegrambots.bots.AbsSender;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 import ru.ustits.colleague.commands.triggers.AbstractTriggerCommand;
-import ru.ustits.colleague.commands.triggers.TriggerStrategy;
+import ru.ustits.colleague.commands.triggers.TriggerParser;
 import ru.ustits.colleague.repositories.TriggerRepository;
 import ru.ustits.colleague.repositories.records.TriggerRecord;
 
@@ -20,14 +20,14 @@ import static java.lang.Integer.toUnsignedLong;
 public final class DeleteTriggerCommand extends AbstractTriggerCommand {
 
   public DeleteTriggerCommand(final String commandIdentifier, final TriggerRepository repository,
-                              final TriggerStrategy commandStrategy) {
-    super(commandIdentifier, "delete trigger", repository, commandStrategy);
+                              final TriggerParser parser) {
+    super(commandIdentifier, "delete trigger", repository, parser);
   }
 
   @Override
   public void execute(final AbsSender absSender, final User user, final Chat chat,
                                        final String[] arguments) {
-    final TriggerRecord record = getCommandStrategy().buildRecord(toUnsignedLong(user.getId()), chat.getId(), arguments);
+    final TriggerRecord record = getParser().buildRecord(toUnsignedLong(user.getId()), chat.getId(), arguments);
     final boolean isDeleted = deleteTrigger(record);
     final SendMessage answer;
     if (isDeleted) {

@@ -8,7 +8,7 @@ import static ru.ustits.colleague.tools.StringUtils.split;
 /**
  * @author ustits
  */
-public final class DailyStrategy extends RepeatStrategy {
+public final class DailyParser extends RepeatParser {
 
   private static final Integer PARAMETERS_COUNT = 3;
 

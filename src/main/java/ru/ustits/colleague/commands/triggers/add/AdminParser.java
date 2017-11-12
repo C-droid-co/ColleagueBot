@@ -8,7 +8,7 @@ import java.util.Optional;
 /**
  * @author ustits
  */
-public final class AdminStrategy extends UserStrategy {
+public final class AdminParser extends UserParser {
 
   @Override
   public TriggerRecord buildRecord(final Long userId, final Long chatId, final String[] arguments) {

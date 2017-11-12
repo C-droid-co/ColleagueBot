@@ -14,13 +14,13 @@ import ru.ustits.colleague.repositories.TriggerRepository;
 public abstract class AbstractTriggerCommand extends BotCommand {
 
   private final TriggerRepository repository;
-  private final TriggerStrategy commandStrategy;
+  private final TriggerParser parser;
 
   public AbstractTriggerCommand(final String commandIdentifier, final String description,
-                                final TriggerRepository repository, final TriggerStrategy commandStrategy) {
+                                final TriggerRepository repository, final TriggerParser parser) {
     super(commandIdentifier, description);
     this.repository = repository;
-    this.commandStrategy = commandStrategy;
+    this.parser = parser;
   }
 
 }

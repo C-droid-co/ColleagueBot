@@ -11,13 +11,13 @@ import static org.mockito.Mockito.*;
 /**
  * @author ustits
  */
-public class RepeatStrategyTest {
+public class RepeatParserTest {
 
-  private RepeatStrategy strategy;
+  private RepeatParser strategy;
 
   @Before
   public void setUp() throws Exception {
-    strategy = mock(RepeatStrategy.class, CALLS_REAL_METHODS);
+    strategy = mock(RepeatParser.class, CALLS_REAL_METHODS);
     doReturn(7).when(strategy).parametersCount();
   }
 

@@ -19,10 +19,10 @@ import ru.ustits.colleague.commands.HelpCommand;
 import ru.ustits.colleague.commands.StatsCommand;
 import ru.ustits.colleague.commands.repeats.*;
 import ru.ustits.colleague.commands.triggers.ListTriggersCommand;
-import ru.ustits.colleague.commands.triggers.TriggerStrategy;
+import ru.ustits.colleague.commands.triggers.TriggerParser;
 import ru.ustits.colleague.commands.triggers.add.AddTriggerCommand;
-import ru.ustits.colleague.commands.triggers.add.AdminStrategy;
-import ru.ustits.colleague.commands.triggers.add.UserStrategy;
+import ru.ustits.colleague.commands.triggers.add.AdminParser;
+import ru.ustits.colleague.commands.triggers.add.UserParser;
 import ru.ustits.colleague.commands.triggers.delete.DeleteTriggerCommand;
 import ru.ustits.colleague.repositories.*;
 import ru.ustits.colleague.repositories.services.RepeatService;
@@ -62,23 +62,23 @@ public class AppContext {
     bot.registerAll(
             new AdminAwareCommand(
                     triggerCommand(ADMIN_ADD_TRIGGER_COMMAND, "add trigger to a specific message and chat",
-                            new AdminStrategy()),
+                            new AdminParser()),
                     adminId()
             ),
-            triggerCommand(ADD_TRIGGER_COMMAND, "add trigger to a specific message", new UserStrategy()),
+            triggerCommand(ADD_TRIGGER_COMMAND, "add trigger to a specific message", new UserParser()),
             helpCommand(bot),
-            repeatCommand(REPEAT_COMMAND, "repeat message with cron expression", new PlainStrategy()),
-            repeatCommand(REPEAT_DAILY_COMMAND, "repeat message everyday", new DailyStrategy()),
-            repeatCommand(REPEAT_WORKDAYS_COMMAND, "repeat message every work day", new WorkDaysStrategy()),
-            repeatCommand(REPEAT_WEEKENDS_COMMAND, "repeat message every weekend", new WeekendsStrategy()),
+            repeatCommand(REPEAT_COMMAND, "repeat message with cron expression", new PlainParser()),
+            repeatCommand(REPEAT_DAILY_COMMAND, "repeat message everyday", new DailyParser()),
+            repeatCommand(REPEAT_WORKDAYS_COMMAND, "repeat message every work day", new WorkDaysParser()),
+            repeatCommand(REPEAT_WEEKENDS_COMMAND, "repeat message every weekend", new WeekendsParser()),
             listTriggersCommand(),
             statsCommand(),
-            new DeleteTriggerCommand(DELETE_TRIGGER_COMMAND, triggerRepository(), new UserStrategy()));
+            new DeleteTriggerCommand(DELETE_TRIGGER_COMMAND, triggerRepository(), new UserParser()));
     return bot;
   }
 
   public BotCommand triggerCommand(final String command, final String description,
-                                   final TriggerStrategy strategy) {
+                                   final TriggerParser strategy) {
     return new ArgsAwareCommand(
             new AddTriggerCommand(command, description, triggerRepository(), strategy),
             strategy.parametersCount());
@@ -100,7 +100,7 @@ public class AppContext {
   }
 
   public BotCommand repeatCommand(final String command, final String description,
-                                  final RepeatStrategy strategy) throws SchedulerException {
+                                  final RepeatParser strategy) throws SchedulerException {
     return new ArgsAwareCommand(
             new RepeatCommand(command, description, strategy, scheduler(), repeatService()),
             strategy.parametersCount());

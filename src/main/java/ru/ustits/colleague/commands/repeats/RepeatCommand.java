@@ -22,15 +22,15 @@ import static java.lang.Integer.toUnsignedLong;
 @Log4j2
 public final class RepeatCommand extends BotCommand {
 
-  private final RepeatStrategy repeatStrategy;
+  private final RepeatParser parser;
   private final RepeatScheduler scheduler;
   private final RepeatService service;
 
   public RepeatCommand(final String commandIdentifier, final String description,
-                       final RepeatStrategy repeatStrategy, final RepeatScheduler scheduler,
+                       final RepeatParser parser, final RepeatScheduler scheduler,
                        final RepeatService service) {
     super(commandIdentifier, description);
-    this.repeatStrategy = repeatStrategy;
+    this.parser = parser;
     this.scheduler = scheduler;
     this.service = service;
   }
@@ -50,7 +50,7 @@ public final class RepeatCommand extends BotCommand {
   final boolean scheduleTask(final String[] arguments, final Chat chat,
                        final User user, @NonNull final AbsSender sender) {
     log.info("Got arguments {} for repeat task", Arrays.toString(arguments));
-    final RepeatRecord record = repeatStrategy.buildRecord(
+    final RepeatRecord record = parser.buildRecord(
             toUnsignedLong(user.getId()), chat.getId(), arguments);
     if (record != null) {
       final RepeatRecord dbRecord = service.addRepeat(record, chat, user);

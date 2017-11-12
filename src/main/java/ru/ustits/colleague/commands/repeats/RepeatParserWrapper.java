@@ -6,9 +6,9 @@ import lombok.RequiredArgsConstructor;
  * @author ustits
  */
 @RequiredArgsConstructor
-public abstract class RepeatStrategyWrapper extends RepeatStrategy {
+public abstract class RepeatParserWrapper extends RepeatParser {
 
-  private final RepeatStrategy innerStrategy;
+  private final RepeatParser innerStrategy;
 
   @Override
   public String transformCron(final String cron) {
