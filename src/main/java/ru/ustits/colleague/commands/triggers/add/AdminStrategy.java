@@ -1,4 +1,4 @@
-package ru.ustits.colleague.commands.triggers;
+package ru.ustits.colleague.commands.triggers.add;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import ru.ustits.colleague.repositories.records.TriggerRecord;

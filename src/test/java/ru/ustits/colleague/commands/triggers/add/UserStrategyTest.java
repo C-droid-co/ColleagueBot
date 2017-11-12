@@ -1,4 +1,4 @@
-package ru.ustits.colleague.commands.triggers;
+package ru.ustits.colleague.commands.triggers.add;
 
 import org.junit.Before;
 import org.junit.Test;

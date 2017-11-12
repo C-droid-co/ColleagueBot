@@ -1,5 +1,6 @@
-package ru.ustits.colleague.commands.triggers;
+package ru.ustits.colleague.commands.triggers.add;
 
+import ru.ustits.colleague.commands.triggers.TriggerStrategy;
 import ru.ustits.colleague.repositories.records.TriggerRecord;
 
 /**

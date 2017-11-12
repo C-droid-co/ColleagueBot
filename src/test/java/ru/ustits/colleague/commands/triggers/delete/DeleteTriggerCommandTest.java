@@ -1,7 +1,8 @@
-package ru.ustits.colleague.commands.triggers;
+package ru.ustits.colleague.commands.triggers.delete;
 
 import org.junit.Before;
 import org.junit.Test;
+import ru.ustits.colleague.commands.triggers.add.UserStrategy;
 import ru.ustits.colleague.repositories.TriggerRepository;
 import ru.ustits.colleague.repositories.records.TriggerRecord;
 

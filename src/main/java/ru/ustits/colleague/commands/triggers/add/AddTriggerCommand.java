@@ -1,4 +1,4 @@
-package ru.ustits.colleague.commands.triggers;
+package ru.ustits.colleague.commands.triggers.add;
 
 import lombok.extern.log4j.Log4j2;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -6,6 +6,8 @@ import org.telegram.telegrambots.api.objects.Chat;
 import org.telegram.telegrambots.api.objects.User;
 import org.telegram.telegrambots.bots.AbsSender;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
+import ru.ustits.colleague.commands.triggers.AbstractTriggerCommand;
+import ru.ustits.colleague.commands.triggers.TriggerStrategy;
 import ru.ustits.colleague.repositories.TriggerRepository;
 import ru.ustits.colleague.repositories.records.TriggerRecord;
 
