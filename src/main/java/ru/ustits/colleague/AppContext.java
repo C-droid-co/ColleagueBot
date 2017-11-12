@@ -64,7 +64,7 @@ public class AppContext {
             repeatCommand(REPEAT_WEEKENDS_COMMAND, "repeat message every weekend", new WeekendsStrategy()),
             listTriggersCommand(),
             statsCommand(),
-            new DeleteTriggerCommand(DELETE_TRIGGER_COMMAND, triggerRepository()));
+            new DeleteTriggerCommand(DELETE_TRIGGER_COMMAND, triggerRepository(), new UserStrategy()));
     return bot;
   }
 

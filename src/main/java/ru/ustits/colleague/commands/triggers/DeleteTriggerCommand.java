@@ -17,20 +17,24 @@ import static java.lang.Integer.toUnsignedLong;
 @Log4j2
 public final class DeleteTriggerCommand extends AbstractTriggerCommand {
 
-  public DeleteTriggerCommand(final String commandIdentifier, final TriggerRepository repository) {
+  private final TriggerStrategy commandStrategy;
+
+  public DeleteTriggerCommand(final String commandIdentifier, final TriggerRepository repository,
+                              final TriggerStrategy commandStrategy) {
     super(commandIdentifier, "delete trigger", repository);
+    this.commandStrategy = commandStrategy;
   }
 
   @Override
   public void execute(final AbsSender absSender, final User user, final Chat chat,
                                        final String[] arguments) {
-    final String trigger = resolveTrigger(arguments);
-    final boolean isDeleted = deleteTrigger(trigger, chat.getId(), toUnsignedLong(user.getId()));
+    final TriggerRecord record = commandStrategy.buildRecord(toUnsignedLong(user.getId()), chat.getId(), arguments);
+    final boolean isDeleted = deleteTrigger(record);
     final SendMessage answer;
     if (isDeleted) {
-      answer = new SendMessage(chat.getId(), String.format("Deleted trigger [%s]", trigger));
+      answer = new SendMessage(chat.getId(), String.format("Deleted trigger [%s]", record.getTrigger()));
     } else {
-      answer = new SendMessage(chat.getId(), String.format("Unable to delete trigger [%s]", trigger));
+      answer = new SendMessage(chat.getId(), "Unable to delete trigger");
     }
     try {
       absSender.execute(answer);
@@ -39,11 +43,13 @@ public final class DeleteTriggerCommand extends AbstractTriggerCommand {
     }
   }
 
-  boolean deleteTrigger(final String trigger, final Long chatId, final Long userId) {
-    final TriggerRecord toDelete = new TriggerRecord(trigger, chatId, userId);
-    final boolean exists = getRepository().exists(toDelete);
+  boolean deleteTrigger(final TriggerRecord record) {
+    if (record == null) {
+      return false;
+    }
+    final boolean exists = getRepository().exists(record);
     if (exists) {
-      getRepository().delete(toDelete);
+      getRepository().delete(record);
       return true;
     } else {
       return false;

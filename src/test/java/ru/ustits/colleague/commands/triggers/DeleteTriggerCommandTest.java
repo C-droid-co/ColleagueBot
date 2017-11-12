@@ -22,13 +22,13 @@ public class DeleteTriggerCommandTest {
   @Before
   public void setUp() throws Exception {
     repository = mock(TriggerRepository.class);
-    command = new DeleteTriggerCommand(string(), repository);
+    command = new DeleteTriggerCommand(string(), repository, new UserStrategy());
   }
 
   @Test
   public void testDeleteTrigger() throws Exception {
     when(repository.exists(any(TriggerRecord.class))).thenReturn(true);
-    final boolean result = command.deleteTrigger(string(), aLong(), aLong());
+    final boolean result = command.deleteTrigger(mockRecord());
     assertThat(result).isTrue();
     verify(repository).exists(any(TriggerRecord.class));
     verify(repository).delete(any(TriggerRecord.class));
@@ -37,10 +37,21 @@ public class DeleteTriggerCommandTest {
   @Test
   public void testDeleteTriggerThatNotExists() throws Exception {
     when(repository.exists(any(TriggerRecord.class))).thenReturn(false);
-    final boolean result = command.deleteTrigger(string(), aLong(), aLong());
+    final boolean result = command.deleteTrigger(mockRecord());
     assertThat(result).isFalse();
     verify(repository).exists(any(TriggerRecord.class));
     verify(repository, never()).delete(any(TriggerRecord.class));
   }
 
+  @Test
+  public void testDeleteTriggerWithNullRecord() throws Exception {
+    final boolean result = command.deleteTrigger(null);
+    assertThat(result).isFalse();
+    verify(repository, never()).exists(any(TriggerRecord.class));
+    verify(repository, never()).delete(any(TriggerRecord.class));
+  }
+
+  private TriggerRecord mockRecord() {
+    return new TriggerRecord(string(), aLong(), aLong());
+  }
 }
