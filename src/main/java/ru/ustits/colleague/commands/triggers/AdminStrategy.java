@@ -10,16 +10,10 @@ import java.util.Optional;
  */
 public final class AdminStrategy extends UserStrategy {
 
-  private final Long adminId;
-
-  public AdminStrategy(final Long adminId) {
-    this.adminId = adminId;
-  }
-
   @Override
   public TriggerRecord buildRecord(final Long userId, final Long chatId, final String[] arguments) {
     final Optional<Long> parsedChatId = parseChatId(arguments);
-    if (parsedChatId.isPresent() && userId.equals(adminId)) {
+    if (parsedChatId.isPresent()) {
       return super.buildRecord(userId, parsedChatId.get(), arguments);
     }
     return null;

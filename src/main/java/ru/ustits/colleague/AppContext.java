@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.telegram.telegrambots.bots.commandbot.commands.BotCommand;
+import ru.ustits.colleague.commands.AdminAwareCommand;
 import ru.ustits.colleague.commands.ArgsAwareCommand;
 import ru.ustits.colleague.commands.HelpCommand;
 import ru.ustits.colleague.commands.StatsCommand;
@@ -54,9 +55,12 @@ public class AppContext {
   public ColleagueBot bot() throws SchedulerException {
     final ColleagueBot bot = new ColleagueBot(botName());
     bot.registerAll(
+            new AdminAwareCommand(
+                    triggerCommand(ADMIN_ADD_TRIGGER_COMMAND, "add trigger to a specific message and chat",
+                            new AdminStrategy()),
+                    adminId()
+            ),
             triggerCommand(ADD_TRIGGER_COMMAND, "add trigger to a specific message", new UserStrategy()),
-            triggerCommand(ADMIN_ADD_TRIGGER_COMMAND, "add trigger to a specific message and chat",
-                    new AdminStrategy(adminId())),
             helpCommand(bot),
             repeatCommand(REPEAT_COMMAND, "repeat message with cron expression", new PlainStrategy()),
             repeatCommand(REPEAT_DAILY_COMMAND, "repeat message everyday", new DailyStrategy()),

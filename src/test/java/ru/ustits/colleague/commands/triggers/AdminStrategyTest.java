@@ -17,28 +17,19 @@ public class AdminStrategyTest {
 
   private AdminStrategy strategy;
   private Long chatId;
-  private Long adminId;
 
   @Before
   public void setUp() throws Exception {
     chatId = aLong();
-    adminId = aLong();
-    strategy = new AdminStrategy(adminId);
+    strategy = new AdminStrategy();
   }
 
   @Test
   public void testBuildRecord() throws Exception {
-    final TriggerRecord record = strategy.buildRecord(adminId, aLong(), goodArgs());
-    assertThat(record.getUserId()).isEqualTo(adminId);
+    final TriggerRecord record = strategy.buildRecord(aLong(), aLong(), goodArgs());
     assertThat(record.getChatId()).isEqualTo(chatId);
     assertThat(record.getMessage()).isNotEmpty();
     assertThat(record.getTrigger()).isNotEmpty();
-  }
-
-  @Test
-  public void testBuildRecordIfUserIsNotAdmin() throws Exception {
-    final TriggerRecord record = strategy.buildRecord(aLong(), aLong(), goodArgs());
-    assertThat(record).isNull();
   }
 
   @Test
