@@ -19,9 +19,9 @@ import static java.lang.Integer.toUnsignedLong;
 @Log4j2
 public final class DeleteTriggerCommand extends AbstractTriggerCommand {
 
-  public DeleteTriggerCommand(final String commandIdentifier, final TriggerRepository repository,
-                              final Parser<TriggerRecord> parser) {
-    super(commandIdentifier, "delete trigger", repository, parser);
+  public DeleteTriggerCommand(final String commandIdentifier, final String description,
+                              final TriggerRepository repository, final Parser<TriggerRecord> parser) {
+    super(commandIdentifier, description, repository, parser);
   }
 
   @Override

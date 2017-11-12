@@ -42,6 +42,7 @@ public class AppContext {
   private static final String ADMIN_ADD_TRIGGER_COMMAND = "a_trigger";
   private static final String TRIGGER_LIST_COMMAND = "trigger_ls";
   private static final String DELETE_TRIGGER_COMMAND = "trigger_rm";
+  private static final String ADMIN_DELETE_TRIGGER_COMMAND = "a_trigger_rm";
   private static final String HELP_COMMAND = "help";
   private static final String REPEAT_COMMAND = "repeat";
   private static final String REPEAT_DAILY_COMMAND = "repeat_d";
@@ -73,7 +74,23 @@ public class AppContext {
             repeatCommand(REPEAT_WEEKENDS_COMMAND, "repeat message every weekend", new WeekendsParser()),
             listTriggersCommand(),
             statsCommand(),
-            new DeleteTriggerCommand(DELETE_TRIGGER_COMMAND, triggerRepository(), new TriggerParser(1)));
+            new ArgsAwareCommand(
+                    new DeleteTriggerCommand(
+                            DELETE_TRIGGER_COMMAND,
+                            "delete chat trigger",
+                            triggerRepository(),
+                            new TriggerParser(1)),
+                    1),
+            new AdminAwareCommand(
+                    new ArgsAwareCommand(
+                            new DeleteTriggerCommand(
+                                    ADMIN_DELETE_TRIGGER_COMMAND,
+                                    "delete trigger for any chat",
+                                    triggerRepository(),
+                                    new ChatIdParser<>(
+                                            new TriggerParser(2, 1))),
+                            2),
+                    adminId()));
     return bot;
   }
 

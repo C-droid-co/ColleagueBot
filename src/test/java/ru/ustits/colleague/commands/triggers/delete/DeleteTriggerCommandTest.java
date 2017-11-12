@@ -23,7 +23,7 @@ public class DeleteTriggerCommandTest {
   @Before
   public void setUp() throws Exception {
     repository = mock(TriggerRepository.class);
-    command = new DeleteTriggerCommand(string(), repository, mock(TriggerParser.class));
+    command = new DeleteTriggerCommand(string(), string(), repository, mock(TriggerParser.class));
   }
 
   @Test
