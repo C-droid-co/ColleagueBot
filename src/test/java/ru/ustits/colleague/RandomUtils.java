@@ -1,11 +1,10 @@
 package ru.ustits.colleague;
 
+import java.lang.Long;
 import java.util.Arrays;
 
 import static io.qala.datagen.RandomShortApi.*;
 import static io.qala.datagen.RandomValue.length;
-
-import java.lang.Long;
 
 /**
  * @author ustits
@@ -13,12 +12,13 @@ import java.lang.Long;
 public final class RandomUtils {
 
   private static final int RANDOM_BOUND = 10;
+  private static final int MAX_ELEMENTS = 100;
 
   private RandomUtils() {
   }
 
   public static String[] values() {
-    return length(RANDOM_BOUND).alphanumerics().toArray(new String[]{});
+    return length(RANDOM_BOUND).alphanumerics(MAX_ELEMENTS).toArray(new String[]{});
   }
 
   public static String[] values(final int bound) {
@@ -50,5 +50,13 @@ public final class RandomUtils {
 
   public static Integer anInt(final int bound) {
     return positiveInteger() % bound;
+  }
+
+  public static Integer aPositiveInt(final int bound) {
+    if (bound == 0) {
+      return 1;
+    }
+    final int number = anInt(bound);
+    return number == 0 ? 1 : number;
   }
 }

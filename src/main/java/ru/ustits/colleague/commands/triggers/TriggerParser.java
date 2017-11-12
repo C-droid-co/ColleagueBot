@@ -1,19 +1,26 @@
 package ru.ustits.colleague.commands.triggers;
 
-import ru.ustits.colleague.commands.Parser;
+import ru.ustits.colleague.commands.AbstractParser;
 import ru.ustits.colleague.repositories.records.TriggerRecord;
-import ru.ustits.colleague.tools.StringUtils;
+
+import java.util.Optional;
 
 /**
  * @author ustits
  */
-public interface TriggerParser extends Parser<TriggerRecord> {
+public abstract class TriggerParser extends AbstractParser<TriggerRecord> {
 
-  default String parseTrigger(final String[] args) {
-    return args[0].toLowerCase();
+  public TriggerParser(final int parametersCount) {
+    super(parametersCount);
   }
 
-  default String parseMessage(final String[] args) {
-    return StringUtils.asString(args, parametersCount() - 1);
+  protected final String parseTrigger(final String[] args) {
+    final Optional<String> trigger = parseString(args, 0);
+    return trigger.map(String::toLowerCase).orElse(null);
+  }
+
+  protected final String parseMessage(final String[] args) {
+    final Optional<String> line = parseString(args, parametersCount() - 1, args.length);
+    return line.orElse(null);
   }
 }

@@ -10,13 +10,13 @@ public final class PlainParser extends RepeatParser {
 
   private static final Integer PARAMETERS_COUNT = 7;
 
+  public PlainParser() {
+    super(PARAMETERS_COUNT);
+  }
+
   @Override
   public String transformCron(final String cron) {
     return cron;
   }
 
-  @Override
-  public int parametersCount() {
-    return PARAMETERS_COUNT;
-  }
 }

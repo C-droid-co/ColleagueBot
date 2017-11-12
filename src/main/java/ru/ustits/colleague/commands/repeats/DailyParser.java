@@ -12,6 +12,10 @@ public final class DailyParser extends RepeatParser {
 
   private static final Integer PARAMETERS_COUNT = 3;
 
+  public DailyParser() {
+    super(PARAMETERS_COUNT);
+  }
+
   @Override
   public String transformCron(final String cron) {
     final String[] args = split(cron);
@@ -24,8 +28,4 @@ public final class DailyParser extends RepeatParser {
             .build();
   }
 
-  @Override
-  public int parametersCount() {
-    return PARAMETERS_COUNT;
-  }
 }
