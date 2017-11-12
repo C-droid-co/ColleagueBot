@@ -43,6 +43,7 @@ public class AppContext {
   private static final String TRIGGER_LIST_COMMAND = "trigger_ls";
   private static final String DELETE_TRIGGER_COMMAND = "trigger_rm";
   private static final String ADMIN_DELETE_TRIGGER_COMMAND = "a_trigger_rm";
+  private static final String ADMIN_DELETE_USER_TRIGGER_COMMAND = "a_trigger_rmu";
   private static final String HELP_COMMAND = "help";
   private static final String REPEAT_COMMAND = "repeat";
   private static final String REPEAT_DAILY_COMMAND = "repeat_d";
@@ -85,12 +86,24 @@ public class AppContext {
                     new ArgsAwareCommand(
                             new DeleteTriggerCommand(
                                     ADMIN_DELETE_TRIGGER_COMMAND,
-                                    "delete trigger for any chat",
+                                    "delete admin's trigger for any chat",
                                     triggerRepository(),
                                     new ChatIdParser<>(
                                             new TriggerParser(2, 1))),
                             2),
-                    adminId()));
+                    adminId()),
+            new AdminAwareCommand(
+                    new ArgsAwareCommand(
+                            new DeleteTriggerCommand(
+                                    ADMIN_DELETE_USER_TRIGGER_COMMAND,
+                                    "delete any user's trigger for any chat",
+                                    triggerRepository(),
+                                    new ChatIdParser<>(
+                                            new UserIdParser<>(
+                                                    new TriggerParser(3, 2)))),
+                            3),
+                    adminId())
+    );
     return bot;
   }
 
