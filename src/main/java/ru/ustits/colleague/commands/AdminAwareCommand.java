@@ -8,37 +8,39 @@ import org.telegram.telegrambots.bots.AbsSender;
 import org.telegram.telegrambots.bots.commandbot.commands.BotCommand;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 
+import static java.lang.Integer.toUnsignedLong;
+
 /**
  * @author ustits
  */
 @Log4j2
-public final class ArgsAwareCommand extends BotCommand {
+public final class AdminAwareCommand extends BotCommand {
 
   private final BotCommand innerCommand;
-  private final int minArgsLen;
+  private final Long adminId;
 
-  public ArgsAwareCommand(final BotCommand innerCommand, final int minArgsLen) {
+  public AdminAwareCommand(final BotCommand innerCommand, final Long adminId) {
     super(innerCommand.getCommandIdentifier(), innerCommand.getDescription());
     this.innerCommand = innerCommand;
-    this.minArgsLen = minArgsLen;
+    this.adminId = adminId;
   }
 
   @Override
-  public final void execute(final AbsSender absSender, final User user, final Chat chat,
-                            final String[] arguments) {
-    if (enough(arguments)) {
+  public void execute(final AbsSender absSender, final User user, final Chat chat,
+                      final String[] arguments) {
+    final Long userId = toUnsignedLong(user.getId());
+    if (isAdmin(userId)) {
       innerCommand.execute(absSender, user, chat, arguments);
     } else {
-      final SendMessage fail = new SendMessage(chat.getId(), "Not enough arguments passed");
       try {
-        absSender.execute(fail);
+        absSender.execute(new SendMessage(chat.getId(), "You have no admin rights"));
       } catch (TelegramApiException e) {
-        log.error("Unable to send fail message", e);
+        log.error("Unable to send message", e);
       }
     }
   }
 
-  protected final boolean enough(final String[] arguments) {
-    return arguments != null && arguments.length >= minArgsLen;
+  boolean isAdmin(final Long userId) {
+    return userId != null && userId.equals(adminId);
   }
 }

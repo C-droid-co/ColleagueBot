@@ -9,50 +9,46 @@ import org.telegram.telegrambots.bots.AbsSender;
 import org.telegram.telegrambots.bots.commandbot.commands.BotCommand;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static ru.ustits.colleague.RandomUtils.*;
+import static ru.ustits.colleague.RandomUtils.aLong;
+import static ru.ustits.colleague.RandomUtils.string;
 
 /**
  * @author ustits
  */
 @Log4j2
-public class ArgsAwareCommandTest {
+public class AdminAwareCommandTest {
 
-  private static final int MIN_ARGS_BOUND = 10;
-
-  private ArgsAwareCommand command;
-  private int minArgs;
+  private AdminAwareCommand command;
+  private Long adminId;
 
   @Before
   public void setUp() throws Exception {
-    minArgs = anInt(MIN_ARGS_BOUND) + 1;
-    command = mockCommand();
+    adminId = aLong();
+    command = mockCommand(adminId);
   }
 
   @Test
-  public void testEnough() throws Exception {
-    final String[] args = values(minArgs + 1);
-    assertThat(command.enough(args)).isTrue();
+  public void testIsAdmin() throws Exception {
+    assertThat(command.isAdmin(adminId)).isTrue();
   }
 
   @Test
-  public void testNotEnough() throws Exception {
-    final String[] args = values(minArgs - 1);
-    assertThat(command.enough(args)).isFalse();
+  public void testIsNotAdmin() throws Exception {
+    assertThat(command.isAdmin(aLong())).isFalse();
   }
 
   @Test
-  public void testEnoughWithNull() throws Exception {
-    assertThat(command.enough(null)).isFalse();
+  public void testIsNotAdminWithNullPassed() throws Exception {
+    assertThat(command.isAdmin(null)).isFalse();
   }
 
-  private ArgsAwareCommand mockCommand() {
+  private AdminAwareCommand mockCommand(final Long adminId) {
     final BotCommand command = new BotCommand(string(), string()) {
       @Override
       public void execute(final AbsSender absSender, final User user, final Chat chat, final String[] arguments) {
         log.info("Executing");
       }
     };
-    return new ArgsAwareCommand(command, minArgs);
+    return new AdminAwareCommand(command, adminId);
   }
-
 }

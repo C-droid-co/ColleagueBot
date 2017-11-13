@@ -25,6 +25,19 @@ public class RepeatService {
   private final ChatsRepository chatsRepository;
   private final UserRepository userRepository;
 
+  public RepeatRecord addRepeat(final RepeatRecord record, final Chat chat, final User user) {
+    final ChatRecord chatRecord = new ChatRecord(chat.getId(), chat.getTitle());
+    if (!chatsRepository.exists(chatRecord)) {
+      chatsRepository.add(chatRecord);
+    }
+    final UserRecord userRecord = new UserRecord(toUnsignedLong(user.getId()),
+            user.getFirstName(), user.getLastName(), user.getUserName());
+    if (!userRepository.exists(userRecord)) {
+      userRepository.add(userRecord);
+    }
+    return repeatRepository.add(record);
+  }
+
   public RepeatRecord addRepeat(final String message, final String cron, final Chat chat, final User user) {
     final ChatRecord chatRecord = new ChatRecord(chat.getId(), chat.getTitle());
     if (!chatsRepository.exists(chatRecord)) {

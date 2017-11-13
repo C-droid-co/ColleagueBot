@@ -6,38 +6,38 @@ import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Chat;
 import org.telegram.telegrambots.api.objects.User;
 import org.telegram.telegrambots.bots.AbsSender;
+import org.telegram.telegrambots.bots.commandbot.commands.BotCommand;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
-import ru.ustits.colleague.commands.ArgsAwareCommand;
+import ru.ustits.colleague.commands.Parser;
 import ru.ustits.colleague.repositories.records.RepeatRecord;
 import ru.ustits.colleague.repositories.services.RepeatService;
 import ru.ustits.colleague.tasks.RepeatScheduler;
 
 import java.util.Arrays;
-import java.util.Optional;
 
-import static ru.ustits.colleague.tools.StringUtils.asString;
+import static java.lang.Integer.toUnsignedLong;
 
 /**
  * @author ustits
  */
 @Log4j2
-public final class RepeatCommand extends ArgsAwareCommand {
+public final class RepeatCommand extends BotCommand {
 
-  private final RepeatStrategy repeatStrategy;
+  private final Parser<RepeatRecord> parser;
   private final RepeatScheduler scheduler;
   private final RepeatService service;
 
   public RepeatCommand(final String commandIdentifier, final String description,
-                       final RepeatStrategy repeatStrategy, final RepeatScheduler scheduler,
+                       final Parser<RepeatRecord> parser, final RepeatScheduler scheduler,
                        final RepeatService service) {
-    super(commandIdentifier, description, repeatStrategy.parametersCount());
-    this.repeatStrategy = repeatStrategy;
+    super(commandIdentifier, description);
+    this.parser = parser;
     this.scheduler = scheduler;
     this.service = service;
   }
 
   @Override
-  protected final void executeInternal(final AbsSender absSender, final User user, final Chat chat,
+  public final void execute(final AbsSender absSender, final User user, final Chat chat,
                                  final String[] arguments) {
     try {
       final String message = scheduleTask(arguments, chat, user, absSender) ?
@@ -51,13 +51,13 @@ public final class RepeatCommand extends ArgsAwareCommand {
   final boolean scheduleTask(final String[] arguments, final Chat chat,
                        final User user, @NonNull final AbsSender sender) {
     log.info("Got arguments {} for repeat task", Arrays.toString(arguments));
-    final Optional<String> message = parseMessage(arguments);
-    final Optional<String> cron = parseCron(arguments);
-    if (message.isPresent() && cron.isPresent()) {
-      final RepeatRecord record = service.addRepeat(message.get(), transformCron(cron.get()), chat, user);
-      final boolean isScheduled = scheduler.scheduleTask(record, sender);
+    final RepeatRecord record = parser.buildRecord(
+            toUnsignedLong(user.getId()), chat.getId(), arguments);
+    if (record != null) {
+      final RepeatRecord dbRecord = service.addRepeat(record, chat, user);
+      final boolean isScheduled = scheduler.scheduleTask(dbRecord, sender);
       if (!isScheduled) {
-        service.deleteRepeat(record);
+        service.deleteRepeat(dbRecord);
         return false;
       } else {
         return true;
@@ -67,18 +67,4 @@ public final class RepeatCommand extends ArgsAwareCommand {
     }
   }
 
-  protected String transformCron(final String cron) {
-    return repeatStrategy.transformCron(cron);
-  }
-
-  final Optional<String> parseMessage(final String[] arguments) {
-    final String text = asString(arguments, getMinArgsLen() - 1);
-    log.info("Parsed repeat task text: {}", text);
-    return Optional.of(text);
-  }
-
-  final Optional<String> parseCron(final String[] arguments) {
-    return Optional.of(
-            asString(arguments, 0, getMinArgsLen() - 1));
-  }
 }

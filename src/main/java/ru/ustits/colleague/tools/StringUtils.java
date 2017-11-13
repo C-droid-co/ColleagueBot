@@ -33,8 +33,11 @@ public final class StringUtils {
   }
 
   public static String asString(final String[] array, final int start, final int end) {
-    if (array == null || array.length == 0) {
+    if (array == null || array.length == 0 || start >= end) {
       return "";
+    }
+    if (array.length < end) {
+      return asString(array, start);
     }
     final String[] part = copyOfRange(array, start, end);
     return String.join(SPACE, part);

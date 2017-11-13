@@ -12,9 +12,16 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.telegram.telegrambots.bots.commandbot.commands.BotCommand;
 import ru.ustits.colleague.commands.*;
 import ru.ustits.colleague.commands.repeats.*;
+import ru.ustits.colleague.commands.triggers.AddTriggerCommand;
+import ru.ustits.colleague.commands.triggers.DeleteTriggerCommand;
+import ru.ustits.colleague.commands.triggers.ListTriggersCommand;
+import ru.ustits.colleague.commands.triggers.TriggerParser;
 import ru.ustits.colleague.repositories.*;
+import ru.ustits.colleague.repositories.records.RepeatRecord;
+import ru.ustits.colleague.repositories.records.TriggerRecord;
 import ru.ustits.colleague.repositories.services.RepeatService;
 import ru.ustits.colleague.tasks.RepeatScheduler;
 
@@ -32,13 +39,21 @@ import java.sql.SQLException;
 @PropertySource("classpath:bot_config.properties")
 public class AppContext {
 
-  private static final String TRIGGER_COMMAND = "trigger";
+  private static final String ADMIN_PREFIX = "a_";
+  private static final String ADD_TRIGGER_COMMAND = "trigger";
+  private static final String ADMIN_ADD_TRIGGER_COMMAND = ADMIN_PREFIX + ADD_TRIGGER_COMMAND;
   private static final String TRIGGER_LIST_COMMAND = "trigger_ls";
   private static final String DELETE_TRIGGER_COMMAND = "trigger_rm";
+  private static final String ADMIN_DELETE_TRIGGER_COMMAND = ADMIN_PREFIX + DELETE_TRIGGER_COMMAND;
+  private static final String ADMIN_DELETE_USER_TRIGGER_COMMAND = ADMIN_DELETE_TRIGGER_COMMAND + "u";
   private static final String HELP_COMMAND = "help";
   private static final String REPEAT_COMMAND = "repeat";
+  private static final String ADMIN_REPEAT_COMMAND = ADMIN_PREFIX + "repeat";
   private static final String REPEAT_DAILY_COMMAND = "repeat_d";
+  private static final String ADMIN_REPEAT_DAILY_COMMAND = ADMIN_PREFIX + "repeat_d";
+  private static final String ADMIN_REPEAT_WORKDAYS_COMMAND = ADMIN_PREFIX + "repeat_wd";
   private static final String REPEAT_WORKDAYS_COMMAND = "repeat_wd";
+  private static final String ADMIN_REPEAT_WEEKENDS_COMMAND = ADMIN_PREFIX + "repeat_we";
   private static final String REPEAT_WEEKENDS_COMMAND = "repeat_we";
   private static final String STATS_COMMAND = "stats";
 
@@ -48,21 +63,103 @@ public class AppContext {
   @Bean
   public ColleagueBot bot() throws SchedulerException {
     final ColleagueBot bot = new ColleagueBot(botName());
-    bot.registerAll(triggerCommand(),
+    bot.registerAll(
+            admin(
+                    triggerCommand(
+                            ADMIN_ADD_TRIGGER_COMMAND,
+                            "add trigger to a specific message and chat",
+                            new ChatIdParser<>(
+                                    new TriggerParser(3, 1)))),
+            triggerCommand(
+                    ADD_TRIGGER_COMMAND,
+                    "add trigger to a specific message",
+                    new TriggerParser(2)),
             helpCommand(bot),
-            repeatCommand(REPEAT_COMMAND,"repeat message with cron expression", new PlainStrategy()),
-            repeatCommand(REPEAT_DAILY_COMMAND,"repeat message everyday", new DailyStrategy()),
-            repeatCommand(REPEAT_WORKDAYS_COMMAND,"repeat message every work day", new WorkDaysStrategy()),
-            repeatCommand(REPEAT_WEEKENDS_COMMAND,"repeat message every weekend", new WeekendsStrategy()),
+            repeatCommand(
+                    REPEAT_COMMAND,
+                    "repeat message with cron expression",
+                    new PlainParser()),
+            admin(
+                    repeatCommand(
+                            ADMIN_REPEAT_COMMAND,
+                            "add repeat message with cron expression to any chat",
+                            new ChatIdParser<>(
+                                    new PlainParser(8, 1)))),
+            repeatCommand(
+                    REPEAT_DAILY_COMMAND,
+                    "repeat message everyday",
+                    new DailyParser()),
+            admin(
+                    repeatCommand(
+                            ADMIN_REPEAT_DAILY_COMMAND,
+                            "repeat message everyday (admin)",
+                            new ChatIdParser<>(
+                                    adminDailyParser()))),
+            repeatCommand(REPEAT_WORKDAYS_COMMAND, "repeat message every work day",
+                    new WorkDaysParser()),
+            admin(
+                    repeatCommand(
+                            ADMIN_REPEAT_WORKDAYS_COMMAND,
+                            "repeat message every work day (admin)",
+                            new ChatIdParser<>(
+                                    new WorkDaysParser(
+                                            adminDailyParser())))),
+            repeatCommand(
+                    REPEAT_WEEKENDS_COMMAND,
+                    "repeat message every weekend",
+                    new WeekendsParser()),
+            admin(
+                    repeatCommand(
+                            ADMIN_REPEAT_WEEKENDS_COMMAND,
+                            "repeat message every weekend (admin)",
+                            new ChatIdParser<>(
+                                    new WeekendsParser(
+                                            adminDailyParser())))),
             listTriggersCommand(),
             statsCommand(),
-            new DeleteTriggerCommand(DELETE_TRIGGER_COMMAND, triggerRepository()));
+            new ArgsAwareCommand(
+                    new DeleteTriggerCommand(
+                            DELETE_TRIGGER_COMMAND,
+                            "delete chat trigger",
+                            triggerRepository(),
+                            new TriggerParser(1)),
+                    1),
+            admin(
+                    new ArgsAwareCommand(
+                            new DeleteTriggerCommand(
+                                    ADMIN_DELETE_TRIGGER_COMMAND,
+                                    "delete admin's trigger for any chat",
+                                    triggerRepository(),
+                                    new ChatIdParser<>(
+                                            new TriggerParser(2, 1))),
+                            2)),
+            admin(
+                    new ArgsAwareCommand(
+                            new DeleteTriggerCommand(
+                                    ADMIN_DELETE_USER_TRIGGER_COMMAND,
+                                    "delete any user's trigger for any chat",
+                                    triggerRepository(),
+                                    new ChatIdParser<>(
+                                            new UserIdParser<>(
+                                                    new TriggerParser(3, 2)))),
+                            3))
+    );
     return bot;
   }
 
-  @Bean
-  public TriggerCommand triggerCommand() {
-    return new TriggerCommand(TRIGGER_COMMAND, triggerRepository());
+  public BotCommand triggerCommand(final String command, final String description,
+                                   final Parser<TriggerRecord> strategy) {
+    return new ArgsAwareCommand(
+            new AddTriggerCommand(command, description, triggerRepository(), strategy),
+            strategy.parametersCount());
+  }
+
+  private AdminAwareCommand admin(final BotCommand command) {
+    return new AdminAwareCommand(command, adminId());
+  }
+
+  private DailyParser adminDailyParser() {
+    return new DailyParser(4, 1);
   }
 
   @Bean
@@ -80,9 +177,11 @@ public class AppContext {
     return new StatsCommand(STATS_COMMAND);
   }
 
-  public RepeatCommand repeatCommand(final String command, final String description,
-                                     final RepeatStrategy strategy) throws SchedulerException {
-    return new RepeatCommand(command, description, strategy, scheduler(), repeatService());
+  public BotCommand repeatCommand(final String command, final String description,
+                                  final Parser<RepeatRecord> strategy) throws SchedulerException {
+    return new ArgsAwareCommand(
+            new RepeatCommand(command, description, strategy, scheduler(), repeatService()),
+            strategy.parametersCount());
   }
 
   @Bean
@@ -150,6 +249,11 @@ public class AppContext {
   @Bean
   public RepeatRepository repeatRepository() {
     return new RepeatRepository(sql());
+  }
+
+  @Bean
+  public Long adminId() {
+    return Long.parseLong(env.getRequiredProperty("admin.id"));
   }
 
   @Bean

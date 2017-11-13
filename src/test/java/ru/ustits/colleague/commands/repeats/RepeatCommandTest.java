@@ -11,8 +11,6 @@ import ru.ustits.colleague.repositories.records.RepeatRecord;
 import ru.ustits.colleague.repositories.services.RepeatService;
 import ru.ustits.colleague.tasks.RepeatScheduler;
 
-import java.util.Optional;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
@@ -42,7 +40,7 @@ public class RepeatCommandTest {
     when(scheduler.scheduleTask(any(RepeatRecord.class), any(AbsSender.class))).thenReturn(true);
     when(service.addRepeat(anyString(), anyString(),
             any(Chat.class), any(User.class))).thenReturn(mockRecord());
-    final RepeatStrategy strategy  = new PlainStrategy();
+    final RepeatParser strategy  = new PlainParser();
     command = new RepeatCommand(string(), string(), strategy, scheduler, service);
 
   }
@@ -52,18 +50,6 @@ public class RepeatCommandTest {
     final boolean result = command.scheduleTask(GOOD_ARGS, chat, user, mock(AbsSender.class));
     assertThat(result).isTrue();
     verify(scheduler).scheduleTask(any(RepeatRecord.class), any(AbsSender.class));
-  }
-
-  @Test
-  public void testParseCron() throws Exception {
-    final Optional<String> expression = command.parseCron(GOOD_ARGS);
-    assertThat(expression).isPresent();
-  }
-
-  @Test
-  public void testParseMessage() throws Exception {
-    final Optional<String> text = command.parseMessage(GOOD_ARGS);
-    assertThat(text).isPresent().contains("some text");
   }
 
   private RepeatRecord mockRecord() {

@@ -8,9 +8,17 @@ import static ru.ustits.colleague.tools.StringUtils.split;
 /**
  * @author ustits
  */
-public final class DailyStrategy implements RepeatStrategy {
+public final class DailyParser extends RepeatParser {
 
   private static final Integer PARAMETERS_COUNT = 3;
+
+  public DailyParser() {
+    super(PARAMETERS_COUNT);
+  }
+
+  public DailyParser(final int parametersCount, final int start) {
+    super(parametersCount, start);
+  }
 
   @Override
   public String transformCron(final String cron) {
@@ -24,8 +32,4 @@ public final class DailyStrategy implements RepeatStrategy {
             .build();
   }
 
-  @Override
-  public int parametersCount() {
-    return PARAMETERS_COUNT;
-  }
 }

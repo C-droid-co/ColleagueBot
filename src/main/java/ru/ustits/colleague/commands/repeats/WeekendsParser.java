@@ -5,15 +5,15 @@ import ru.ustits.colleague.tools.cron.CronBuilder;
 /**
  * @author ustits
  */
-public final class WorkDaysStrategy extends RepeatStrategyWrapper {
+public final class WeekendsParser extends RepeatParserWrapper {
 
-  private static final String WORK_DAYS = "2-6";
+  private static final String WEEKENDS = "1,7";
 
-  public WorkDaysStrategy() {
-    super(new DailyStrategy());
+  public WeekendsParser() {
+    super(new DailyParser());
   }
 
-  public WorkDaysStrategy(final DailyStrategy innerStrategy) {
+  public WeekendsParser(final DailyParser innerStrategy) {
     super(innerStrategy);
   }
 
@@ -21,7 +21,7 @@ public final class WorkDaysStrategy extends RepeatStrategyWrapper {
   public String transformCron(final String cron) {
     final String processedCron = super.transformCron(cron);
     return CronBuilder.builder(processedCron)
-            .withDayOfWeek(WORK_DAYS)
+            .withDayOfWeek(WEEKENDS)
             .build();
   }
 
