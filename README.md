@@ -11,5 +11,12 @@
 * `/repeat [cron_patter] [message]` - repeat message by [cron](http://www.quartz-scheduler.org/documentation/quartz-2.x/tutorials/crontrigger.html)
 * `/help` - lists all available commands
 
-## Version
-0.1.1
+## Version info
+
+### 0.2
+
+* **[new]** [#18](https://github.com/ustits/ColleagueBot/issues/18): friendly wrappers for repeat command that doesn't need to
+specify a full cron expression
+* **[new]** [#21](https://github.com/ustits/ColleagueBot/issues/21): admin commands for triggers and repeats
+* **[refactoring]** [#4](https://github.com/ustits/ColleagueBot/issues/4): repositories refactoring
+
