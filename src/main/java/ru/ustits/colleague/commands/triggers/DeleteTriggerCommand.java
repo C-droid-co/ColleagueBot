@@ -1,4 +1,4 @@
-package ru.ustits.colleague.commands.triggers.delete;
+package ru.ustits.colleague.commands.triggers;
 
 import lombok.extern.log4j.Log4j2;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -7,7 +7,6 @@ import org.telegram.telegrambots.api.objects.User;
 import org.telegram.telegrambots.bots.AbsSender;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 import ru.ustits.colleague.commands.Parser;
-import ru.ustits.colleague.commands.triggers.AbstractTriggerCommand;
 import ru.ustits.colleague.repositories.TriggerRepository;
 import ru.ustits.colleague.repositories.records.TriggerRecord;
 
