@@ -14,6 +14,10 @@ public final class PlainParser extends RepeatParser {
     super(PARAMETERS_COUNT);
   }
 
+  public PlainParser(final int parametersCount, final int start) {
+    super(parametersCount, start);
+  }
+
   @Override
   public String transformCron(final String cron) {
     return cron;

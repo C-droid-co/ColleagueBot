@@ -21,4 +21,9 @@ public abstract class RepeatParserWrapper extends RepeatParser {
   public final int parametersCount() {
     return innerParser.parametersCount();
   }
+
+  @Override
+  protected int getStart() {
+    return innerParser.getStart();
+  }
 }

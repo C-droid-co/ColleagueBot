@@ -8,6 +8,7 @@ import org.telegram.telegrambots.api.objects.User;
 import org.telegram.telegrambots.bots.AbsSender;
 import org.telegram.telegrambots.bots.commandbot.commands.BotCommand;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
+import ru.ustits.colleague.commands.Parser;
 import ru.ustits.colleague.repositories.records.RepeatRecord;
 import ru.ustits.colleague.repositories.services.RepeatService;
 import ru.ustits.colleague.tasks.RepeatScheduler;
@@ -22,12 +23,12 @@ import static java.lang.Integer.toUnsignedLong;
 @Log4j2
 public final class RepeatCommand extends BotCommand {
 
-  private final RepeatParser parser;
+  private final Parser<RepeatRecord> parser;
   private final RepeatScheduler scheduler;
   private final RepeatService service;
 
   public RepeatCommand(final String commandIdentifier, final String description,
-                       final RepeatParser parser, final RepeatScheduler scheduler,
+                       final Parser<RepeatRecord> parser, final RepeatScheduler scheduler,
                        final RepeatService service) {
     super(commandIdentifier, description);
     this.parser = parser;
