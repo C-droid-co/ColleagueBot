@@ -14,14 +14,12 @@ import static java.lang.Integer.toUnsignedLong;
  * @author ustits
  */
 @Log4j2
-public final class AdminAwareCommand extends BotCommand {
+public final class AdminAwareCommand extends CommandWrapper {
 
-  private final BotCommand innerCommand;
   private final Long adminId;
 
   public AdminAwareCommand(final BotCommand innerCommand, final Long adminId) {
-    super(innerCommand.getCommandIdentifier(), innerCommand.getDescription());
-    this.innerCommand = innerCommand;
+    super(innerCommand);
     this.adminId = adminId;
   }
 
@@ -30,7 +28,7 @@ public final class AdminAwareCommand extends BotCommand {
                       final String[] arguments) {
     final Long userId = toUnsignedLong(user.getId());
     if (isAdmin(userId)) {
-      innerCommand.execute(absSender, user, chat, arguments);
+      super.execute(absSender, user, chat, arguments);
     } else {
       try {
         absSender.execute(new SendMessage(chat.getId(), "You have no admin rights"));
