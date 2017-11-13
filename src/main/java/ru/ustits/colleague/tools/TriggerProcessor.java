@@ -25,7 +25,7 @@ public class TriggerProcessor {
   }
 
   boolean hasTrigger(final String text, final String trigger) {
-    final String regexp = prepareRegexp(trigger);
+    final String regexp = prepareRegexp(removeQuotes(trigger));
     final Pattern pattern = Pattern.compile(regexp,
             Pattern.CASE_INSENSITIVE + Pattern.UNICODE_CASE);
     final Matcher matcher = pattern.matcher(text);
@@ -35,6 +35,11 @@ public class TriggerProcessor {
   String prepareRegexp(final String text) {
     final String toPattern = Pattern.quote(text);
     return String.format("\\b%s\\b", toPattern);
+  }
+
+  String removeQuotes(final String text) {
+    return text.replace("\\Q", "")
+            .replace("\\E", "");
   }
 
   SendMessage createMessage(final String response) {

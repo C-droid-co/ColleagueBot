@@ -68,4 +68,12 @@ public class TriggerProcessorTest {
     final String regexp = processor.prepareRegexp(text);
     assertThat(Pattern.compile(regexp)).isNotNull();
   }
+
+  @Test
+  public void testRemoveQuotes() throws Exception {
+    final String quoted = "\\Qsome\\E";
+    assertThat(processor.removeQuotes(quoted))
+            .doesNotContain("\\Q")
+            .doesNotContain("\\E");
+  }
 }
