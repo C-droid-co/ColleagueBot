@@ -149,9 +149,10 @@ public class AppContext {
 
   public BotCommand triggerCommand(final String command, final String description,
                                    final Parser<TriggerRecord> strategy) {
-    return new ArgsAwareCommand(
-            new AddTriggerCommand(command, description, triggerRepository(), strategy),
-            strategy.parametersCount());
+    return new NoWhitespaceCommand(
+            new ArgsAwareCommand(
+                    new AddTriggerCommand(command, description, triggerRepository(), strategy),
+                    strategy.parametersCount()));
   }
 
   private AdminAwareCommand admin(final BotCommand command) {
@@ -179,9 +180,10 @@ public class AppContext {
 
   public BotCommand repeatCommand(final String command, final String description,
                                   final Parser<RepeatRecord> strategy) throws SchedulerException {
-    return new ArgsAwareCommand(
-            new RepeatCommand(command, description, strategy, scheduler(), repeatService()),
-            strategy.parametersCount());
+    return new NoWhitespaceCommand(
+            new ArgsAwareCommand(
+                    new RepeatCommand(command, description, strategy, scheduler(), repeatService()),
+                    strategy.parametersCount()));
   }
 
   @Bean
