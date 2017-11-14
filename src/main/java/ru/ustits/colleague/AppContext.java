@@ -15,10 +15,7 @@ import org.springframework.core.env.Environment;
 import org.telegram.telegrambots.bots.commandbot.commands.BotCommand;
 import ru.ustits.colleague.commands.*;
 import ru.ustits.colleague.commands.repeats.*;
-import ru.ustits.colleague.commands.triggers.AddTriggerCommand;
-import ru.ustits.colleague.commands.triggers.DeleteTriggerCommand;
-import ru.ustits.colleague.commands.triggers.ListTriggersCommand;
-import ru.ustits.colleague.commands.triggers.TriggerParser;
+import ru.ustits.colleague.commands.triggers.*;
 import ru.ustits.colleague.repositories.*;
 import ru.ustits.colleague.repositories.records.RepeatRecord;
 import ru.ustits.colleague.repositories.records.TriggerRecord;
@@ -56,6 +53,7 @@ public class AppContext {
   private static final String ADMIN_REPEAT_WEEKENDS_COMMAND = ADMIN_PREFIX + "repeat_we";
   private static final String REPEAT_WEEKENDS_COMMAND = "repeat_we";
   private static final String STATS_COMMAND = "stats";
+  private static final String PROCESS_STATE_COMMAND = "trigger_state";
 
   @Autowired
   private Environment env;
@@ -142,7 +140,17 @@ public class AppContext {
                                     new ChatIdParser<>(
                                             new UserIdParser<>(
                                                     new TriggerParser(3, 2)))),
-                            3))
+                            3)),
+            admin(
+                    new NoWhitespaceCommand(
+                            new ArgsAwareCommand(
+                                    new ProcessStateCommand(
+                                            PROCESS_STATE_COMMAND,
+                                            "change trigger reaction",
+                                            bot),
+                                    1
+                            ))
+            )
     );
     return bot;
   }

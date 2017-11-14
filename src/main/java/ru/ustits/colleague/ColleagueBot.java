@@ -1,5 +1,6 @@
 package ru.ustits.colleague;
 
+import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.api.methods.PartialBotApiMethod;
@@ -17,6 +18,8 @@ import ru.ustits.colleague.repositories.UserRepository;
 import ru.ustits.colleague.repositories.records.*;
 import ru.ustits.colleague.repositories.services.RepeatService;
 import ru.ustits.colleague.tasks.RepeatScheduler;
+import ru.ustits.colleague.tools.AllTriggers;
+import ru.ustits.colleague.tools.ProcessingStrategy;
 import ru.ustits.colleague.tools.TriggerProcessor;
 
 import java.sql.Timestamp;
@@ -46,6 +49,9 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
   private String botName;
   @Autowired
   private String botToken;
+
+  @Setter
+  private ProcessingStrategy processingStrategy = new AllTriggers();
 
   public ColleagueBot(final String botUsername) {
     super(new DefaultBotOptions(), true, botUsername);
@@ -122,7 +128,7 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
     final String text = update.getMessage().getText();
     final Long chatId = update.getMessage().getChatId();
     final List<TriggerRecord> triggers = triggerRepository.fetchAll(chatId);
-    final TriggerProcessor processor = new TriggerProcessor(triggers);
+    final TriggerProcessor processor = new TriggerProcessor(triggers, processingStrategy);
     final List<SendMessage> messages = processor.process(text);
     for (final SendMessage message : messages) {
       sendMessage(update.getMessage().getChatId(), message);
