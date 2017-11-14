@@ -1,4 +1,4 @@
-package ru.ustits.colleague.tools;
+package ru.ustits.colleague.tools.triggers;
 
 import org.junit.Test;
 import org.telegram.telegrambots.api.methods.send.SendMessage;

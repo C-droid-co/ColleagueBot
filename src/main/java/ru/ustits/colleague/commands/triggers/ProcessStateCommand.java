@@ -8,7 +8,7 @@ import org.telegram.telegrambots.bots.AbsSender;
 import org.telegram.telegrambots.bots.commandbot.commands.BotCommand;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 import ru.ustits.colleague.ColleagueBot;
-import ru.ustits.colleague.tools.ProcessStates;
+import ru.ustits.colleague.tools.triggers.ProcessStates;
 
 /**
  * @author ustits

@@ -18,9 +18,9 @@ import ru.ustits.colleague.repositories.UserRepository;
 import ru.ustits.colleague.repositories.records.*;
 import ru.ustits.colleague.repositories.services.RepeatService;
 import ru.ustits.colleague.tasks.RepeatScheduler;
-import ru.ustits.colleague.tools.AllTriggers;
-import ru.ustits.colleague.tools.ProcessingStrategy;
-import ru.ustits.colleague.tools.TriggerProcessor;
+import ru.ustits.colleague.tools.triggers.AllTriggers;
+import ru.ustits.colleague.tools.triggers.ProcessingStrategy;
+import ru.ustits.colleague.tools.triggers.TriggerProcessor;
 
 import java.sql.Timestamp;
 import java.util.List;

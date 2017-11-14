@@ -7,7 +7,7 @@ import ru.ustits.colleague.ColleagueBot;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static ru.ustits.colleague.RandomUtils.string;
-import static ru.ustits.colleague.tools.ProcessStates.ALL;
+import static ru.ustits.colleague.tools.triggers.ProcessStates.ALL;
 
 /**
  * @author ustits

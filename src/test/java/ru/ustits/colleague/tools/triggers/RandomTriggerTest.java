@@ -1,4 +1,4 @@
-package ru.ustits.colleague.tools;
+package ru.ustits.colleague.tools.triggers;
 
 import org.junit.Before;
 import org.junit.Test;
