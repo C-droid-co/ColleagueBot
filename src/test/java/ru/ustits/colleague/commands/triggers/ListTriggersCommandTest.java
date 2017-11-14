@@ -5,8 +5,10 @@ import org.junit.Test;
 import ru.ustits.colleague.repositories.records.TriggerRecord;
 
 import java.util.Collections;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static ru.ustits.colleague.RandomUtils.*;
 
 /**
  * @author ustits
@@ -17,28 +19,29 @@ public class ListTriggersCommandTest {
 
   @Before
   public void setUp() throws Exception {
-    command = new ListTriggersCommand("random");
+    command = new ListTriggersCommand(string());
   }
 
   @Test
-  public void testRecordsToString() throws Exception {
-    final String trigger = "trigger";
-    final String message = "message";
-    final TriggerRecord record = new TriggerRecord(1,
-            trigger, message, 1L, 1L);
-    final String result = command.recordsToString(Collections.singletonList(record));
-    assertThat(result).isEqualTo(trigger + ": " + message + "\n");
+  public void testToMessages() throws Exception {
+    final String trigger = string();
+    final String message = string();
+    final TriggerRecord record = new TriggerRecord(anInt(),
+            trigger, message, aLong(), aLong());
+    final List<String> result = command.toMessages(Collections.singletonList(record));
+    assertThat(result).isNotEmpty();
   }
 
   @Test
-  public void testRecordsToStringWithEmptyList() throws Exception {
-    final String result = command.recordsToString(Collections.emptyList());
-    assertThat(result).isEqualTo(ListTriggersCommand.NO_TRIGGER_RESULT);
+  public void testToMessagesWithEmptyList() throws Exception {
+    final List<String> result = command.toMessages(Collections.emptyList());
+    assertThat(result).containsOnly(ListTriggersCommand.NO_TRIGGER_RESULT);
   }
 
   @Test
-  public void testRecordsToStringWithNullList() throws Exception {
-    final String result = command.recordsToString(null);
-    assertThat(result).isEqualTo(ListTriggersCommand.NO_TRIGGER_RESULT);
+  public void testToMessagesWithNullList() throws Exception {
+    final List<String> result = command.toMessages(null);
+    assertThat(result).containsOnly(ListTriggersCommand.NO_TRIGGER_RESULT);
   }
+
 }
