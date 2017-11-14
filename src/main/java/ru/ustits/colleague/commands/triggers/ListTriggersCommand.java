@@ -1,7 +1,6 @@
 package ru.ustits.colleague.commands.triggers;
 
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Chat;
 import org.telegram.telegrambots.api.objects.User;
@@ -24,11 +23,11 @@ public final class ListTriggersCommand extends BotCommand {
   static final String NO_TRIGGER_RESULT = "No triggers for current chat";
   private static final int MAX_MESSAGE_LENGTH = 4096;
 
-  @Autowired
-  private TriggerRepository repository;
+  private final TriggerRepository repository;
 
-  public ListTriggersCommand(final String commandIdentifier) {
+  public ListTriggersCommand(final String commandIdentifier, final TriggerRepository repository) {
     super(commandIdentifier, "list triggers");
+    this.repository = repository;
   }
 
   @Override

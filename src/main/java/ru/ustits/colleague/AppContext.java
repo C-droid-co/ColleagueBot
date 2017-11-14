@@ -173,9 +173,8 @@ public class AppContext {
     return new DailyParser(4, 1);
   }
 
-  @Bean
-  public ListTriggersCommand listTriggersCommand() {
-    return new ListTriggersCommand(TRIGGER_LIST_COMMAND);
+  private ListTriggersCommand listTriggersCommand() {
+    return new ListTriggersCommand(TRIGGER_LIST_COMMAND, triggerRepository());
   }
 
   @Bean

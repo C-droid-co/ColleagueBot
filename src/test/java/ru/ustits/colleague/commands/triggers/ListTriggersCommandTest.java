@@ -2,12 +2,14 @@ package ru.ustits.colleague.commands.triggers;
 
 import org.junit.Before;
 import org.junit.Test;
+import ru.ustits.colleague.repositories.TriggerRepository;
 import ru.ustits.colleague.repositories.records.TriggerRecord;
 
 import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 import static ru.ustits.colleague.RandomUtils.*;
 
 /**
@@ -19,7 +21,7 @@ public class ListTriggersCommandTest {
 
   @Before
   public void setUp() throws Exception {
-    command = new ListTriggersCommand(string());
+    command = new ListTriggersCommand(string(), mock(TriggerRepository.class));
   }
 
   @Test
