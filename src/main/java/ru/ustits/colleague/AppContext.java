@@ -54,6 +54,7 @@ public class AppContext {
   private static final String REPEAT_WEEKENDS_COMMAND = "repeat_we";
   private static final String STATS_COMMAND = "stats";
   private static final String PROCESS_STATE_COMMAND = "trigger_state";
+  private static final String LIST_PROCESS_STATE_COMMAND = "trigger_state_ls";
 
   @Autowired
   private Environment env;
@@ -150,7 +151,8 @@ public class AppContext {
                                             bot),
                                     1
                             ))
-            )
+            ),
+            new ListProcessStatesCommand(LIST_PROCESS_STATE_COMMAND, "list all trigger reactions")
     );
     return bot;
   }
