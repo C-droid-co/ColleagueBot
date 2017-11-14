@@ -1,6 +1,5 @@
-package ru.ustits.colleague.tools;
+package ru.ustits.colleague.tools.triggers;
 
-import lombok.RequiredArgsConstructor;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import ru.ustits.colleague.repositories.records.TriggerRecord;
 
@@ -12,16 +11,26 @@ import java.util.stream.Collectors;
 /**
  * @author ustits
  */
-@RequiredArgsConstructor
 public class TriggerProcessor {
 
   private final List<TriggerRecord> triggers;
+  private final ProcessingStrategy strategy;
+
+  public TriggerProcessor(final List<TriggerRecord> triggers) {
+    this(triggers, new AllTriggers());
+  }
+
+  public TriggerProcessor(final List<TriggerRecord> triggers, final ProcessingStrategy strategy) {
+    this.triggers = triggers;
+    this.strategy = strategy;
+  }
 
   public List<SendMessage> process(final String text) {
-    return triggers.stream().
-            filter(record -> hasTrigger(text, record.getTrigger())).
-            map(record -> createMessage(record.getMessage())).
-            collect(Collectors.toList());
+    return strategy.process(
+            triggers.stream().
+                    filter(record -> hasTrigger(text, record.getTrigger())).
+                    map(record -> createMessage(record.getMessage())).
+                    collect(Collectors.toList()));
   }
 
   boolean hasTrigger(final String text, final String trigger) {
