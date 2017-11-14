@@ -8,17 +8,13 @@ import org.telegram.telegrambots.bots.AbsSender;
 import org.telegram.telegrambots.bots.commandbot.commands.BotCommand;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 import ru.ustits.colleague.ColleagueBot;
-import ru.ustits.colleague.tools.AllTriggers;
-import ru.ustits.colleague.tools.RandomTrigger;
+import ru.ustits.colleague.tools.ProcessStates;
 
 /**
  * @author ustits
  */
 @Log4j2
 public final class ProcessStateCommand extends BotCommand {
-
-  private static final String ALL_STATE = "all";
-  private static final String RANDOM_STATE = "random";
 
   private final ColleagueBot bot;
 
@@ -44,13 +40,12 @@ public final class ProcessStateCommand extends BotCommand {
     }
   }
 
-  private boolean changeState(final String arg) {
-    if (arg.equals(ALL_STATE)) {
-      bot.setProcessingStrategy(new AllTriggers());
-      return true;
-    } else if (arg.equals(RANDOM_STATE)) {
-      bot.setProcessingStrategy(new RandomTrigger());
-      return true;
+  boolean changeState(final String arg) {
+    for (final ProcessStates state : ProcessStates.values()) {
+      if (arg.equals(state.getName())) {
+        bot.setProcessingStrategy(state.getStrategy());
+        return true;
+      }
     }
     return false;
   }
