@@ -11,7 +11,11 @@ import lombok.RequiredArgsConstructor;
 public enum ProcessStates {
 
   ALL(new AllTriggers(), "all"),
-  RANDOM(new RandomTrigger(), "random");
+  RANDOM(new RandomTrigger(), "random"),
+  NOTHING(new NoTriggers(), "nothing"),
+  FIRST(new FirstTrigger(), "first"),
+  LAST(new LastTrigger(), "last"),
+  PERIODIC(new PeriodicTrigger(), "periodic");
 
   private final ProcessingStrategy strategy;
   private final String name;
