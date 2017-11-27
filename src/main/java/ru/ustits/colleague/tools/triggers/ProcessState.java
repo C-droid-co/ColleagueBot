@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
  */
 @Getter
 @RequiredArgsConstructor
-public enum ProcessStates {
+public enum ProcessState {
 
   ALL(new AllTriggers(), "all"),
   RANDOM(new RandomTrigger(), "random"),

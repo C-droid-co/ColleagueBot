@@ -53,8 +53,9 @@ public class AppContext {
   private static final String ADMIN_REPEAT_WEEKENDS_COMMAND = ADMIN_PREFIX + "repeat_we";
   private static final String REPEAT_WEEKENDS_COMMAND = "repeat_we";
   private static final String STATS_COMMAND = "stats";
-  private static final String PROCESS_STATE_COMMAND = "trigger_state";
-  private static final String LIST_PROCESS_STATE_COMMAND = "trigger_state_ls";
+  private static final String PROCESS_STATE_COMMAND = "state_switch";
+  private static final String LIST_PROCESS_STATE_COMMAND = "state_ls";
+  private static final String SHOW_CURRENT_STATE_COMMAND = "state";
 
   @Autowired
   private Environment env;
@@ -152,7 +153,11 @@ public class AppContext {
                                     1
                             ))
             ),
-            new ListProcessStatesCommand(LIST_PROCESS_STATE_COMMAND, "list all trigger reactions")
+            new ListProcessStatesCommand(LIST_PROCESS_STATE_COMMAND, "list all trigger reactions"),
+            new ShowStateCommand(
+                    SHOW_CURRENT_STATE_COMMAND,
+                    "show current trigger reaction",
+                    bot)
     );
     return bot;
   }

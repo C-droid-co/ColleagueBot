@@ -14,12 +14,12 @@ import ru.ustits.colleague.tools.triggers.ProcessState;
  * @author ustits
  */
 @Log4j2
-public final class ProcessStateCommand extends BotCommand {
+public final class ShowStateCommand extends BotCommand {
 
   private final ColleagueBot bot;
 
-  public ProcessStateCommand(final String commandIdentifier, final String description,
-                             final ColleagueBot bot) {
+  public ShowStateCommand(final String commandIdentifier, final String description,
+                          final ColleagueBot bot) {
     super(commandIdentifier, description);
     this.bot = bot;
   }
@@ -27,26 +27,11 @@ public final class ProcessStateCommand extends BotCommand {
   @Override
   public void execute(final AbsSender absSender, final User user, final Chat chat,
                       final String[] arguments) {
-    final String mode = arguments[0];
+    final ProcessState state = bot.getProcessState();
     try {
-      if (changeState(mode)) {
-        log.info("Switched to trigger mode [{}]", mode);
-        absSender.execute(new SendMessage(chat.getId(), "Switched mode [" + mode + "]"));
-      } else {
-        absSender.execute(new SendMessage(chat.getId(), "Unknown mode [" + mode + "]"));
-      }
+      absSender.execute(new SendMessage(chat.getId(), "Current mode [" + state.getName() + "]"));
     } catch (TelegramApiException e) {
       log.error("Unable to send message", e);
     }
-  }
-
-  boolean changeState(final String arg) {
-    for (final ProcessState state : ProcessState.values()) {
-      if (arg.equals(state.getName())) {
-        bot.setProcessState(state);
-        return true;
-      }
-    }
-    return false;
   }
 }

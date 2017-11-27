@@ -1,5 +1,6 @@
 package ru.ustits.colleague;
 
+import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +19,7 @@ import ru.ustits.colleague.repositories.UserRepository;
 import ru.ustits.colleague.repositories.records.*;
 import ru.ustits.colleague.repositories.services.RepeatService;
 import ru.ustits.colleague.tasks.RepeatScheduler;
-import ru.ustits.colleague.tools.triggers.AllTriggers;
-import ru.ustits.colleague.tools.triggers.ProcessingStrategy;
+import ru.ustits.colleague.tools.triggers.ProcessState;
 import ru.ustits.colleague.tools.triggers.TriggerProcessor;
 
 import java.sql.Timestamp;
@@ -50,8 +50,9 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
   @Autowired
   private String botToken;
 
+  @Getter
   @Setter
-  private ProcessingStrategy processingStrategy = new AllTriggers();
+  private ProcessState processState = ProcessState.ALL;
 
   public ColleagueBot(final String botUsername) {
     super(new DefaultBotOptions(), true, botUsername);
@@ -128,7 +129,7 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
     final String text = update.getMessage().getText();
     final Long chatId = update.getMessage().getChatId();
     final List<TriggerRecord> triggers = triggerRepository.fetchAll(chatId);
-    final TriggerProcessor processor = new TriggerProcessor(triggers, processingStrategy);
+    final TriggerProcessor processor = new TriggerProcessor(triggers, processState.getStrategy());
     final List<SendMessage> messages = processor.process(text);
     for (final SendMessage message : messages) {
       sendMessage(update.getMessage().getChatId(), message);

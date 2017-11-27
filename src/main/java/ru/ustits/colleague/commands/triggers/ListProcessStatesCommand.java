@@ -7,7 +7,7 @@ import org.telegram.telegrambots.api.objects.User;
 import org.telegram.telegrambots.bots.AbsSender;
 import org.telegram.telegrambots.bots.commandbot.commands.BotCommand;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
-import ru.ustits.colleague.tools.triggers.ProcessStates;
+import ru.ustits.colleague.tools.triggers.ProcessState;
 
 /**
  * @author ustits
@@ -24,7 +24,7 @@ public final class ListProcessStatesCommand extends BotCommand {
                       final String[] arguments) {
     final StringBuilder builder = new StringBuilder();
     builder.append("*Available states:*");
-    for (final ProcessStates state : ProcessStates.values()) {
+    for (final ProcessState state : ProcessState.values()) {
       builder.append("\n").append("- ").append(state.getName());
     }
     try {
