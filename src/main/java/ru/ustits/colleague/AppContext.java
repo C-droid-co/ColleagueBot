@@ -19,6 +19,7 @@ import ru.ustits.colleague.commands.triggers.*;
 import ru.ustits.colleague.repositories.*;
 import ru.ustits.colleague.repositories.records.RepeatRecord;
 import ru.ustits.colleague.repositories.records.TriggerRecord;
+import ru.ustits.colleague.repositories.services.MessageService;
 import ru.ustits.colleague.repositories.services.RepeatService;
 import ru.ustits.colleague.tasks.RepeatScheduler;
 
@@ -162,7 +163,7 @@ public class AppContext {
     return bot;
   }
 
-  public BotCommand triggerCommand(final String command, final String description,
+  private BotCommand triggerCommand(final String command, final String description,
                                    final Parser<TriggerRecord> strategy) {
     return new NoWhitespaceCommand(
             new ArgsAwareCommand(
@@ -182,17 +183,15 @@ public class AppContext {
     return new ListTriggersCommand(TRIGGER_LIST_COMMAND, triggerRepository());
   }
 
-  @Bean
-  public HelpCommand helpCommand(final ColleagueBot bot) {
+  private HelpCommand helpCommand(final ColleagueBot bot) {
     return new HelpCommand(bot, HELP_COMMAND);
   }
 
-  @Bean
-  public StatsCommand statsCommand() {
-    return new StatsCommand(STATS_COMMAND);
+  private StatsCommand statsCommand() {
+    return new StatsCommand(STATS_COMMAND, messageService());
   }
 
-  public BotCommand repeatCommand(final String command, final String description,
+  private BotCommand repeatCommand(final String command, final String description,
                                   final Parser<RepeatRecord> strategy) throws SchedulerException {
     return new NoWhitespaceCommand(
             new ArgsAwareCommand(
@@ -240,6 +239,10 @@ public class AppContext {
   @Bean
   public RepeatService repeatService() {
     return new RepeatService(repeatRepository(), chatsRepository(), userRepository());
+  }
+
+  private MessageService messageService() {
+    return new MessageService(sql());
   }
 
   @Bean
