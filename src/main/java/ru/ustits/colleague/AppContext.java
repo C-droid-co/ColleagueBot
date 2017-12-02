@@ -58,6 +58,7 @@ public class AppContext {
   private static final String PROCESS_STATE_COMMAND = "state_switch";
   private static final String LIST_PROCESS_STATE_COMMAND = "state_ls";
   private static final String SHOW_CURRENT_STATE_COMMAND = "state";
+  private static final String CHANGE_TRIGGER_MESSAGE_LENGTH_CMD = ADMIN_PREFIX + "trigger_mes_len";
 
   @Autowired
   private Environment env;
@@ -162,7 +163,15 @@ public class AppContext {
             new ShowStateCommand(
                     SHOW_CURRENT_STATE_COMMAND,
                     "show current trigger reaction",
-                    bot)
+                    bot),
+            admin(
+                    new NoWhitespaceCommand(
+                            new ArgsAwareCommand(
+                                    new ChangeMessageLengthCmd(CHANGE_TRIGGER_MESSAGE_LENGTH_CMD, triggerConfig),
+                                    1
+                            )
+                    )
+            )
     );
     return bot;
   }

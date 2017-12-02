@@ -44,7 +44,7 @@ public final class AddTriggerCommand extends AbstractTriggerCommand {
       final int messageLimit = config.getMessageLength();
       log.info("Can't add {}: expecting message length to be {}", toAdd, messageLimit);
       answer.setText(
-              "Trigger's message length must be less or equals [" + messageLimit + "] symbols");
+              "Trigger's message length must be less or equal to [" + messageLimit + "] symbols");
     } else if (!getRepository().exists(toAdd)) {
       final TriggerRecord record = getRepository().add(toAdd);
       answer.setText(String.format("Trigger [%s] added", record.getTrigger()));
