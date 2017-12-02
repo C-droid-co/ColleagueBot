@@ -1,6 +1,5 @@
 package ru.ustits.colleague;
 
-import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.dbutils.QueryRunner;
 import org.postgresql.ds.PGSimpleDataSource;
@@ -64,9 +63,6 @@ public class AppContext {
 
   @Autowired
   private Environment env;
-
-  @Getter
-  private TriggerCmdConfig triggerConfig = new TriggerCmdConfig();
 
   @Bean
   public ColleagueBot bot() throws SchedulerException {
@@ -169,7 +165,7 @@ public class AppContext {
             admin(
                     new NoWhitespaceCommand(
                             new ArgsAwareCommand(
-                                    new ChangeMessageLengthCmd(CHANGE_TRIGGER_MESSAGE_LENGTH_CMD, triggerConfig),
+                                    new ChangeMessageLengthCmd(CHANGE_TRIGGER_MESSAGE_LENGTH_CMD, triggerCmdConfig()),
                                     1
                             )
                     )
@@ -182,7 +178,7 @@ public class AppContext {
                                    final Parser<TriggerRecord> strategy) {
     return new NoWhitespaceCommand(
             new ArgsAwareCommand(
-                    new AddTriggerCommand(command, description, triggerRepository(), strategy, triggerConfig),
+                    new AddTriggerCommand(command, description, triggerRepository(), strategy, triggerCmdConfig()),
                     strategy.parametersCount()));
   }
 
@@ -212,6 +208,13 @@ public class AppContext {
             new ArgsAwareCommand(
                     new RepeatCommand(command, description, strategy, scheduler(), repeatService()),
                     strategy.parametersCount()));
+  }
+
+  @Bean
+  public TriggerCmdConfig triggerCmdConfig() {
+    final TriggerCmdConfig config = new TriggerCmdConfig();
+    config.setMessageLength(defaultMessageLength());
+    return config;
   }
 
   @Bean
@@ -299,4 +302,11 @@ public class AppContext {
   public String botToken() {
     return env.getRequiredProperty("bot.token");
   }
+
+  @Bean
+  public Integer defaultMessageLength() {
+    final String raw = env.getProperty("bot.message_length");
+    return raw == null ? MAX_MESSAGE_LENGTH : Integer.parseInt(raw);
+  }
+
 }
