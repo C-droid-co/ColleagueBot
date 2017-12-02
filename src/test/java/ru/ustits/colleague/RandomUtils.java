@@ -27,7 +27,7 @@ public final class RandomUtils {
   }
 
   public static String[] valuesMoreThan(final int from) {
-    final int bound = anInt(RANDOM_BOUND);
+    final int bound = aPositiveInt(RANDOM_BOUND);
     final int finalSize = from + bound;
     final String[] values = new String[finalSize];
     for (int i = 0; i < from + bound; i++) {
@@ -37,7 +37,11 @@ public final class RandomUtils {
   }
 
   public static String string() {
-    return alphanumeric(RANDOM_BOUND);
+    return string(RANDOM_BOUND);
+  }
+
+  public static String string(final int length) {
+    return alphanumeric(length);
   }
 
   public static Long aLong() {
@@ -45,11 +49,11 @@ public final class RandomUtils {
   }
 
   public static Integer anInt() {
-    return positiveInteger();
+    return integer();
   }
 
   public static Integer anInt(final int bound) {
-    return positiveInteger() % bound;
+    return anInt() % bound;
   }
 
   public static Integer aPositiveInt(final int bound) {
@@ -57,6 +61,14 @@ public final class RandomUtils {
       return 1;
     }
     final int number = anInt(bound);
-    return number == 0 ? 1 : number;
+    if (number == 0) {
+      return 1;
+    }
+    return number < 0 ? -number : number;
   }
+
+  public static Integer aPositiveInt() {
+    return aPositiveInt(RANDOM_BOUND);
+  }
+
 }

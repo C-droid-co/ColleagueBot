@@ -15,13 +15,11 @@ import org.springframework.core.env.Environment;
 import org.telegram.telegrambots.bots.commandbot.commands.BotCommand;
 import ru.ustits.colleague.commands.*;
 import ru.ustits.colleague.commands.repeats.*;
-import ru.ustits.colleague.commands.triggers.AddTriggerCommand;
-import ru.ustits.colleague.commands.triggers.DeleteTriggerCommand;
-import ru.ustits.colleague.commands.triggers.ListTriggersCommand;
-import ru.ustits.colleague.commands.triggers.TriggerParser;
+import ru.ustits.colleague.commands.triggers.*;
 import ru.ustits.colleague.repositories.*;
 import ru.ustits.colleague.repositories.records.RepeatRecord;
 import ru.ustits.colleague.repositories.records.TriggerRecord;
+import ru.ustits.colleague.repositories.services.MessageService;
 import ru.ustits.colleague.repositories.services.RepeatService;
 import ru.ustits.colleague.tasks.RepeatScheduler;
 
@@ -38,6 +36,8 @@ import java.sql.SQLException;
 @ComponentScan
 @PropertySource("classpath:bot_config.properties")
 public class AppContext {
+
+  public static final int MAX_MESSAGE_LENGTH = 4096;
 
   private static final String ADMIN_PREFIX = "a_";
   private static final String ADD_TRIGGER_COMMAND = "trigger";
@@ -56,6 +56,11 @@ public class AppContext {
   private static final String ADMIN_REPEAT_WEEKENDS_COMMAND = ADMIN_PREFIX + "repeat_we";
   private static final String REPEAT_WEEKENDS_COMMAND = "repeat_we";
   private static final String STATS_COMMAND = "stats";
+  private static final String PROCESS_STATE_COMMAND = "state_switch";
+  private static final String LIST_PROCESS_STATE_COMMAND = "state_ls";
+  private static final String SHOW_CURRENT_STATE_COMMAND = "state";
+  private static final String CHANGE_TRIGGER_MESSAGE_LENGTH_CMD = ADMIN_PREFIX + "trigger_mes_len";
+  private static final String IGNORE_TRIGGERS_CMD = "ignore";
 
   @Autowired
   private Environment env;
@@ -142,16 +147,41 @@ public class AppContext {
                                     new ChatIdParser<>(
                                             new UserIdParser<>(
                                                     new TriggerParser(3, 2)))),
-                            3))
+                            3)),
+            admin(
+                    new NoWhitespaceCommand(
+                            new ArgsAwareCommand(
+                                    new ProcessStateCommand(
+                                            PROCESS_STATE_COMMAND,
+                                            "change trigger reaction",
+                                            bot),
+                                    1
+                            ))
+            ),
+            new ListProcessStatesCommand(LIST_PROCESS_STATE_COMMAND, "list all trigger reactions"),
+            new ShowStateCommand(
+                    SHOW_CURRENT_STATE_COMMAND,
+                    "show current trigger reaction",
+                    bot),
+            admin(
+                    new NoWhitespaceCommand(
+                            new ArgsAwareCommand(
+                                    new ChangeMessageLengthCmd(CHANGE_TRIGGER_MESSAGE_LENGTH_CMD, triggerCmdConfig()),
+                                    1
+                            )
+                    )
+            ),
+            new IgnoreTriggerCmd(IGNORE_TRIGGERS_CMD, ignoreTriggerRepository())
     );
     return bot;
   }
 
-  public BotCommand triggerCommand(final String command, final String description,
+  private BotCommand triggerCommand(final String command, final String description,
                                    final Parser<TriggerRecord> strategy) {
-    return new ArgsAwareCommand(
-            new AddTriggerCommand(command, description, triggerRepository(), strategy),
-            strategy.parametersCount());
+    return new NoWhitespaceCommand(
+            new ArgsAwareCommand(
+                    new AddTriggerCommand(command, description, triggerRepository(), strategy, triggerCmdConfig()),
+                    strategy.parametersCount()));
   }
 
   private AdminAwareCommand admin(final BotCommand command) {
@@ -162,26 +192,31 @@ public class AppContext {
     return new DailyParser(4, 1);
   }
 
-  @Bean
-  public ListTriggersCommand listTriggersCommand() {
-    return new ListTriggersCommand(TRIGGER_LIST_COMMAND);
+  private ListTriggersCommand listTriggersCommand() {
+    return new ListTriggersCommand(TRIGGER_LIST_COMMAND, triggerRepository());
   }
 
-  @Bean
-  public HelpCommand helpCommand(final ColleagueBot bot) {
+  private HelpCommand helpCommand(final ColleagueBot bot) {
     return new HelpCommand(bot, HELP_COMMAND);
   }
 
-  @Bean
-  public StatsCommand statsCommand() {
-    return new StatsCommand(STATS_COMMAND);
+  private StatsCommand statsCommand() {
+    return new StatsCommand(STATS_COMMAND, messageService());
   }
 
-  public BotCommand repeatCommand(final String command, final String description,
+  private BotCommand repeatCommand(final String command, final String description,
                                   final Parser<RepeatRecord> strategy) throws SchedulerException {
-    return new ArgsAwareCommand(
-            new RepeatCommand(command, description, strategy, scheduler(), repeatService()),
-            strategy.parametersCount());
+    return new NoWhitespaceCommand(
+            new ArgsAwareCommand(
+                    new RepeatCommand(command, description, strategy, scheduler(), repeatService()),
+                    strategy.parametersCount()));
+  }
+
+  @Bean
+  public TriggerCmdConfig triggerCmdConfig() {
+    final TriggerCmdConfig config = new TriggerCmdConfig();
+    config.setMessageLength(defaultMessageLength());
+    return config;
   }
 
   @Bean
@@ -226,6 +261,10 @@ public class AppContext {
     return new RepeatService(repeatRepository(), chatsRepository(), userRepository());
   }
 
+  private MessageService messageService() {
+    return new MessageService(sql());
+  }
+
   @Bean
   public MessageRepository messageRepository() {
     return new MessageRepository(sql());
@@ -252,6 +291,11 @@ public class AppContext {
   }
 
   @Bean
+  public IgnoreTriggerRepository ignoreTriggerRepository() {
+    return new IgnoreTriggerRepository(sql());
+  }
+
+  @Bean
   public Long adminId() {
     return Long.parseLong(env.getRequiredProperty("admin.id"));
   }
@@ -265,4 +309,11 @@ public class AppContext {
   public String botToken() {
     return env.getRequiredProperty("bot.token");
   }
+
+  @Bean
+  public Integer defaultMessageLength() {
+    final String raw = env.getProperty("bot.message_length");
+    return raw == null ? MAX_MESSAGE_LENGTH : Integer.parseInt(raw);
+  }
+
 }

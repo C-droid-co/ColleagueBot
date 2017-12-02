@@ -66,11 +66,28 @@ CREATE TABLE users (
     user_name text
 );
 
+CREATE TABLE ignore_triggers (
+    id integer NOT NULL,
+    chat_id bigint NOT NULL,
+    user_id bigint NOT NULL
+);
+
+CREATE SEQUENCE ignore_triggers_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE ignore_triggers_id_seq OWNED BY ignore_triggers.id;
+
 ALTER TABLE ONLY messages ALTER COLUMN id SET DEFAULT nextval('messages_id_seq'::regclass);
 
 ALTER TABLE ONLY repeats ALTER COLUMN id SET DEFAULT nextval('repeats_id_seq'::regclass);
 
 ALTER TABLE ONLY triggers ALTER COLUMN id SET DEFAULT nextval('triggers_id_seq'::regclass);
+
+ALTER TABLE ONLY ignore_triggers ALTER COLUMN id SET DEFAULT nextval('ignore_triggers_id_seq'::regclass);
 
 ALTER TABLE ONLY chats
     ADD CONSTRAINT chats_pkey PRIMARY KEY (id);
@@ -86,6 +103,15 @@ ALTER TABLE ONLY triggers
 
 ALTER TABLE ONLY users
     ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY ignore_triggers
+    ADD CONSTRAINT ignore_triggers_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY ignore_triggers
+    ADD CONSTRAINT ignore_triggers_chat_id_fkey FOREIGN KEY (chat_id) REFERENCES chats(id);
+
+ALTER TABLE ONLY ignore_triggers
+    ADD CONSTRAINT ignore_triggers_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id);
 
 ALTER TABLE ONLY messages
     ADD CONSTRAINT messages_chat_id_fkey FOREIGN KEY (chat_id) REFERENCES chats(id);

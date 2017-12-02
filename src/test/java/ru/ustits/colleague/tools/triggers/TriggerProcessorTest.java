@@ -1,4 +1,4 @@
-package ru.ustits.colleague.tools;
+package ru.ustits.colleague.tools.triggers;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -67,5 +67,13 @@ public class TriggerProcessorTest {
     final String text = "{";
     final String regexp = processor.prepareRegexp(text);
     assertThat(Pattern.compile(regexp)).isNotNull();
+  }
+
+  @Test
+  public void testRemoveQuotes() throws Exception {
+    final String quoted = "\\Qsome\\E";
+    assertThat(processor.removeQuotes(quoted))
+            .doesNotContain("\\Q")
+            .doesNotContain("\\E");
   }
 }
