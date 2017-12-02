@@ -37,6 +37,8 @@ import java.sql.SQLException;
 @PropertySource("classpath:bot_config.properties")
 public class AppContext {
 
+  public static final int MAX_MESSAGE_LENGTH = 4096;
+
   private static final String ADMIN_PREFIX = "a_";
   private static final String ADD_TRIGGER_COMMAND = "trigger";
   private static final String ADMIN_ADD_TRIGGER_COMMAND = ADMIN_PREFIX + ADD_TRIGGER_COMMAND;
@@ -57,6 +59,7 @@ public class AppContext {
   private static final String PROCESS_STATE_COMMAND = "state_switch";
   private static final String LIST_PROCESS_STATE_COMMAND = "state_ls";
   private static final String SHOW_CURRENT_STATE_COMMAND = "state";
+  private static final String CHANGE_TRIGGER_MESSAGE_LENGTH_CMD = ADMIN_PREFIX + "trigger_mes_len";
 
   @Autowired
   private Environment env;
@@ -158,7 +161,15 @@ public class AppContext {
             new ShowStateCommand(
                     SHOW_CURRENT_STATE_COMMAND,
                     "show current trigger reaction",
-                    bot)
+                    bot),
+            admin(
+                    new NoWhitespaceCommand(
+                            new ArgsAwareCommand(
+                                    new ChangeMessageLengthCmd(CHANGE_TRIGGER_MESSAGE_LENGTH_CMD, triggerCmdConfig()),
+                                    1
+                            )
+                    )
+            )
     );
     return bot;
   }
@@ -167,7 +178,7 @@ public class AppContext {
                                    final Parser<TriggerRecord> strategy) {
     return new NoWhitespaceCommand(
             new ArgsAwareCommand(
-                    new AddTriggerCommand(command, description, triggerRepository(), strategy),
+                    new AddTriggerCommand(command, description, triggerRepository(), strategy, triggerCmdConfig()),
                     strategy.parametersCount()));
   }
 
@@ -197,6 +208,13 @@ public class AppContext {
             new ArgsAwareCommand(
                     new RepeatCommand(command, description, strategy, scheduler(), repeatService()),
                     strategy.parametersCount()));
+  }
+
+  @Bean
+  public TriggerCmdConfig triggerCmdConfig() {
+    final TriggerCmdConfig config = new TriggerCmdConfig();
+    config.setMessageLength(defaultMessageLength());
+    return config;
   }
 
   @Bean
@@ -284,4 +302,11 @@ public class AppContext {
   public String botToken() {
     return env.getRequiredProperty("bot.token");
   }
+
+  @Bean
+  public Integer defaultMessageLength() {
+    final String raw = env.getProperty("bot.message_length");
+    return raw == null ? MAX_MESSAGE_LENGTH : Integer.parseInt(raw);
+  }
+
 }

@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static ru.ustits.colleague.AppContext.MAX_MESSAGE_LENGTH;
+
 /**
  * @author ustits
  */
@@ -21,7 +23,6 @@ import java.util.List;
 public final class ListTriggersCommand extends BotCommand {
 
   static final String NO_TRIGGER_RESULT = "No triggers for current chat";
-  private static final int MAX_MESSAGE_LENGTH = 4096;
 
   private final TriggerRepository repository;
 
