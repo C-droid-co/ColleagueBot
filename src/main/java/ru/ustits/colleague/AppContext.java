@@ -1,5 +1,6 @@
 package ru.ustits.colleague;
 
+import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.dbutils.QueryRunner;
 import org.postgresql.ds.PGSimpleDataSource;
@@ -60,6 +61,9 @@ public class AppContext {
 
   @Autowired
   private Environment env;
+
+  @Getter
+  private TriggerCmdConfig triggerConfig = new TriggerCmdConfig();
 
   @Bean
   public ColleagueBot bot() throws SchedulerException {
@@ -167,7 +171,7 @@ public class AppContext {
                                    final Parser<TriggerRecord> strategy) {
     return new NoWhitespaceCommand(
             new ArgsAwareCommand(
-                    new AddTriggerCommand(command, description, triggerRepository(), strategy),
+                    new AddTriggerCommand(command, description, triggerRepository(), strategy, triggerConfig),
                     strategy.parametersCount()));
   }
 

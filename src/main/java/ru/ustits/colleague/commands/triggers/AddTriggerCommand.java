@@ -16,9 +16,13 @@ import ru.ustits.colleague.repositories.records.TriggerRecord;
 @Log4j2
 public final class AddTriggerCommand extends AbstractTriggerCommand {
 
+  private final TriggerCmdConfig config;
+
   public AddTriggerCommand(final String commandIdentifier, final String description,
-                           final TriggerRepository repository, final Parser<TriggerRecord> parser) {
+                           final TriggerRepository repository, final Parser<TriggerRecord> parser,
+                           final TriggerCmdConfig config) {
     super(commandIdentifier, description, repository, parser);
+    this.config = config;
   }
 
   @Override
@@ -34,20 +38,28 @@ public final class AddTriggerCommand extends AbstractTriggerCommand {
   protected SendMessage createAnswer(final User user, final Chat chat, final String[] arguments) {
     final TriggerRecord toAdd = getParser().buildRecord(
             Integer.toUnsignedLong(user.getId()), chat.getId(), arguments);
-    final SendMessage answer;
-    if (toAdd == null) {
-      answer = new SendMessage().setText("Unable to add trigger");
+    log.info("Trying to add {}", toAdd);
+    final SendMessage answer = new SendMessage().setChatId(chat.getId());
+    if (isMessageTooLong(toAdd)) {
+      final int messageLimit = config.getMessageLength();
+      log.info("Can't add {}: expecting message length to be {}", toAdd, messageLimit);
+      answer.setText(
+              "Trigger's message length must be less or equals [" + messageLimit + "] symbols");
     } else if (!getRepository().exists(toAdd)) {
       final TriggerRecord record = getRepository().add(toAdd);
-      answer = new SendMessage().setText(String.format("Trigger [%s] added", record.getTrigger()));
+      answer.setText(String.format("Trigger [%s] added", record.getTrigger()));
     } else {
       if (getRepository().update(toAdd) <= 0) {
-        answer = new SendMessage().setText("Ooops, i couldn't update trigger");
+        answer.setText("Ooops, i couldn't update trigger");
       } else {
-        answer = new SendMessage().setText(String.format("Trigger [%s] was updated", toAdd.getTrigger()));
+        answer.setText(String.format("Trigger [%s] was updated", toAdd.getTrigger()));
       }
     }
-    return answer.setChatId(chat.getId());
+    return answer;
+  }
+
+  protected boolean isMessageTooLong(final TriggerRecord record) {
+    return record.getMessage().length() > config.getMessageLength();
   }
 
 }
