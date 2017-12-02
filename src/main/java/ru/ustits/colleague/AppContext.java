@@ -60,6 +60,7 @@ public class AppContext {
   private static final String LIST_PROCESS_STATE_COMMAND = "state_ls";
   private static final String SHOW_CURRENT_STATE_COMMAND = "state";
   private static final String CHANGE_TRIGGER_MESSAGE_LENGTH_CMD = ADMIN_PREFIX + "trigger_mes_len";
+  private static final String IGNORE_TRIGGERS_CMD = "ignore";
 
   @Autowired
   private Environment env;
@@ -169,7 +170,8 @@ public class AppContext {
                                     1
                             )
                     )
-            )
+            ),
+            new IgnoreTriggerCmd(IGNORE_TRIGGERS_CMD, ignoreTriggerRepository())
     );
     return bot;
   }
@@ -286,6 +288,11 @@ public class AppContext {
   @Bean
   public RepeatRepository repeatRepository() {
     return new RepeatRepository(sql());
+  }
+
+  @Bean
+  public IgnoreTriggerRepository ignoreTriggerRepository() {
+    return new IgnoreTriggerRepository(sql());
   }
 
   @Bean

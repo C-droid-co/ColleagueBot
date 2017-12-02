@@ -29,3 +29,6 @@ INSERT INTO repeats (message, chat_id, user_id, cron)
     VALUES ('message2', 1, 1, 'cron2');
 INSERT INTO repeats (message, chat_id, user_id, cron)
     VALUES ('message3', 1, 1, 'cron3');
+
+INSERT INTO ignore_triggers (chat_id, user_id)
+    VALUES (3, 3);
