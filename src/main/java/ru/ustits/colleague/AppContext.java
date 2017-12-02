@@ -38,6 +38,8 @@ import java.sql.SQLException;
 @PropertySource("classpath:bot_config.properties")
 public class AppContext {
 
+  public static final int MAX_MESSAGE_LENGTH = 4096;
+
   private static final String ADMIN_PREFIX = "a_";
   private static final String ADD_TRIGGER_COMMAND = "trigger";
   private static final String ADMIN_ADD_TRIGGER_COMMAND = ADMIN_PREFIX + ADD_TRIGGER_COMMAND;

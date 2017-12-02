@@ -1,6 +1,7 @@
 package ru.ustits.colleague.commands.triggers;
 
 import lombok.Data;
+import ru.ustits.colleague.AppContext;
 
 /**
  * @author ustits
@@ -8,6 +9,6 @@ import lombok.Data;
 @Data
 public final class TriggerCmdConfig {
 
-  private int messageLength = Integer.MAX_VALUE;
+  private int messageLength = AppContext.MAX_MESSAGE_LENGTH;
 
 }
