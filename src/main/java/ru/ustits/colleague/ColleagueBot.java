@@ -12,10 +12,7 @@ import org.telegram.telegrambots.api.objects.*;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.bots.commandbot.TelegramLongPollingCommandBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
-import ru.ustits.colleague.repositories.ChatsRepository;
-import ru.ustits.colleague.repositories.MessageRepository;
-import ru.ustits.colleague.repositories.TriggerRepository;
-import ru.ustits.colleague.repositories.UserRepository;
+import ru.ustits.colleague.repositories.*;
 import ru.ustits.colleague.repositories.records.*;
 import ru.ustits.colleague.repositories.services.RepeatService;
 import ru.ustits.colleague.tasks.RepeatScheduler;
@@ -44,6 +41,8 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
   @Autowired
   private RepeatService repeatService;
   @Autowired
+  private IgnoreTriggerRepository ignoreTriggerRepository;
+  @Autowired
   private RepeatScheduler scheduler;
   @Autowired
   private String botName;
@@ -71,7 +70,7 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
     } else if (hasMessage(update)) {
       addMessage(update);
       if (isMessage(update)) {
-        findTriggers(update);
+        findTriggers(update.getMessage());
       }
     }
   }
@@ -125,14 +124,21 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
     messageRepository.add(messageRecord);
   }
 
-  private void findTriggers(final Update update) {
-    final String text = update.getMessage().getText();
-    final Long chatId = update.getMessage().getChatId();
-    final List<TriggerRecord> triggers = triggerRepository.fetchAll(chatId);
-    final TriggerProcessor processor = new TriggerProcessor(triggers, processState.getStrategy());
-    final List<SendMessage> messages = processor.process(text);
-    for (final SendMessage message : messages) {
-      sendMessage(update.getMessage().getChatId(), message);
+  private void findTriggers(final Message message) {
+    final String text = message.getText();
+    final Long chatId = message.getChatId();
+    final Long userId = toUnsignedLong(message.getFrom().getId());
+    final IgnoreTriggerRecord ignoredUser = new IgnoreTriggerRecord(chatId, userId);
+    if (!ignoreTriggerRepository.exists(ignoredUser)) {
+      log.debug("Searching triggers for user [{}] and message [{}]", userId, text);
+      final List<TriggerRecord> triggers = triggerRepository.fetchAll(chatId);
+      final TriggerProcessor processor = new TriggerProcessor(triggers, processState.getStrategy());
+      final List<SendMessage> messages = processor.process(text);
+      for (final SendMessage msg : messages) {
+        sendMessage(chatId, msg);
+      }
+    } else {
+      log.debug("Ignoring triggers for user {}", userId);
     }
   }
 
