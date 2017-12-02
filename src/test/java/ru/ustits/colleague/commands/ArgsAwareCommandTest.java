@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static ru.ustits.colleague.RandomUtils.anInt;
+import static ru.ustits.colleague.RandomUtils.aPositiveInt;
 import static ru.ustits.colleague.RandomUtils.values;
 
 /**
@@ -19,7 +19,7 @@ public class ArgsAwareCommandTest {
 
   @Before
   public void setUp() throws Exception {
-    minArgs = anInt(MIN_ARGS_BOUND) + 1;
+    minArgs = aPositiveInt(MIN_ARGS_BOUND) + 1;
     command = new ArgsAwareCommand(new MockCommand(), minArgs);
   }
 
