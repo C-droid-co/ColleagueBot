@@ -37,7 +37,7 @@ public class RepeatCommandTest {
   public void setUp() throws Exception {
     MockitoAnnotations.initMocks(this);
     final RepeatService service = mock(RepeatService.class);
-    when(scheduler.scheduleTask(any(RepeatRecord.class), any(AbsSender.class))).thenReturn(true);
+    when(scheduler.scheduleTask(nullable(RepeatRecord.class), any(AbsSender.class))).thenReturn(true);
     when(service.addRepeat(anyString(), anyString(),
             any(Chat.class), any(User.class))).thenReturn(mockRecord());
     final RepeatParser strategy  = new PlainParser();
@@ -49,7 +49,7 @@ public class RepeatCommandTest {
   public void testScheduleTask() throws Exception {
     final boolean result = command.scheduleTask(GOOD_ARGS, chat, user, mock(AbsSender.class));
     assertThat(result).isTrue();
-    verify(scheduler).scheduleTask(any(RepeatRecord.class), any(AbsSender.class));
+    verify(scheduler).scheduleTask(nullable(RepeatRecord.class), any(AbsSender.class));
   }
 
   private RepeatRecord mockRecord() {
