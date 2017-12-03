@@ -5,6 +5,7 @@ import org.junit.Test;
 import ru.ustits.colleague.repositories.records.MockRecord;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -111,10 +112,34 @@ public class CachedRepositoryTest {
 
   @Test
   public void testFetchAllWithExistingCache() {
-    cachedRepository = withCache();
+    cachedRepository = withCacheAndTime(Integer.MAX_VALUE);
     assertThat(cachedRepository.getEntities()).isNotNull();
     assertThat(cachedRepository.fetchAll()).isNotNull();
     verify(innerRepository, never()).fetchAll();
+  }
+
+  @Test
+  public void testIsTimeToUpdate() {
+    cachedRepository = withCacheAndTime(0);
+    final long was = new Date().getTime();
+    final long become = new Date().getTime() + 1000;
+    assertThat(cachedRepository.isTimeToUpdate(was, become)).isTrue();
+  }
+
+  @Test
+  public void testIsTimeToUpdateBecauseWasNotPreviouslyInitialized() {
+    cachedRepository = noCache();
+    final long was = new Date().getTime() + 1000;
+    final long become = new Date().getTime();
+    assertThat(cachedRepository.isTimeToUpdate(was, become)).isTrue();
+  }
+
+  @Test
+  public void testIsNotTimeToUpdate() {
+    cachedRepository = withCacheAndTime(0);
+    final long was = new Date().getTime() + 1000;
+    final long become = new Date().getTime();
+    assertThat(cachedRepository.isTimeToUpdate(was, become)).isFalse();
   }
 
   private CachedRepository<MockRecord> noCache() {
@@ -127,6 +152,10 @@ public class CachedRepositoryTest {
 
   private CachedRepository<MockRecord> withCache(final MockRecord... records) {
     return new CachedRepository<>(innerRepository, new ArrayList<>(asList(records)));
+  }
+
+  private CachedRepository<MockRecord> withCacheAndTime(final long updateDelay) {
+    return new CachedRepository<>(innerRepository, new ArrayList<>(), updateDelay, new Date().getTime());
   }
 
 }
