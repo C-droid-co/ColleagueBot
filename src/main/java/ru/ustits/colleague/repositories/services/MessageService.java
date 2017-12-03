@@ -19,9 +19,9 @@ public final class MessageService {
   private final QueryRunner sql;
   private final MessageRepository messageRepository;
 
-  public Map<String, Long> count(final Long chatId, final boolean isEdited) {
+  public Map<String, Integer> count(final Long chatId, final boolean isEdited) {
     try {
-      final Map<String, Long> counts = new LinkedHashMap<>();
+      final Map<String, Integer> counts = new LinkedHashMap<>();
       return sql.query("SELECT users.first_name, count(*) as messages_count " +
                       "FROM messages " +
                       "INNER JOIN users ON (messages.user_id = users.id) " +
@@ -31,7 +31,7 @@ public final class MessageService {
               resultSet -> {
                 while (resultSet.next()) {
                   final String name = resultSet.getString(1);
-                  final long count = resultSet.getLong(2);
+                  final int count = resultSet.getInt(2);
                   counts.put(name, count);
                 }
                 log.info("Fetched: {}", counts);

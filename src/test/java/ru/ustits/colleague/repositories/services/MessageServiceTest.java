@@ -27,9 +27,9 @@ public class MessageServiceTest extends RepositoryTest {
   }
 
   @Test
-  public void testCount() throws Exception {
-    final Map<String, Long> result = service.count(1L, false);
-    assertThat(result).containsOnlyKeys("name1", "name2", "name3").containsValues(1L);
+  public void testCount() {
+    final Map<String, Integer> result = service.count(1L, false);
+    assertThat(result).containsOnlyKeys("name1", "name2", "name3").containsValues(1);
   }
 
   @Test
