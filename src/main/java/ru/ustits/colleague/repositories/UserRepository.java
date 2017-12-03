@@ -57,7 +57,7 @@ public class UserRepository extends AbstractRepository<UserRecord> {
   }
 
   @Override
-  protected UserRecord toRecord(final ResultSet resultSet) throws SQLException {
+  public UserRecord toRecord(final ResultSet resultSet) throws SQLException {
     final Long id = resultSet.getLong(1);
     final String firstName = resultSet.getString(2);
     final String lastName = resultSet.getString(3);

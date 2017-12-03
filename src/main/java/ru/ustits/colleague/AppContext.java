@@ -262,7 +262,7 @@ public class AppContext {
   }
 
   private MessageService messageService() {
-    return new MessageService(sql());
+    return new MessageService(sql(), messageRepository());
   }
 
   @Bean
