@@ -75,6 +75,11 @@ public abstract class AbstractRepository<T> implements Repository<T> {
     }
   }
 
+  @Override
+  public List<T> fetchAll() {
+    throw new UnsupportedOperationException();
+  }
+
   public abstract T toRecord(final ResultSet resultSet) throws SQLException;
 
   protected abstract T innerAdd(final T entity) throws SQLException;

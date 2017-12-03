@@ -39,6 +39,7 @@ public class StopWordRepository extends AbstractRepository<StopWordRecord> {
     throw new UnsupportedOperationException();
   }
 
+  @Override
   public List<StopWordRecord> fetchAll() {
     try {
       return sql().query("SELECT * FROM stopwords",

@@ -1,5 +1,7 @@
 package ru.ustits.colleague.repositories;
 
+import java.util.List;
+
 /**
  * @author ustits
  */
@@ -14,4 +16,7 @@ public interface Repository<T> {
   int update(final T entity);
 
   void delete(final T entity);
+
+  List<T> fetchAll();
+
 }

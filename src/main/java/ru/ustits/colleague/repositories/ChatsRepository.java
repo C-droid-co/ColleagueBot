@@ -44,6 +44,7 @@ public class ChatsRepository extends AbstractRepository<ChatRecord> {
             record.getTitle());
   }
 
+  @Override
   public List<ChatRecord> fetchAll() {
     try {
       return sql().query("SELECT * FROM chats",
