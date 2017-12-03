@@ -32,3 +32,7 @@ INSERT INTO repeats (message, chat_id, user_id, cron)
 
 INSERT INTO ignore_triggers (chat_id, user_id)
     VALUES (3, 3);
+
+INSERT INTO stopwords (word) VALUES ('stop_word1');
+INSERT INTO stopwords (word) VALUES ('stop_word2');
+INSERT INTO stopwords (word) VALUES ('stop_word3');
