@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
@@ -24,6 +25,15 @@ public class SimpleAnalysisTest {
   @Before
   public void setUp() throws Exception {
     analysis = new SimpleAnalysis(TEST_STATS_LEN);
+  }
+
+  @Test
+  public void testMostCommonWithStopWords() {
+    final String stopWord = string();
+    final List<String> words = asList(stopWord, stopWord, string());
+    final List<String> stopWords = singletonList(stopWord);
+    final Map<String, Integer> stats = analysis.mostCommonWords(words, stopWords);
+    assertThat(stats).hasSize(1);
   }
 
   @Test

@@ -48,6 +48,16 @@ public final class SimpleAnalysis {
     this(DEFAULT_STATS_LEN);
   }
 
+  public Map<String, Integer> mostCommonWords(final List<String> tokens, final List<String> stopWords) {
+    final List<String> raw = new ArrayList<>(tokens);
+    tokens.forEach(s -> {
+      if (stopWords.contains(s)) {
+        raw.remove(s);
+      }
+    });
+    return mostCommonWords(raw);
+  }
+
   public Map<String, Integer> mostCommonWords(final List<String> tokens) {
     log.info("Searching common words in {} tokens", tokens.size());
     List<String> raw = applyFilters(tokens, messageFilters);
