@@ -1,5 +1,7 @@
 package ru.ustits.colleague.analysis.filters;
 
+import ru.ustits.colleague.tools.StringUtils;
+
 import java.util.function.Predicate;
 
 /**
@@ -9,7 +11,7 @@ public final class EmptyFilter implements Predicate<String> {
 
   @Override
   public boolean test(final String s) {
-    return !s.equals("");
+    return !s.equals(StringUtils.EMPTY);
   }
 
 }
