@@ -8,25 +8,23 @@ import java.util.List;
 /**
  * @author ustits
  */
-public final class CachedRepository<T> implements Repository<T> {
-
-  private final Repository<T> innerRepository;
+public final class CachedRepository<T> extends RepositoryWrapper<T> {
 
   @Getter(AccessLevel.PROTECTED)
   private List<T> entities;
 
   public CachedRepository(final Repository<T> innerRepository) {
-    this.innerRepository = innerRepository;
+    super(innerRepository);
   }
 
   protected CachedRepository(final Repository<T> innerRepository, final List<T> entities) {
-    this.innerRepository = innerRepository;
+    this(innerRepository);
     this.entities = entities;
   }
 
   @Override
   public T add(final T entity) {
-    final T dbRecord = innerRepository.add(entity);
+    final T dbRecord = super.add(entity);
     if (dbRecord != null && entities != null) {
       entities.add(dbRecord);
     }
@@ -38,13 +36,13 @@ public final class CachedRepository<T> implements Repository<T> {
     if (entities != null) {
       return entities.contains(entity);
     } else {
-      return innerRepository.exists(entity);
+      return super.exists(entity);
     }
   }
 
   @Override
   public T fetchOne(final T entity) {
-    final T dbEntity = innerRepository.fetchOne(entity);
+    final T dbEntity = super.fetchOne(entity);
     if (entities != null && !entities.contains(dbEntity)) {
       entities.add(dbEntity);
     }
@@ -52,13 +50,8 @@ public final class CachedRepository<T> implements Repository<T> {
   }
 
   @Override
-  public int update(final T entity) {
-    return innerRepository.update(entity);
-  }
-
-  @Override
   public void delete(final T entity) {
-    innerRepository.delete(entity);
+    super.delete(entity);
     if (entities != null) {
       entities.remove(entity);
     }
@@ -67,7 +60,7 @@ public final class CachedRepository<T> implements Repository<T> {
   @Override
   public List<T> fetchAll() {
     if (entities == null) {
-      entities = innerRepository.fetchAll();
+      entities = super.fetchAll();
     }
     return entities;
   }
