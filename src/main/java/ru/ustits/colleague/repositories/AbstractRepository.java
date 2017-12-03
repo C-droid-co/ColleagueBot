@@ -75,6 +75,8 @@ public abstract class AbstractRepository<T> implements Repository<T> {
     }
   }
 
+  public abstract T toRecord(final ResultSet resultSet) throws SQLException;
+
   protected abstract T innerAdd(final T entity) throws SQLException;
 
   protected abstract T innerFetchOne(final T entity) throws SQLException;
@@ -82,8 +84,6 @@ public abstract class AbstractRepository<T> implements Repository<T> {
   protected abstract int innerUpdate(final T entity) throws SQLException;
 
   protected abstract void innerDelete(final T entity) throws SQLException;
-
-  protected abstract T toRecord(final ResultSet resultSet) throws SQLException;
 
   protected final T addRecord(final ResultSet resultSet) throws SQLException {
     resultSet.next();

@@ -55,7 +55,7 @@ public class ChatsRepository extends AbstractRepository<ChatRecord> {
   }
 
   @Override
-  protected ChatRecord toRecord(final ResultSet resultSet) throws SQLException {
+  public ChatRecord toRecord(final ResultSet resultSet) throws SQLException {
     final Long id = resultSet.getLong(1);
     final String title = resultSet.getString(3);
     return new ChatRecord(id, null, title);

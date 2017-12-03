@@ -15,6 +15,7 @@ import org.springframework.core.env.Environment;
 import org.telegram.telegrambots.bots.commandbot.commands.BotCommand;
 import ru.ustits.colleague.commands.*;
 import ru.ustits.colleague.commands.repeats.*;
+import ru.ustits.colleague.commands.stats.WordStatsCmd;
 import ru.ustits.colleague.commands.triggers.*;
 import ru.ustits.colleague.repositories.*;
 import ru.ustits.colleague.repositories.records.RepeatRecord;
@@ -56,6 +57,7 @@ public class AppContext {
   private static final String ADMIN_REPEAT_WEEKENDS_COMMAND = ADMIN_PREFIX + "repeat_we";
   private static final String REPEAT_WEEKENDS_COMMAND = "repeat_we";
   private static final String STATS_COMMAND = "stats";
+  private static final String WORD_STATS_CMD = "word_stats";
   private static final String PROCESS_STATE_COMMAND = "state_switch";
   private static final String LIST_PROCESS_STATE_COMMAND = "state_ls";
   private static final String SHOW_CURRENT_STATE_COMMAND = "state";
@@ -122,6 +124,7 @@ public class AppContext {
                                             adminDailyParser())))),
             listTriggersCommand(),
             statsCommand(),
+            wordStatsCommand(),
             new ArgsAwareCommand(
                     new DeleteTriggerCommand(
                             DELETE_TRIGGER_COMMAND,
@@ -204,6 +207,10 @@ public class AppContext {
     return new StatsCommand(STATS_COMMAND, messageService());
   }
 
+  private WordStatsCmd wordStatsCommand() {
+    return new WordStatsCmd(WORD_STATS_CMD, messageService());
+  }
+
   private BotCommand repeatCommand(final String command, final String description,
                                   final Parser<RepeatRecord> strategy) throws SchedulerException {
     return new NoWhitespaceCommand(
@@ -262,7 +269,7 @@ public class AppContext {
   }
 
   private MessageService messageService() {
-    return new MessageService(sql());
+    return new MessageService(sql(), messageRepository());
   }
 
   @Bean

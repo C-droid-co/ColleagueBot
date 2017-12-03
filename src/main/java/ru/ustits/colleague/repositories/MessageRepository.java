@@ -56,7 +56,7 @@ public class MessageRepository extends AbstractRepository<MessageRecord> {
   }
 
   @Override
-  protected MessageRecord toRecord(final ResultSet resultSet) throws SQLException {
+  public MessageRecord toRecord(final ResultSet resultSet) throws SQLException {
     final Integer id = resultSet.getInt(1);
     final Long messageId = resultSet.getLong(2);
     final Timestamp date = resultSet.getTimestamp(3);

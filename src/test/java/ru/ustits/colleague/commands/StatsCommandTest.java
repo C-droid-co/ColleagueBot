@@ -3,6 +3,7 @@ package ru.ustits.colleague.commands;
 import org.apache.commons.dbutils.QueryRunner;
 import org.junit.Before;
 import org.junit.Test;
+import ru.ustits.colleague.repositories.MessageRepository;
 import ru.ustits.colleague.repositories.services.MessageService;
 
 import java.util.Collections;
@@ -24,16 +25,16 @@ public class StatsCommandTest {
   @Before
   public void setUp() throws Exception {
     command = new StatsCommand("random",
-            new MessageService(mock(QueryRunner.class)));
+            new MessageService(mock(QueryRunner.class), mock(MessageRepository.class)));
   }
 
   @Test
   public void testBuildText() throws Exception {
-    final Map<String, Long> stats = new HashMap<>();
+    final Map<String, Integer> stats = new HashMap<>();
     final String firstUser = "Vanya";
-    final Long firstCount = 10L;
+    final Integer firstCount = 10;
     final String secondUser = "Petya";
-    final Long secondCount = 20L;
+    final Integer secondCount = 20;
     stats.put(firstUser, firstCount);
     stats.put(secondUser, secondCount);
     final String result = command.buildText(stats);

@@ -53,7 +53,7 @@ public class RepeatRepository extends AbstractRepository<RepeatRecord> {
   }
 
   @Override
-  protected RepeatRecord toRecord(final ResultSet resultSet) throws SQLException {
+  public RepeatRecord toRecord(final ResultSet resultSet) throws SQLException {
     final Integer id = resultSet.getInt(1);
     final String message = resultSet.getString(2);
     final Long chatId = resultSet.getLong(3);

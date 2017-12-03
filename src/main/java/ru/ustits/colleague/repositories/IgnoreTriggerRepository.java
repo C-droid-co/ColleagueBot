@@ -41,7 +41,7 @@ public class IgnoreTriggerRepository extends AbstractRepository<IgnoreTriggerRec
   }
 
   @Override
-  protected IgnoreTriggerRecord toRecord(final ResultSet resultSet) throws SQLException {
+  public IgnoreTriggerRecord toRecord(final ResultSet resultSet) throws SQLException {
     final Integer id = resultSet.getInt(1);
     final Long chatId = resultSet.getLong(2);
     final Long userId = resultSet.getLong(3);

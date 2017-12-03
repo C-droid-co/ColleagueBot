@@ -58,7 +58,7 @@ public class TriggerRepository extends AbstractRepository<TriggerRecord> {
   }
 
   @Override
-  protected TriggerRecord toRecord(final ResultSet resultSet) throws SQLException {
+  public TriggerRecord toRecord(final ResultSet resultSet) throws SQLException {
     final Integer id = resultSet.getInt(1);
     final String trigger = resultSet.getString(2);
     final String message = resultSet.getString(3);

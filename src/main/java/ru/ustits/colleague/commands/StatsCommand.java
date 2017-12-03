@@ -1,5 +1,7 @@
 package ru.ustits.colleague.commands;
 
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -15,8 +17,9 @@ import java.util.Map;
 /**
  * @author ustits
  */
+@Getter(AccessLevel.PROTECTED)
 @Log4j2
-public final class StatsCommand extends BotCommand {
+public class StatsCommand extends BotCommand {
 
   static final String NO_STAT_MESSAGE = "No statistic yet";
 
@@ -29,18 +32,22 @@ public final class StatsCommand extends BotCommand {
 
   @Override
   public void execute(final AbsSender absSender, final User user, final Chat chat, final String[] arguments) {
-    final Map<String, Long> stats = service.count(chat.getId(), false);
+    final Map<String, Integer> stats = service.count(chat.getId(), false);
+    sendStats(stats, chat.getId(), absSender);
+  }
+
+  protected final void sendStats(final Map<String, Integer> stats, final Long chatId, final AbsSender sender) {
     final String text = String.format("%s%n%s", "*Chat stats:*", buildText(stats));
-    final SendMessage message = new SendMessage(chat.getId(), text);
+    final SendMessage message = new SendMessage(chatId, text);
     message.enableMarkdown(true);
     try {
-      absSender.execute(message);
+      sender.execute(message);
     } catch (TelegramApiException e) {
       log.error("Unable to send stats", e);
     }
   }
 
-  String buildText(@NonNull final Map<String, Long> stats) {
+  final String buildText(@NonNull final Map<String, Integer> stats) {
     if (stats.isEmpty()) {
       return NO_STAT_MESSAGE;
     }
