@@ -9,7 +9,7 @@ import lombok.ToString;
  */
 @Getter
 @ToString
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = "id")
 public final class StopWordRecord {
 
   private Integer id;
