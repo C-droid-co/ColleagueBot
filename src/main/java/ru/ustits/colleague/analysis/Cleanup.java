@@ -40,13 +40,14 @@ public final class Cleanup {
   }
 
   public List<String> clean(final List<String> tokens, final List<String> stopWords) {
-    final List<String> cleaned = new ArrayList<>(clean(tokens));
-    tokens.forEach(s -> {
+    final List<String> cleaned = clean(tokens);
+    final List<String> noStopWords = new ArrayList<>(cleaned);
+    cleaned.forEach(s -> {
       if (stopWords.contains(s)) {
-        cleaned.remove(s);
+        noStopWords.remove(s);
       }
     });
-    return cleaned;
+    return noStopWords;
   }
 
   public List<String> clean(final List<String> tokens) {
