@@ -9,7 +9,7 @@ public final class ReplaceSymbols implements Function<String, String> {
 
   @Override
   public String apply(final String s) {
-    return s.replaceAll("\\p{P}", "");
+    return s.replaceAll("[\\p{P}\\p{S}]", "");
   }
 
 }

@@ -11,10 +11,18 @@ import static ru.ustits.colleague.RandomUtils.string;
 public class ReplaceSymbolsTest {
 
   @Test
-  public void testApply() {
+  public void testFilterSpecialSymbols() {
     final ReplaceSymbols mapper = new ReplaceSymbols();
     final String expected = string();
     final String text = "\\\"" + expected + "\"";
+    assertThat(mapper.apply(text)).isEqualTo(expected);
+  }
+
+  @Test
+  public void testFilterArithmeticSymbols() {
+    final ReplaceSymbols mapper = new ReplaceSymbols();
+    final String expected = string();
+    final String text = "==+" + expected + "-";
     assertThat(mapper.apply(text)).isEqualTo(expected);
   }
 
