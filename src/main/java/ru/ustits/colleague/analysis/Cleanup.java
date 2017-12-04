@@ -5,6 +5,7 @@ import ru.ustits.colleague.analysis.filters.EmptyFilter;
 import ru.ustits.colleague.analysis.filters.TwitterFilter;
 import ru.ustits.colleague.analysis.mappers.ReplaceSymbols;
 import ru.ustits.colleague.analysis.mappers.ToLowerCase;
+import ru.ustits.colleague.analysis.mappers.WhitespaceMapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +36,7 @@ public final class Cleanup {
 
   public Cleanup() {
     this(asList(new EmptyFilter(), new TwitterFilter()),
-            asList(new ToLowerCase(), new ReplaceSymbols()),
+            asList(new ToLowerCase(), new ReplaceSymbols(), new WhitespaceMapper()),
             singletonList(new EmptyFilter()));
   }
 

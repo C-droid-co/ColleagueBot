@@ -9,6 +9,9 @@ public final class StringUtils {
 
   public static final String ZERO = "0";
   public static final String EMPTY = "";
+  public static final String CR = "\r";
+  public static final String LF = "\n";
+  public static final String TAB = "\t";
   private static final String SPACE = " ";
 
   private StringUtils() {
