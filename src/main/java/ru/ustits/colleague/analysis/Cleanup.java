@@ -2,7 +2,6 @@ package ru.ustits.colleague.analysis;
 
 import lombok.extern.log4j.Log4j2;
 import ru.ustits.colleague.analysis.filters.EmptyFilter;
-import ru.ustits.colleague.analysis.filters.TwitterFilter;
 import ru.ustits.colleague.analysis.mappers.ReplaceSymbols;
 import ru.ustits.colleague.analysis.mappers.ToLowerCase;
 import ru.ustits.colleague.analysis.mappers.WhitespaceMapper;
@@ -14,6 +13,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 
 /**
@@ -35,7 +35,7 @@ public final class Cleanup {
   }
 
   public Cleanup() {
-    this(asList(new EmptyFilter(), new TwitterFilter()),
+    this(emptyList(),
             asList(new ToLowerCase(), new ReplaceSymbols(), new WhitespaceMapper()),
             singletonList(new EmptyFilter()));
   }
