@@ -15,6 +15,7 @@ import org.springframework.core.env.Environment;
 import org.telegram.telegrambots.bots.commandbot.commands.BotCommand;
 import ru.ustits.colleague.commands.*;
 import ru.ustits.colleague.commands.repeats.*;
+import ru.ustits.colleague.commands.stats.StatsCommand;
 import ru.ustits.colleague.commands.stats.WordStatsCmd;
 import ru.ustits.colleague.commands.triggers.*;
 import ru.ustits.colleague.repositories.*;

@@ -6,7 +6,6 @@ import org.telegram.telegrambots.api.objects.User;
 import org.telegram.telegrambots.bots.AbsSender;
 import ru.ustits.colleague.analysis.SimpleAnalysis;
 import ru.ustits.colleague.analysis.SimpleTokenizer;
-import ru.ustits.colleague.commands.StatsCommand;
 import ru.ustits.colleague.repositories.Repository;
 import ru.ustits.colleague.repositories.records.MessageRecord;
 import ru.ustits.colleague.repositories.records.StopWordRecord;

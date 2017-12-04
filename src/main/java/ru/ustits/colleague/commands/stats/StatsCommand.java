@@ -1,4 +1,4 @@
-package ru.ustits.colleague.commands;
+package ru.ustits.colleague.commands.stats;
 
 import lombok.AccessLevel;
 import lombok.Getter;
