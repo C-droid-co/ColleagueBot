@@ -16,6 +16,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.lang.Integer.toUnsignedLong;
+import static ru.ustits.colleague.tools.MapUtils.limit;
+import static ru.ustits.colleague.tools.MapUtils.sortByValue;
 
 /**
  * @author ustits
@@ -23,14 +25,23 @@ import static java.lang.Integer.toUnsignedLong;
 @Log4j2
 public final class WordStatsCmd extends StatsCommand {
 
+  private static final int DEFAULT_STATS_LEN = 10;
+
   private final SimpleTokenizer tokenizer = new SimpleTokenizer();
   private final SimpleAnalysis analysis = new SimpleAnalysis();
   private final Repository<StopWordRecord> stopWordRepository;
+  private final int statsLength;
 
   public WordStatsCmd(final String commandIdentifier, final MessageService service,
                       final Repository<StopWordRecord> stopWordRepository) {
+    this(commandIdentifier, service, stopWordRepository, DEFAULT_STATS_LEN);
+  }
+
+  public WordStatsCmd(final String commandIdentifier, final MessageService service,
+                      final Repository<StopWordRecord> stopWordRepository, final int statsLength) {
     super(commandIdentifier, service);
     this.stopWordRepository = stopWordRepository;
+    this.statsLength = statsLength;
   }
 
   @Override
@@ -52,7 +63,7 @@ public final class WordStatsCmd extends StatsCommand {
               .collect(Collectors.toList());
       stats = analysis.mostCommonWords(tokens, stopWords);
     }
-    sendStats(stats, chatId, absSender);
+    sendStats(limit(sortByValue(stats), statsLength), chatId, absSender);
   }
 
 }

@@ -21,16 +21,17 @@ public class SimpleAnalysisTest {
 
   @Before
   public void setUp() throws Exception {
-    analysis = new SimpleAnalysis(3);
+    analysis = new SimpleAnalysis(emptyList(), emptyList(), emptyList());
   }
 
   @Test
   public void testMostCommonWithStopWords() {
     final String stopWord = string();
-    final List<String> words = asList(stopWord, stopWord, string());
+    final String notStopWord = string();
+    final List<String> words = asList(stopWord, stopWord, notStopWord);
     final List<String> stopWords = singletonList(stopWord);
     final Map<String, Integer> stats = analysis.mostCommonWords(words, stopWords);
-    assertThat(stats).hasSize(1);
+    assertThat(stats).hasSize(1).containsEntry(notStopWord, 1);
   }
 
   @Test

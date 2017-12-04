@@ -5,9 +5,7 @@ import ru.ustits.colleague.analysis.filters.EmptyFilter;
 import ru.ustits.colleague.analysis.filters.TwitterFilter;
 import ru.ustits.colleague.analysis.mappers.ReplaceSymbols;
 import ru.ustits.colleague.analysis.mappers.ToLowerCase;
-import ru.ustits.colleague.tools.MapUtils;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,42 +22,32 @@ import static java.util.Collections.singletonList;
 @Log4j2
 public final class SimpleAnalysis {
 
-  private static final int DEFAULT_STATS_LEN = 10;
-
   private final List<Predicate<String>> messageFilters;
   private final List<Function<String, String>> mappers;
   private final List<Predicate<String>> wordFilters;
-  private final int statsLength;
 
   public SimpleAnalysis(final List<Predicate<String>> messageFilters,
                         final List<Function<String, String>> mappers,
-                        final List<Predicate<String>> wordFilters,
-                        final int statsLength) {
+                        final List<Predicate<String>> wordFilters) {
     this.messageFilters = messageFilters;
     this.mappers = mappers;
     this.wordFilters = wordFilters;
-    this.statsLength = statsLength;
-  }
-
-  public SimpleAnalysis(final int statsLength) {
-    this(asList(new EmptyFilter(), new TwitterFilter()),
-            asList(new ToLowerCase(), new ReplaceSymbols()),
-            singletonList(new EmptyFilter()),
-            statsLength);
   }
 
   public SimpleAnalysis() {
-    this(DEFAULT_STATS_LEN);
+    this(asList(new EmptyFilter(), new TwitterFilter()),
+            asList(new ToLowerCase(), new ReplaceSymbols()),
+            singletonList(new EmptyFilter()));
   }
 
   public Map<String, Integer> mostCommonWords(final List<String> tokens, final List<String> stopWords) {
-    final List<String> raw = new ArrayList<>(tokens);
+    final Map<String, Integer> raw = mostCommonWords(tokens);
     tokens.forEach(s -> {
       if (stopWords.contains(s)) {
         raw.remove(s);
       }
     });
-    return mostCommonWords(raw);
+    return raw;
   }
 
   public Map<String, Integer> mostCommonWords(final List<String> tokens) {
@@ -69,7 +57,7 @@ public final class SimpleAnalysis {
     raw = applyFilters(raw, wordFilters);
     final Map<String, Integer> stats = count(raw);
     log.info("Mapped unique {} tokens", stats.size());
-    return MapUtils.limit(MapUtils.sortByValue(stats), statsLength);
+    return stats;
   }
 
   private List<String> applyFilters(final List<String> tokens, final List<Predicate<String>> filters) {
