@@ -2,6 +2,7 @@ package ru.ustits.colleague.repositories;
 
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.Date;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.List;
 /**
  * @author ustits
  */
+@Log4j2
 public final class CachedRepository<T> extends RepositoryWrapper<T> {
 
   private static final long DEFAULT_UPDATE_TIME = 600000;
@@ -55,6 +57,7 @@ public final class CachedRepository<T> extends RepositoryWrapper<T> {
   @Override
   public boolean exists(final T entity) {
     if (entities != null) {
+      log.debug("Searching {} in cache", entity);
       return entities.contains(entity);
     } else {
       return super.exists(entity);
@@ -74,6 +77,7 @@ public final class CachedRepository<T> extends RepositoryWrapper<T> {
   public void delete(final T entity) {
     super.delete(entity);
     if (entities != null) {
+      log.debug("Removing {} from cache", entity);
       entities.remove(entity);
     }
   }
@@ -81,8 +85,11 @@ public final class CachedRepository<T> extends RepositoryWrapper<T> {
   @Override
   public List<T> fetchAll() {
     if (entities == null || isTimeToUpdate()) {
+      log.debug("Updating cache");
       entities = super.fetchAll();
       lastUpdateTime = new Date().getTime();
+    } else {
+      log.debug("Using cached data");
     }
     return entities;
   }
