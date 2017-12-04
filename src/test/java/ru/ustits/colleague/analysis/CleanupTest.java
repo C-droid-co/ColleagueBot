@@ -3,8 +3,8 @@ package ru.ustits.colleague.analysis;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -15,23 +15,23 @@ import static ru.ustits.colleague.RandomUtils.string;
 /**
  * @author ustits
  */
-public class SimpleAnalysisTest {
+public class CleanupTest {
 
-  private SimpleAnalysis analysis;
+  private Cleanup cleanup;
 
   @Before
   public void setUp() throws Exception {
-    analysis = new SimpleAnalysis(emptyList(), emptyList(), emptyList());
+    cleanup = new Cleanup(emptyList(), emptyList(), emptyList());
   }
 
   @Test
-  public void testMostCommonWithStopWords() {
+  public void testClean() {
     final String stopWord = string();
     final String notStopWord = string();
     final List<String> words = asList(stopWord, stopWord, notStopWord);
-    final List<String> stopWords = singletonList(stopWord);
-    final Map<String, Integer> stats = analysis.mostCommonWords(words, stopWords);
-    assertThat(stats).hasSize(1).containsEntry(notStopWord, 1);
+    final List<String> stopWords = new ArrayList<>(singletonList(stopWord));
+    final List<String> cleaned = cleanup.clean(words, stopWords);
+    assertThat(cleaned).containsOnly(notStopWord);
   }
 
 }

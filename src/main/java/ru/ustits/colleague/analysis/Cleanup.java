@@ -5,10 +5,9 @@ import ru.ustits.colleague.analysis.filters.EmptyFilter;
 import ru.ustits.colleague.analysis.filters.TwitterFilter;
 import ru.ustits.colleague.analysis.mappers.ReplaceSymbols;
 import ru.ustits.colleague.analysis.mappers.ToLowerCase;
-import ru.ustits.colleague.tools.ListUtils;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -20,44 +19,42 @@ import static java.util.Collections.singletonList;
  * @author ustits
  */
 @Log4j2
-public final class SimpleAnalysis {
+public final class Cleanup {
 
   private final List<Predicate<String>> messageFilters;
   private final List<Function<String, String>> mappers;
   private final List<Predicate<String>> wordFilters;
 
-  public SimpleAnalysis(final List<Predicate<String>> messageFilters,
-                        final List<Function<String, String>> mappers,
-                        final List<Predicate<String>> wordFilters) {
+  public Cleanup(final List<Predicate<String>> messageFilters,
+                 final List<Function<String, String>> mappers,
+                 final List<Predicate<String>> wordFilters) {
     this.messageFilters = messageFilters;
     this.mappers = mappers;
     this.wordFilters = wordFilters;
   }
 
-  public SimpleAnalysis() {
+  public Cleanup() {
     this(asList(new EmptyFilter(), new TwitterFilter()),
             asList(new ToLowerCase(), new ReplaceSymbols()),
             singletonList(new EmptyFilter()));
   }
 
-  public Map<String, Integer> mostCommonWords(final List<String> tokens, final List<String> stopWords) {
-    final Map<String, Integer> raw = mostCommonWords(tokens);
+  public List<String> clean(final List<String> tokens, final List<String> stopWords) {
+    final List<String> cleaned = new ArrayList<>(clean(tokens));
     tokens.forEach(s -> {
       if (stopWords.contains(s)) {
-        raw.remove(s);
+        cleaned.remove(s);
       }
     });
-    return raw;
+    return cleaned;
   }
 
-  public Map<String, Integer> mostCommonWords(final List<String> tokens) {
+  public List<String> clean(final List<String> tokens) {
     log.info("Searching common words in {} tokens", tokens.size());
-    List<String> raw = applyFilters(tokens, messageFilters);
-    raw = applyMappers(raw);
-    raw = applyFilters(raw, wordFilters);
-    final Map<String, Integer> stats = ListUtils.count(raw);
-    log.info("Mapped unique {} tokens", stats.size());
-    return stats;
+    List<String> cleaned = applyFilters(tokens, messageFilters);
+    cleaned = applyMappers(cleaned);
+    cleaned = applyFilters(cleaned, wordFilters);
+    return cleaned;
   }
 
   private List<String> applyFilters(final List<String> tokens, final List<Predicate<String>> filters) {

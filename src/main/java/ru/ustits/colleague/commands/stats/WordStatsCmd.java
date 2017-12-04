@@ -4,7 +4,7 @@ import lombok.extern.log4j.Log4j2;
 import org.telegram.telegrambots.api.objects.Chat;
 import org.telegram.telegrambots.api.objects.User;
 import org.telegram.telegrambots.bots.AbsSender;
-import ru.ustits.colleague.analysis.SimpleAnalysis;
+import ru.ustits.colleague.analysis.Cleanup;
 import ru.ustits.colleague.analysis.SimpleTokenizer;
 import ru.ustits.colleague.repositories.Repository;
 import ru.ustits.colleague.repositories.records.MessageRecord;
@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.lang.Integer.toUnsignedLong;
+import static ru.ustits.colleague.tools.ListUtils.count;
 import static ru.ustits.colleague.tools.MapUtils.limit;
 import static ru.ustits.colleague.tools.MapUtils.sortByValue;
 
@@ -28,7 +29,7 @@ public final class WordStatsCmd extends StatsCommand {
   private static final int DEFAULT_STATS_LEN = 10;
 
   private final SimpleTokenizer tokenizer = new SimpleTokenizer();
-  private final SimpleAnalysis analysis = new SimpleAnalysis();
+  private final Cleanup cleanup = new Cleanup();
   private final Repository<StopWordRecord> stopWordRepository;
   private final int statsLength;
 
@@ -55,15 +56,17 @@ public final class WordStatsCmd extends StatsCommand {
             .collect(Collectors.toList()));
 
     final List<StopWordRecord> stopWordRecords = stopWordRepository.fetchAll();
-    final Map<String, Integer> stats;
+    final List<String> cleanedTokens;
     if (stopWordRecords == null) {
-      stats = analysis.mostCommonWords(tokens);
+      cleanedTokens = cleanup.clean(tokens);
     } else {
       final List<String> stopWords = stopWordRecords.stream().map(StopWordRecord::getWord)
               .collect(Collectors.toList());
-      stats = analysis.mostCommonWords(tokens, stopWords);
+      cleanedTokens = cleanup.clean(tokens, stopWords);
     }
-    sendStats(limit(sortByValue(stats), statsLength), chatId, absSender);
+    final Map<String, Integer> stats = limit(sortByValue(count(cleanedTokens)), statsLength);
+    log.info("Mapped unique {} tokens", stats.size());
+    sendStats(stats, chatId, absSender);
   }
 
 }
