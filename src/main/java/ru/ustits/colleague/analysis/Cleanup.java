@@ -22,16 +22,16 @@ import static java.util.Collections.singletonList;
 @Log4j2
 public final class Cleanup {
 
-  private final List<Predicate<String>> messageFilters;
+  private final List<Predicate<String>> preFilters;
   private final List<Function<String, String>> mappers;
-  private final List<Predicate<String>> wordFilters;
+  private final List<Predicate<String>> postFilters;
 
-  public Cleanup(final List<Predicate<String>> messageFilters,
+  public Cleanup(final List<Predicate<String>> preFilters,
                  final List<Function<String, String>> mappers,
-                 final List<Predicate<String>> wordFilters) {
-    this.messageFilters = messageFilters;
+                 final List<Predicate<String>> postFilters) {
+    this.preFilters = preFilters;
     this.mappers = mappers;
-    this.wordFilters = wordFilters;
+    this.postFilters = postFilters;
   }
 
   public Cleanup() {
@@ -53,9 +53,9 @@ public final class Cleanup {
 
   public List<String> clean(final List<String> tokens) {
     log.info("Searching common words in {} tokens", tokens.size());
-    List<String> cleaned = applyFilters(tokens, messageFilters);
+    List<String> cleaned = applyFilters(tokens, preFilters);
     cleaned = applyMappers(cleaned);
-    cleaned = applyFilters(cleaned, wordFilters);
+    cleaned = applyFilters(cleaned, postFilters);
     return cleaned;
   }
 
