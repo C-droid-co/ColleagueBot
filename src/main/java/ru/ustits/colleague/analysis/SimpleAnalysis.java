@@ -5,8 +5,8 @@ import ru.ustits.colleague.analysis.filters.EmptyFilter;
 import ru.ustits.colleague.analysis.filters.TwitterFilter;
 import ru.ustits.colleague.analysis.mappers.ReplaceSymbols;
 import ru.ustits.colleague.analysis.mappers.ToLowerCase;
+import ru.ustits.colleague.tools.ListUtils;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -55,7 +55,7 @@ public final class SimpleAnalysis {
     List<String> raw = applyFilters(tokens, messageFilters);
     raw = applyMappers(raw);
     raw = applyFilters(raw, wordFilters);
-    final Map<String, Integer> stats = count(raw);
+    final Map<String, Integer> stats = ListUtils.count(raw);
     log.info("Mapped unique {} tokens", stats.size());
     return stats;
   }
@@ -75,20 +75,6 @@ public final class SimpleAnalysis {
       mapped = mapped.stream().map(mapper).collect(Collectors.toList());
     }
     return mapped;
-  }
-
-  protected Map<String, Integer> count(final List<String> tokens) {
-    final Map<String, Integer> count = new HashMap<>();
-    for (final String text : tokens) {
-      final int value;
-      if (count.containsKey(text)) {
-        value = count.get(text) + 1;
-      } else {
-        value = 1;
-      }
-      count.put(text, value);
-    }
-    return count;
   }
 
 }

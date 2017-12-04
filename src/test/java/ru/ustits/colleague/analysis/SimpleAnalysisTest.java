@@ -34,23 +34,4 @@ public class SimpleAnalysisTest {
     assertThat(stats).hasSize(1).containsEntry(notStopWord, 1);
   }
 
-  @Test
-  public void testCount() {
-    final String first = string();
-    final String second = string();
-    final String third = string();
-    final Map<String, Integer> stats = analysis.count(
-            asList(first, second, third, first, third, first));
-    assertThat(stats)
-            .containsEntry(first, 3)
-            .containsEntry(second, 1)
-            .containsEntry(third, 2);
-    System.out.println(stats);
-  }
-
-  @Test
-  public void testCountEmptyList() {
-    assertThat(analysis.count(emptyList())).isEmpty();
-  }
-
 }
