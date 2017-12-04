@@ -7,7 +7,7 @@ import org.telegram.telegrambots.bots.AbsSender;
 import ru.ustits.colleague.analysis.SimpleAnalysis;
 import ru.ustits.colleague.analysis.SimpleTokenizer;
 import ru.ustits.colleague.commands.StatsCommand;
-import ru.ustits.colleague.repositories.StopWordRepository;
+import ru.ustits.colleague.repositories.Repository;
 import ru.ustits.colleague.repositories.records.MessageRecord;
 import ru.ustits.colleague.repositories.records.StopWordRecord;
 import ru.ustits.colleague.repositories.services.MessageService;
@@ -26,10 +26,10 @@ public final class WordStatsCmd extends StatsCommand {
 
   private final SimpleTokenizer tokenizer = new SimpleTokenizer();
   private final SimpleAnalysis analysis = new SimpleAnalysis();
-  private final StopWordRepository stopWordRepository;
+  private final Repository<StopWordRecord> stopWordRepository;
 
   public WordStatsCmd(final String commandIdentifier, final MessageService service,
-                      final StopWordRepository stopWordRepository) {
+                      final Repository<StopWordRecord> stopWordRepository) {
     super(commandIdentifier, service);
     this.stopWordRepository = stopWordRepository;
   }
