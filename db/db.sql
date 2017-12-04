@@ -81,6 +81,20 @@ CREATE SEQUENCE ignore_triggers_id_seq
 
 ALTER SEQUENCE ignore_triggers_id_seq OWNED BY ignore_triggers.id;
 
+CREATE TABLE stopwords (
+    id integer NOT NULL,
+    word text NOT NULL
+);
+
+CREATE SEQUENCE stopwords_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE stopwords_id_seq OWNED BY stopwords.id;
+
 ALTER TABLE ONLY messages ALTER COLUMN id SET DEFAULT nextval('messages_id_seq'::regclass);
 
 ALTER TABLE ONLY repeats ALTER COLUMN id SET DEFAULT nextval('repeats_id_seq'::regclass);
@@ -88,6 +102,8 @@ ALTER TABLE ONLY repeats ALTER COLUMN id SET DEFAULT nextval('repeats_id_seq'::r
 ALTER TABLE ONLY triggers ALTER COLUMN id SET DEFAULT nextval('triggers_id_seq'::regclass);
 
 ALTER TABLE ONLY ignore_triggers ALTER COLUMN id SET DEFAULT nextval('ignore_triggers_id_seq'::regclass);
+
+ALTER TABLE ONLY stopwords ALTER COLUMN id SET DEFAULT nextval('stopwords_id_seq'::regclass);
 
 ALTER TABLE ONLY chats
     ADD CONSTRAINT chats_pkey PRIMARY KEY (id);
@@ -106,6 +122,9 @@ ALTER TABLE ONLY users
 
 ALTER TABLE ONLY ignore_triggers
     ADD CONSTRAINT ignore_triggers_pkey PRIMARY KEY (id);
+
+ALTER TABLE ONLY stopwords
+    ADD CONSTRAINT stopwords_pkey PRIMARY KEY (id);
 
 ALTER TABLE ONLY ignore_triggers
     ADD CONSTRAINT ignore_triggers_chat_id_fkey FOREIGN KEY (chat_id) REFERENCES chats(id);

@@ -12,6 +12,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 
 /**
  * @author ustits
@@ -21,40 +22,53 @@ public final class SimpleAnalysis {
 
   private static final int DEFAULT_STATS_LEN = 10;
 
-  private final List<Predicate<String>> filters;
+  private final List<Predicate<String>> messageFilters;
   private final List<Function<String, String>> mappers;
+  private final List<Predicate<String>> wordFilters;
   private final int statsLength;
 
-  public SimpleAnalysis(final List<Predicate<String>> filters,
+  public SimpleAnalysis(final List<Predicate<String>> messageFilters,
                         final List<Function<String, String>> mappers,
+                        final List<Predicate<String>> wordFilters,
                         final int statsLength) {
-    this.filters = filters;
+    this.messageFilters = messageFilters;
     this.mappers = mappers;
+    this.wordFilters = wordFilters;
     this.statsLength = statsLength;
   }
 
   public SimpleAnalysis(final int statsLength) {
     this(asList(new EmptyFilter(), new TwitterFilter()),
             asList(new ToLowerCase(), new ReplaceSymbols()),
+            singletonList(new EmptyFilter()),
             statsLength);
   }
 
   public SimpleAnalysis() {
-    this(asList(new EmptyFilter(), new TwitterFilter()),
-            asList(new ToLowerCase(), new ReplaceSymbols()),
-            DEFAULT_STATS_LEN);
+    this(DEFAULT_STATS_LEN);
+  }
+
+  public Map<String, Integer> mostCommonWords(final List<String> tokens, final List<String> stopWords) {
+    final List<String> raw = new ArrayList<>(tokens);
+    tokens.forEach(s -> {
+      if (stopWords.contains(s)) {
+        raw.remove(s);
+      }
+    });
+    return mostCommonWords(raw);
   }
 
   public Map<String, Integer> mostCommonWords(final List<String> tokens) {
     log.info("Searching common words in {} tokens", tokens.size());
-    List<String> raw = applyFilters(tokens);
+    List<String> raw = applyFilters(tokens, messageFilters);
     raw = applyMappers(raw);
+    raw = applyFilters(raw, wordFilters);
     final Map<String, Integer> stats = count(raw);
     log.info("Mapped unique {} tokens", stats.size());
     return limit(sortByValue(stats), statsLength);
   }
 
-  private List<String> applyFilters(final List<String> tokens) {
+  private List<String> applyFilters(final List<String> tokens, final List<Predicate<String>> filters) {
     List<String> filtered = tokens;
     for (final Predicate<String> filter : filters) {
       filtered = filtered.stream().filter(filter).collect(Collectors.toList());

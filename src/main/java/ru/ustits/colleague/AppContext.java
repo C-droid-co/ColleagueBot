@@ -19,6 +19,7 @@ import ru.ustits.colleague.commands.stats.WordStatsCmd;
 import ru.ustits.colleague.commands.triggers.*;
 import ru.ustits.colleague.repositories.*;
 import ru.ustits.colleague.repositories.records.RepeatRecord;
+import ru.ustits.colleague.repositories.records.StopWordRecord;
 import ru.ustits.colleague.repositories.records.TriggerRecord;
 import ru.ustits.colleague.repositories.services.MessageService;
 import ru.ustits.colleague.repositories.services.RepeatService;
@@ -208,7 +209,7 @@ public class AppContext {
   }
 
   private WordStatsCmd wordStatsCommand() {
-    return new WordStatsCmd(WORD_STATS_CMD, messageService());
+    return new WordStatsCmd(WORD_STATS_CMD, messageService(), stopWordRepository());
   }
 
   private BotCommand repeatCommand(final String command, final String description,
@@ -300,6 +301,11 @@ public class AppContext {
   @Bean
   public IgnoreTriggerRepository ignoreTriggerRepository() {
     return new IgnoreTriggerRepository(sql());
+  }
+
+  @Bean
+  public Repository<StopWordRecord> stopWordRepository() {
+    return new CachedRepository<>(new StopWordRepository(sql()));
   }
 
   @Bean
