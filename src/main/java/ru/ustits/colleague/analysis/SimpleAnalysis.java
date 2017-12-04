@@ -5,8 +5,12 @@ import ru.ustits.colleague.analysis.filters.EmptyFilter;
 import ru.ustits.colleague.analysis.filters.TwitterFilter;
 import ru.ustits.colleague.analysis.mappers.ReplaceSymbols;
 import ru.ustits.colleague.analysis.mappers.ToLowerCase;
+import ru.ustits.colleague.tools.MapUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -65,7 +69,7 @@ public final class SimpleAnalysis {
     raw = applyFilters(raw, wordFilters);
     final Map<String, Integer> stats = count(raw);
     log.info("Mapped unique {} tokens", stats.size());
-    return limit(sortByValue(stats), statsLength);
+    return MapUtils.limit(MapUtils.sortByValue(stats), statsLength);
   }
 
   private List<String> applyFilters(final List<String> tokens, final List<Predicate<String>> filters) {
@@ -97,31 +101,6 @@ public final class SimpleAnalysis {
       count.put(text, value);
     }
     return count;
-  }
-
-  protected Map<String, Integer> limit(final Map<String, Integer> map, final int size) {
-    final Map<String, Integer> limited = new LinkedHashMap<>();
-    int counter = 0;
-    for (final Map.Entry<String, Integer> entry : map.entrySet()) {
-      limited.put(entry.getKey(), entry.getValue());
-      counter++;
-      if (counter >= size) {
-        break;
-      }
-    }
-    return limited;
-  }
-
-  private Map<String, Integer> sortByValue(final Map<String, Integer> map) {
-    return map.entrySet()
-            .stream()
-            .sorted(Map.Entry.comparingByValue(Collections.reverseOrder()))
-            .collect(Collectors.toMap(
-                    Map.Entry::getKey,
-                    Map.Entry::getValue,
-                    (e1, e2) -> e1,
-                    LinkedHashMap::new
-            ));
   }
 
 }

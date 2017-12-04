@@ -3,14 +3,13 @@ package ru.ustits.colleague.analysis;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.*;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static ru.ustits.colleague.RandomUtils.anInt;
 import static ru.ustits.colleague.RandomUtils.string;
 
 /**
@@ -18,13 +17,11 @@ import static ru.ustits.colleague.RandomUtils.string;
  */
 public class SimpleAnalysisTest {
 
-  private final int TEST_STATS_LEN = 3;
-
   private SimpleAnalysis analysis;
 
   @Before
   public void setUp() throws Exception {
-    analysis = new SimpleAnalysis(TEST_STATS_LEN);
+    analysis = new SimpleAnalysis(3);
   }
 
   @Test
@@ -53,28 +50,6 @@ public class SimpleAnalysisTest {
   @Test
   public void testCountEmptyList() {
     assertThat(analysis.count(emptyList())).isEmpty();
-  }
-
-  @Test
-  public void testLimit() {
-    final Map<String, Integer> data = new HashMap<>();
-    final int initialSize = TEST_STATS_LEN * 2;
-    for (int i = 0; i < initialSize; i++) {
-      data.put(string(), anInt());
-    }
-    assertThat(data).hasSize(initialSize);
-    assertThat(analysis.limit(data, TEST_STATS_LEN)).hasSize(TEST_STATS_LEN);
-  }
-
-  @Test
-  public void testLimitWithSmallMap() {
-    final Map<String, Integer> data = singletonMap(string(), anInt());
-    assertThat(analysis.limit(data, TEST_STATS_LEN)).hasSize(data.size());
-  }
-
-  @Test
-  public void testLimitWithEmptyMap() {
-    assertThat(analysis.limit(emptyMap(), TEST_STATS_LEN)).isEmpty();
   }
 
 }
