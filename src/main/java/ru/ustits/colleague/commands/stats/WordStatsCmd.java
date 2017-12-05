@@ -6,6 +6,7 @@ import org.telegram.telegrambots.api.objects.User;
 import org.telegram.telegrambots.bots.AbsSender;
 import ru.ustits.colleague.analysis.Cleanup;
 import ru.ustits.colleague.analysis.SimpleTokenizer;
+import ru.ustits.colleague.analysis.filters.NoUrlFilter;
 import ru.ustits.colleague.analysis.filters.TwitterFilter;
 import ru.ustits.colleague.repositories.Repository;
 import ru.ustits.colleague.repositories.records.MessageRecord;
@@ -55,6 +56,7 @@ public final class WordStatsCmd extends StatsCommand {
     final List<String> tokens = tokenizer.tokenize(messages.stream()
             .map(MessageRecord::getText)
             .filter(new TwitterFilter())
+            .filter(new NoUrlFilter())
             .collect(Collectors.toList()));
 
     final List<StopWordRecord> stopWordRecords = stopWordRepository.fetchAll();
