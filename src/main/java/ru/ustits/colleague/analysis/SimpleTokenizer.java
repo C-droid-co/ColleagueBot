@@ -17,8 +17,8 @@ public final class SimpleTokenizer {
   }
 
   public List<String> tokenize(final String sentence) {
-    final String noPunctuation = sentence.replaceAll("[!\"#$%&'()*+,-./:;<=>?@\\[\\]^_`{|}~\\\\]", "");
-    return asList(noPunctuation.split("[\t\n\r ]"));
+    final String noPunctuation = sentence.replaceAll("[\"#$%&'*+-<=>\\[\\]^_`{|}~\\\\]", "");
+    return asList(noPunctuation.split("[.,!?():;\t\n\r ]"));
   }
 
 }
