@@ -33,11 +33,11 @@ public class StatsCommand extends BotCommand {
   @Override
   public void execute(final AbsSender absSender, final User user, final Chat chat, final String[] arguments) {
     final Map<String, Integer> stats = service.count(chat.getId(), false);
-    sendStats(stats, chat.getId(), absSender);
+    final String text = String.format("%s%n%s", "*Chat stats:*", buildText(stats));
+    sendStats(text, chat.getId(), absSender);
   }
 
-  protected final void sendStats(final Map<String, Integer> stats, final Long chatId, final AbsSender sender) {
-    final String text = String.format("%s%n%s", "*Chat stats:*", buildText(stats));
+  protected final void sendStats(final String text, final Long chatId, final AbsSender sender) {
     final SendMessage message = new SendMessage(chatId, text);
     message.enableMarkdown(true);
     try {

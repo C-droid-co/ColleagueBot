@@ -1,5 +1,6 @@
 package ru.ustits.colleague.commands.stats;
 
+import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
 import org.telegram.telegrambots.api.objects.Chat;
 import org.telegram.telegrambots.api.objects.User;
@@ -13,6 +14,9 @@ import ru.ustits.colleague.repositories.records.MessageRecord;
 import ru.ustits.colleague.repositories.records.StopWordRecord;
 import ru.ustits.colleague.repositories.services.MessageService;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -68,9 +72,35 @@ public final class WordStatsCmd extends StatsCommand {
               .collect(Collectors.toList());
       cleanedTokens = cleanup.clean(tokens, stopWords);
     }
+    final int size = cleanedTokens.size();
     final Map<String, Integer> stats = limit(sortByValue(count(cleanedTokens)), statsLength);
     log.info("Mapped unique {} tokens", stats.size());
-    sendStats(stats, chatId, absSender);
+    final String text = buildText(stats, size);
+    sendStats(text, chatId, absSender);
+  }
+
+  final String buildText(@NonNull final Map<String, Integer> stats, final int total) {
+    if (stats.isEmpty()) {
+      return NO_STAT_MESSAGE;
+    }
+    final StringBuilder builder = new StringBuilder();
+    final DecimalFormat df = percentageFormat();
+    stats.forEach((word, count) ->
+            builder.append(word)
+                    .append(": ")
+                    .append(count)
+                    .append(" (").append(df.format((float) count / total)).append(")")
+                    .append("\n"));
+    return builder.toString();
+  }
+
+  private DecimalFormat percentageFormat() {
+    final DecimalFormat format = new DecimalFormat("#.##");
+    final DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+    symbols.setDecimalSeparator('.');
+    format.setRoundingMode(RoundingMode.CEILING);
+    format.setDecimalFormatSymbols(symbols);
+    return format;
   }
 
 }
