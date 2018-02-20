@@ -8,6 +8,9 @@ import ru.ustits.colleague.tools.StringUtils;
 import java.text.ParseException;
 import java.util.Optional;
 
+import static ru.ustits.colleague.tools.cron.CronFields.MINUTES;
+import static ru.ustits.colleague.tools.cron.CronFields.SECONDS;
+
 /**
  * @author ustits
  */
@@ -18,10 +21,20 @@ public final class CronRestriction {
   private final CronExpression cron;
 
   public Optional<CronExpression> restrictToHours() {
+    return restrict(SECONDS, MINUTES);
+  }
+
+  public Optional<CronExpression> restrictToMinutes() {
+    return restrict(SECONDS);
+  }
+
+  public Optional<CronExpression> restrict(final CronFields... fields) {
     final String expression = cron.getCronExpression();
     final String[] args = StringUtils.split(expression);
-    args[0] = StringUtils.ZERO;
-    args[1] = StringUtils.ZERO;
+    for (final CronFields field : fields) {
+      args[field.getFieldNumber()] = StringUtils.ZERO;
+
+    }
     try {
       final CronExpression newCron = new CronExpression(StringUtils.asString(args));
       return Optional.of(newCron);
@@ -30,4 +43,5 @@ public final class CronRestriction {
       return Optional.empty();
     }
   }
+
 }

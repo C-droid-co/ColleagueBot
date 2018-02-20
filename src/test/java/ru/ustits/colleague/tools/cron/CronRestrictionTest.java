@@ -1,5 +1,6 @@
 package ru.ustits.colleague.tools.cron;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.quartz.CronExpression;
 
@@ -12,13 +13,37 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class CronRestrictionTest {
 
-  @Test
-  public void testRestrictToHours() throws Exception {
+  private CronRestriction restriction;
+
+  @Before
+  public void setUp() throws Exception {
     final CronExpression cron = new CronExpression("* * 10 ? * *");
-    final CronRestriction restriction = new CronRestriction(cron);
+    restriction = new CronRestriction(cron);
+  }
+
+  @Test
+  public void testRestrictToHours() {
     final Optional<CronExpression> result = restriction.restrictToHours();
     assertThat(result).isPresent();
     final CronExpression newExpression = result.get();
     assertThat(newExpression.getCronExpression()).isEqualTo("0 0 10 ? * *");
   }
+
+  @Test
+  public void testRestrictToMinutes() {
+    final Optional<CronExpression> result = restriction.restrictToMinutes();
+    assertThat(result).isPresent();
+    final CronExpression newExpression = result.get();
+    assertThat(newExpression.getCronExpression()).isEqualTo("0 * 10 ? * *");
+  }
+
+  @Test
+  public void testRestrict() {
+    final Optional<CronExpression> result = restriction.restrict(CronFields.HOURS);
+    assertThat(result).isPresent();
+    final CronExpression newExpression = result.get();
+    assertThat(newExpression.getCronExpression()).isEqualTo("* * 0 ? * *");
+  }
+
+
 }
