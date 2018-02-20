@@ -19,6 +19,7 @@ import ru.ustits.colleague.tasks.RepeatScheduler;
 import ru.ustits.colleague.tools.triggers.ProcessState;
 import ru.ustits.colleague.tools.triggers.TriggerProcessor;
 
+import javax.annotation.PostConstruct;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -57,6 +58,7 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
     super(new DefaultBotOptions(), true, botUsername);
   }
 
+  @PostConstruct
   void startRepeats() {
     final List<RepeatRecord> records = repeatService.fetchAllRepeats();
     scheduler.scheduleTasks(records, this);
