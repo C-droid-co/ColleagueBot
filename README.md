@@ -6,11 +6,11 @@
 
 ## Supported Commands
 
-* `/trigger [trigger] [message]` - shows the message if the trigger was written in the chat
-* `/trigger_rm [trigger]` - delete trigger
+* `/trigger trigger message` - shows the message if the trigger was written in the chat
+* `/trigger_rm trigger` - delete trigger
 * `/trigger_ls` - show all triggers available for current chat
 * `/ignore` - tell bot to ignore your messages
-* `/state_switch [state]` - change trigger response strategy
+* `/state_switch state` - change trigger response strategy
   * `all` - default mode, that returns every possible trigger
   * `random` - returns one random trigger
   * `nothing` - returns no trigger
@@ -18,10 +18,10 @@
   * `last` - returns last found trigger
   * `periodic` - returns one random trigger with a specified chance
 * `/state` - show current trigger response strategy
-* `/repeat [cron_patter] [message]` - repeat message by [cron](http://www.quartz-scheduler.org/documentation/quartz-2.x/tutorials/crontrigger.html)
-  * `/repeat_d [hh:mm]` - repeat daily
-  * `/repeat_wd [hh:mm]` - repeat on work days
-  * `/repeat_we [hh:mm]` - repeat on weekends
+* `/repeat cron_patter message` - repeat message by [cron](http://www.quartz-scheduler.org/documentation/quartz-2.x/tutorials/crontrigger.html)
+  * `/repeat_d hh mm` - repeat daily
+  * `/repeat_wd hh mm` - repeat on work days
+  * `/repeat_we hh mm` - repeat on weekends
 * `/stats` - show message statistics for current chat
 * `/help` - lists all available commands
 
