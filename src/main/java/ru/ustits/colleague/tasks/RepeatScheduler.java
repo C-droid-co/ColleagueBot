@@ -87,7 +87,7 @@ public class RepeatScheduler {
       try {
         log.info("Parsed repeat task cron expression [{}]", expression);
         return new CronRestriction(
-                new CronExpression(expression)).restrictToHours();
+                new CronExpression(expression)).restrictToMinutes();
       } catch (ParseException e) {
         throw new IllegalStateException("Error occurred, though the expression was validated", e);
       }
