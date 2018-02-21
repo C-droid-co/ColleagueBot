@@ -2,8 +2,10 @@ package ru.ustits.colleague.repositories.services;
 
 import org.junit.Before;
 import org.junit.Test;
+import ru.ustits.colleague.repositories.ChatsRepository;
 import ru.ustits.colleague.repositories.MessageRepository;
 import ru.ustits.colleague.repositories.RepositoryTest;
+import ru.ustits.colleague.repositories.UserRepository;
 import ru.ustits.colleague.repositories.records.MessageRecord;
 
 import java.util.List;
@@ -23,7 +25,8 @@ public class MessageServiceTest extends RepositoryTest {
   @Before
   public void setUp() throws Exception {
     super.setUp();
-    service = new MessageService(sql, mock(MessageRepository.class));
+    service = new MessageService(sql, mock(MessageRepository.class), mock(ChatsRepository.class),
+            mock(UserRepository.class));
   }
 
   @Test

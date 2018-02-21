@@ -3,7 +3,9 @@ package ru.ustits.colleague.commands.stats;
 import org.apache.commons.dbutils.QueryRunner;
 import org.junit.Before;
 import org.junit.Test;
+import ru.ustits.colleague.repositories.ChatsRepository;
 import ru.ustits.colleague.repositories.MessageRepository;
+import ru.ustits.colleague.repositories.UserRepository;
 import ru.ustits.colleague.repositories.services.MessageService;
 
 import java.util.Collections;
@@ -14,6 +16,7 @@ import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
+import static ru.ustits.colleague.RandomUtils.string;
 
 /**
  * @author ustits
@@ -24,16 +27,17 @@ public class StatsCommandTest {
 
   @Before
   public void setUp() throws Exception {
-    command = new StatsCommand("random",
-            new MessageService(mock(QueryRunner.class), mock(MessageRepository.class)));
+    command = new StatsCommand(string(),
+            new MessageService(mock(QueryRunner.class), mock(MessageRepository.class), mock(ChatsRepository.class),
+                    mock(UserRepository.class)));
   }
 
   @Test
   public void testBuildText() throws Exception {
     final Map<String, Integer> stats = new HashMap<>();
-    final String firstUser = "Vanya";
+    final String firstUser = string();
     final Integer firstCount = 10;
-    final String secondUser = "Petya";
+    final String secondUser = string();
     final Integer secondCount = 20;
     stats.put(firstUser, firstCount);
     stats.put(secondUser, secondCount);

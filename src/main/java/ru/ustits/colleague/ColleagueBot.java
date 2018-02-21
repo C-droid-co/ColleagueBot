@@ -4,22 +4,30 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.api.methods.send.SendDocument;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.methods.send.SendSticker;
-import org.telegram.telegrambots.api.objects.*;
+import org.telegram.telegrambots.api.objects.CallbackQuery;
+import org.telegram.telegrambots.api.objects.Message;
+import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.bots.commandbot.TelegramLongPollingCommandBot;
+import org.telegram.telegrambots.bots.commandbot.commands.BotCommand;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
-import ru.ustits.colleague.repositories.*;
-import ru.ustits.colleague.repositories.records.*;
+import ru.ustits.colleague.repositories.IgnoreTriggerRepository;
+import ru.ustits.colleague.repositories.TriggerRepository;
+import ru.ustits.colleague.repositories.records.IgnoreTriggerRecord;
+import ru.ustits.colleague.repositories.records.RepeatRecord;
+import ru.ustits.colleague.repositories.records.TriggerRecord;
+import ru.ustits.colleague.repositories.services.MessageService;
 import ru.ustits.colleague.repositories.services.RepeatService;
 import ru.ustits.colleague.tasks.RepeatScheduler;
 import ru.ustits.colleague.tools.triggers.ProcessState;
 import ru.ustits.colleague.tools.triggers.TriggerProcessor;
 
-import java.sql.Timestamp;
+import javax.annotation.PostConstruct;
 import java.util.List;
 
 import static java.lang.Integer.toUnsignedLong;
@@ -28,38 +36,39 @@ import static java.lang.Integer.toUnsignedLong;
  * @author ustits
  */
 @Log4j2
+@Service
 public class ColleagueBot extends TelegramLongPollingCommandBot {
 
-  @Autowired
-  private MessageRepository messageRepository;
-  @Autowired
-  private ChatsRepository chatsRepository;
-  @Autowired
-  private UserRepository userRepository;
-  @Autowired
-  private TriggerRepository triggerRepository;
-  @Autowired
-  private RepeatService repeatService;
-  @Autowired
-  private IgnoreTriggerRepository ignoreTriggerRepository;
-  @Autowired
-  private RepeatScheduler scheduler;
-  @Autowired
-  private String botName;
-  @Autowired
-  private String botToken;
+  private final MessageService messageService;
+  private final TriggerRepository triggerRepository;
+  private final RepeatService repeatService;
+  private final IgnoreTriggerRepository ignoreTriggerRepository;
+  private final RepeatScheduler scheduler;
+  private final String botToken;
+
+  private BotCommand[] commands;
 
   @Getter
   @Setter
   private ProcessState processState = ProcessState.ALL;
 
-  public ColleagueBot(final String botUsername) {
-    super(new DefaultBotOptions(), true, botUsername);
+  public ColleagueBot(final String botName, final String botToken, final MessageService messageService,
+                      final TriggerRepository triggerRepository, final RepeatService repeatService,
+                      final IgnoreTriggerRepository ignoreTriggerRepository, final RepeatScheduler scheduler) {
+    super(new DefaultBotOptions(), true, botName);
+    this.botToken = botToken;
+    this.messageService = messageService;
+    this.triggerRepository = triggerRepository;
+    this.repeatService = repeatService;
+    this.ignoreTriggerRepository = ignoreTriggerRepository;
+    this.scheduler = scheduler;
   }
 
-  void startRepeats() {
+  @PostConstruct
+  void initialize() {
     final List<RepeatRecord> records = repeatService.fetchAllRepeats();
     scheduler.scheduleTasks(records, this);
+    registerAll(commands);
   }
 
   @Override
@@ -73,6 +82,11 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
         findTriggers(update.getMessage());
       }
     }
+  }
+
+  @Autowired
+  public void setCommands(final BotCommand[] commands) {
+    this.commands = commands;
   }
 
   @Override
@@ -94,34 +108,10 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
 
   private void addMessage(final Update update) {
     if (isMessage(update)) {
-      addMessage(update.getMessage());
+      messageService.addMessage(update.getMessage());
     } else if (isEditMessage(update)) {
-      addMessage(update.getEditedMessage());
+      messageService.addMessage(update.getEditedMessage());
     }
-  }
-
-  private void addMessage(final Message message) {
-    final Chat chat = message.getChat();
-    final ChatRecord chatRecord = new ChatRecord(chat.getId(), null, chat.getTitle());
-    if (!chatsRepository.exists(chatRecord)) {
-      chatsRepository.add(chatRecord);
-    }
-
-    final User user = message.getFrom();
-    final UserRecord userRecord = new UserRecord(toUnsignedLong(user.getId()),
-            user.getFirstName(), user.getLastName(), user.getUserName());
-    if (!userRepository.exists(userRecord)) {
-      userRepository.add(userRecord);
-    }
-    final MessageRecord messageRecord =
-            new MessageRecord(
-                    toUnsignedLong(message.getMessageId()),
-                    new Timestamp((long) message.getDate() * 1000),
-                    message.getText(),
-                    message.getEditDate() != null,
-                    chat.getId(),
-                    toUnsignedLong(user.getId()));
-    messageRepository.add(messageRecord);
   }
 
   private void findTriggers(final Message message) {
