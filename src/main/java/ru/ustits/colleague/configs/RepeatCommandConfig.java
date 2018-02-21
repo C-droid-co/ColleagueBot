@@ -19,13 +19,13 @@ import ru.ustits.colleague.tasks.RepeatScheduler;
 class RepeatCommandConfig extends CommandConfig {
 
   private static final String REPEAT_COMMAND = "repeat";
-  private static final String ADMIN_REPEAT_COMMAND = ADMIN_PREFIX + "repeat";
-  private static final String REPEAT_DAILY_COMMAND = "repeat_d";
-  private static final String ADMIN_REPEAT_DAILY_COMMAND = ADMIN_PREFIX + "repeat_d";
-  private static final String ADMIN_REPEAT_WORKDAYS_COMMAND = ADMIN_PREFIX + "repeat_wd";
-  private static final String REPEAT_WORKDAYS_COMMAND = "repeat_wd";
-  private static final String ADMIN_REPEAT_WEEKENDS_COMMAND = ADMIN_PREFIX + "repeat_we";
-  private static final String REPEAT_WEEKENDS_COMMAND = "repeat_we";
+  private static final String ADMIN_REPEAT_COMMAND = ADMIN_PREFIX + REPEAT_COMMAND;
+  private static final String REPEAT_DAILY_COMMAND = REPEAT_COMMAND + "_d";
+  private static final String ADMIN_REPEAT_DAILY_COMMAND = ADMIN_PREFIX + REPEAT_DAILY_COMMAND;
+  private static final String REPEAT_WORKDAYS_COMMAND = REPEAT_COMMAND + "_wd";
+  private static final String ADMIN_REPEAT_WORKDAYS_COMMAND = ADMIN_PREFIX + REPEAT_WORKDAYS_COMMAND;
+  private static final String REPEAT_WEEKENDS_COMMAND = REPEAT_COMMAND + "_we";
+  private static final String ADMIN_REPEAT_WEEKENDS_COMMAND = ADMIN_PREFIX + REPEAT_WEEKENDS_COMMAND;
 
   @Bean
   public BotCommand repeatCommand(final RepeatService repeatService, final RepeatScheduler scheduler) {
