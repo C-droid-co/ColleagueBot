@@ -27,9 +27,6 @@ import ru.ustits.colleague.repositories.services.RepeatService;
 import ru.ustits.colleague.tasks.RepeatScheduler;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 
 /**
  * @author ustits
@@ -268,20 +265,6 @@ public class AppContext {
     dataSource.setPassword(env.getRequiredProperty("db.password"));
     dataSource.setPortNumber(Integer.valueOf(env.getRequiredProperty("db.port")));
     return dataSource;
-  }
-
-  @Bean
-  public Connection connection() {
-    final String url = env.getRequiredProperty("db.jdbc_url");
-    final String user = env.getRequiredProperty("db.user");
-    final String password = env.getRequiredProperty("db.password");
-
-    try {
-      return DriverManager.getConnection(url, user, password);
-    } catch (SQLException e) {
-      log.error(e);
-    }
-    return null;
   }
 
   @Bean
