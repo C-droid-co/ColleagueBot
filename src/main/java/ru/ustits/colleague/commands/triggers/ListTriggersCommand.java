@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static ru.ustits.colleague.AppConfig.MAX_MESSAGE_LENGTH;
+import static ru.ustits.colleague.configs.AppConfig.MAX_MESSAGE_LENGTH;
 
 /**
  * @author ustits

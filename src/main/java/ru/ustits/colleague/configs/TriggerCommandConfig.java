@@ -1,4 +1,4 @@
-package ru.ustits.colleague;
+package ru.ustits.colleague.configs;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,7 +13,7 @@ import ru.ustits.colleague.repositories.records.TriggerRecord;
  * @author ustits
  */
 @Configuration
-public class TriggerCommandConfig extends CommandConfig {
+class TriggerCommandConfig extends CommandConfig {
 
   private static final String ADD_TRIGGER_COMMAND = "trigger";
   private static final String ADMIN_ADD_TRIGGER_COMMAND = ADMIN_PREFIX + ADD_TRIGGER_COMMAND;

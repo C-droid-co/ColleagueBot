@@ -1,7 +1,7 @@
 package ru.ustits.colleague.commands.triggers;
 
 import lombok.Data;
-import ru.ustits.colleague.AppConfig;
+import ru.ustits.colleague.configs.AppConfig;
 
 /**
  * @author ustits

@@ -10,6 +10,7 @@ import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
 import org.telegram.telegrambots.logging.BotLogger;
+import ru.ustits.colleague.configs.AppConfig;
 
 /**
  * @author ustits
@@ -24,7 +25,7 @@ public class ColleagueApp {
     final TelegramBotsApi api = new TelegramBotsApi();
 
     final ApplicationContext context =
-            new AnnotationConfigApplicationContext(AppConfig.class, CommandConfig.class);
+            new AnnotationConfigApplicationContext(AppConfig.class);
     final ColleagueBot bot = context.getBean(ColleagueBot.class);
 
     try {

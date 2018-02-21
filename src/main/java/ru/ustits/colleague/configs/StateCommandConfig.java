@@ -1,8 +1,9 @@
-package ru.ustits.colleague;
+package ru.ustits.colleague.configs;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.telegram.telegrambots.bots.commandbot.commands.BotCommand;
+import ru.ustits.colleague.ColleagueBot;
 import ru.ustits.colleague.commands.ArgsAwareCommand;
 import ru.ustits.colleague.commands.NoWhitespaceCommand;
 import ru.ustits.colleague.commands.triggers.ListProcessStatesCommand;
@@ -13,7 +14,7 @@ import ru.ustits.colleague.commands.triggers.ShowStateCommand;
  * @author ustits
  */
 @Configuration
-public class StateCommandConfig extends CommandConfig {
+class StateCommandConfig extends CommandConfig {
 
   private static final String PROCESS_STATE_COMMAND = "state_switch";
   private static final String LIST_PROCESS_STATE_COMMAND = "state_ls";

@@ -1,4 +1,4 @@
-package ru.ustits.colleague;
+package ru.ustits.colleague.configs;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.postgresql.ds.PGSimpleDataSource;
@@ -19,7 +19,7 @@ import javax.sql.DataSource;
  * @author ustits
  */
 @Configuration
-@ComponentScan
+@ComponentScan(basePackages = "ru.ustits.colleague")
 @PropertySource("classpath:bot_config.properties")
 public class AppConfig {
 

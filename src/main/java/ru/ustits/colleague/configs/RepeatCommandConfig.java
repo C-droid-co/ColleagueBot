@@ -1,4 +1,4 @@
-package ru.ustits.colleague;
+package ru.ustits.colleague.configs;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +16,7 @@ import ru.ustits.colleague.tasks.RepeatScheduler;
  * @author ustits
  */
 @Configuration
-public class RepeatCommandConfig extends CommandConfig {
+class RepeatCommandConfig extends CommandConfig {
 
   private static final String REPEAT_COMMAND = "repeat";
   private static final String ADMIN_REPEAT_COMMAND = ADMIN_PREFIX + "repeat";
