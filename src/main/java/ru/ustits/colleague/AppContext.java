@@ -18,7 +18,9 @@ import ru.ustits.colleague.commands.repeats.*;
 import ru.ustits.colleague.commands.stats.StatsCommand;
 import ru.ustits.colleague.commands.stats.WordStatsCmd;
 import ru.ustits.colleague.commands.triggers.*;
-import ru.ustits.colleague.repositories.*;
+import ru.ustits.colleague.repositories.IgnoreTriggerRepository;
+import ru.ustits.colleague.repositories.Repository;
+import ru.ustits.colleague.repositories.TriggerRepository;
 import ru.ustits.colleague.repositories.records.RepeatRecord;
 import ru.ustits.colleague.repositories.records.StopWordRecord;
 import ru.ustits.colleague.repositories.records.TriggerRecord;
@@ -67,16 +69,11 @@ public class AppContext {
   private Environment env;
 
   @Bean
-  public ColleagueBot bot(final String botName, final String botToken,
-                          final TriggerRepository triggerRepository, final RepeatService repeatService,
-                          final MessageService messageService, final Repository<StopWordRecord> stopWordRepository,
-                          final IgnoreTriggerRepository ignoreTriggerRepository,
-                          final MessageRepository messageRepository, final ChatsRepository chatsRepository,
-                          final UserRepository userRepository, final RepeatScheduler scheduler)
-          throws SchedulerException {
-    final ColleagueBot bot = new ColleagueBot(botName, botToken, messageRepository, chatsRepository, userRepository,
-            triggerRepository, repeatService, ignoreTriggerRepository, scheduler);
-    bot.registerAll(
+  public BotCommand[] commands(final ColleagueBot bot, final TriggerRepository triggerRepository,
+                               final RepeatService repeatService, final MessageService messageService,
+                               final Repository<StopWordRecord> stopWordRepository,
+                               final IgnoreTriggerRepository ignoreTriggerRepository) throws SchedulerException {
+    return new BotCommand[] {
             admin(
                     triggerCommand(
                             ADMIN_ADD_TRIGGER_COMMAND,
@@ -191,8 +188,7 @@ public class AppContext {
                     )
             ),
             new IgnoreTriggerCmd(IGNORE_TRIGGERS_CMD, ignoreTriggerRepository)
-    );
-    return bot;
+    };
   }
 
   private BotCommand triggerCommand(final String command, final String description,

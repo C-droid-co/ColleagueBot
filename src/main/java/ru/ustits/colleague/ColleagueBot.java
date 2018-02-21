@@ -3,6 +3,8 @@ package ru.ustits.colleague;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.api.methods.send.SendDocument;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -10,6 +12,7 @@ import org.telegram.telegrambots.api.methods.send.SendSticker;
 import org.telegram.telegrambots.api.objects.*;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.bots.commandbot.TelegramLongPollingCommandBot;
+import org.telegram.telegrambots.bots.commandbot.commands.BotCommand;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 import ru.ustits.colleague.repositories.*;
 import ru.ustits.colleague.repositories.records.*;
@@ -28,6 +31,7 @@ import static java.lang.Integer.toUnsignedLong;
  * @author ustits
  */
 @Log4j2
+@Service
 public class ColleagueBot extends TelegramLongPollingCommandBot {
 
   private final MessageRepository messageRepository;
@@ -38,6 +42,8 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
   private final IgnoreTriggerRepository ignoreTriggerRepository;
   private final RepeatScheduler scheduler;
   private final String botToken;
+
+  private BotCommand[] commands;
 
   @Getter
   @Setter
@@ -59,9 +65,10 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
   }
 
   @PostConstruct
-  void startRepeats() {
+  void initialize() {
     final List<RepeatRecord> records = repeatService.fetchAllRepeats();
     scheduler.scheduleTasks(records, this);
+    registerAll(commands);
   }
 
   @Override
@@ -75,6 +82,11 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
         findTriggers(update.getMessage());
       }
     }
+  }
+
+  @Autowired
+  public void setCommands(final BotCommand[] commands) {
+    this.commands = commands;
   }
 
   @Override
