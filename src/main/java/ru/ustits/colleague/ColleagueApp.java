@@ -24,7 +24,7 @@ public class ColleagueApp {
     final TelegramBotsApi api = new TelegramBotsApi();
 
     final ApplicationContext context =
-            new AnnotationConfigApplicationContext(AppContext.class);
+            new AnnotationConfigApplicationContext(AppConfig.class, CommandConfig.class);
     final ColleagueBot bot = context.getBean(ColleagueBot.class);
 
     try {

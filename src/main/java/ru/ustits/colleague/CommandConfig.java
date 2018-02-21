@@ -1,17 +1,7 @@
 package ru.ustits.colleague;
 
-import lombok.extern.log4j.Log4j2;
-import org.apache.commons.dbutils.QueryRunner;
-import org.postgresql.ds.PGSimpleDataSource;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.impl.StdSchedulerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.env.Environment;
 import org.telegram.telegrambots.bots.commandbot.commands.BotCommand;
 import ru.ustits.colleague.commands.*;
 import ru.ustits.colleague.commands.repeats.*;
@@ -28,18 +18,11 @@ import ru.ustits.colleague.repositories.services.MessageService;
 import ru.ustits.colleague.repositories.services.RepeatService;
 import ru.ustits.colleague.tasks.RepeatScheduler;
 
-import javax.sql.DataSource;
-
 /**
  * @author ustits
  */
-@Log4j2
 @Configuration
-@ComponentScan
-@PropertySource("classpath:bot_config.properties")
-public class AppContext {
-
-  public static final int MAX_MESSAGE_LENGTH = 4096;
+public class CommandConfig {
 
   private static final String ADMIN_PREFIX = "a_";
   private static final String ADD_TRIGGER_COMMAND = "trigger";
@@ -65,14 +48,13 @@ public class AppContext {
   private static final String CHANGE_TRIGGER_MESSAGE_LENGTH_CMD = ADMIN_PREFIX + "trigger_mes_len";
   private static final String IGNORE_TRIGGERS_CMD = "ignore";
 
-  @Autowired
-  private Environment env;
-
   @Bean
   public BotCommand[] commands(final ColleagueBot bot, final TriggerRepository triggerRepository,
                                final RepeatService repeatService, final MessageService messageService,
                                final Repository<StopWordRecord> stopWordRepository,
-                               final IgnoreTriggerRepository ignoreTriggerRepository) throws SchedulerException {
+                               final IgnoreTriggerRepository ignoreTriggerRepository,
+                               final TriggerCmdConfig triggerCmdConfig, final Long adminId,
+                               final RepeatScheduler scheduler) {
     return new BotCommand[] {
             admin(
                     triggerCommand(
@@ -80,40 +62,49 @@ public class AppContext {
                             "add trigger to a specific message and chat",
                             new ChatIdParser<>(
                                     new TriggerParser(3, 1)),
-                            triggerRepository)),
+                            triggerRepository,
+                            triggerCmdConfig),
+                    adminId),
             triggerCommand(
                     ADD_TRIGGER_COMMAND,
                     "add trigger to a specific message",
                     new TriggerParser(2),
-                    triggerRepository),
+                    triggerRepository, triggerCmdConfig),
             helpCommand(bot),
             repeatCommand(
                     REPEAT_COMMAND,
                     "repeat message with cron expression",
                     new PlainParser(),
-                    repeatService),
+                    repeatService,
+                    scheduler),
             admin(
                     repeatCommand(
                             ADMIN_REPEAT_COMMAND,
                             "add repeat message with cron expression to any chat",
                             new ChatIdParser<>(
                                     new PlainParser(8, 1)),
-                            repeatService)),
+                            repeatService,
+                            scheduler),
+                    adminId),
             repeatCommand(
                     REPEAT_DAILY_COMMAND,
                     "repeat message everyday",
                     new DailyParser(),
-                    repeatService),
+                    repeatService,
+                    scheduler),
             admin(
                     repeatCommand(
                             ADMIN_REPEAT_DAILY_COMMAND,
                             "repeat message everyday (admin)",
                             new ChatIdParser<>(
                                     adminDailyParser()),
-                            repeatService)),
+                            repeatService,
+                            scheduler),
+                    adminId),
             repeatCommand(REPEAT_WORKDAYS_COMMAND, "repeat message every work day",
                     new WorkDaysParser(),
-                    repeatService),
+                    repeatService,
+                    scheduler),
             admin(
                     repeatCommand(
                             ADMIN_REPEAT_WORKDAYS_COMMAND,
@@ -121,12 +112,15 @@ public class AppContext {
                             new ChatIdParser<>(
                                     new WorkDaysParser(
                                             adminDailyParser())),
-                            repeatService)),
+                            repeatService,
+                            scheduler),
+                    adminId),
             repeatCommand(
                     REPEAT_WEEKENDS_COMMAND,
                     "repeat message every weekend",
                     new WeekendsParser(),
-                    repeatService),
+                    repeatService,
+                    scheduler),
             admin(
                     repeatCommand(
                             ADMIN_REPEAT_WEEKENDS_COMMAND,
@@ -134,7 +128,9 @@ public class AppContext {
                             new ChatIdParser<>(
                                     new WeekendsParser(
                                             adminDailyParser())),
-                            repeatService)),
+                            repeatService,
+                            scheduler),
+                    adminId),
             listTriggersCommand(triggerRepository),
             statsCommand(messageService),
             wordStatsCommand(messageService, stopWordRepository),
@@ -153,7 +149,8 @@ public class AppContext {
                                     triggerRepository,
                                     new ChatIdParser<>(
                                             new TriggerParser(2, 1))),
-                            2)),
+                            2),
+                    adminId),
             admin(
                     new ArgsAwareCommand(
                             new DeleteTriggerCommand(
@@ -163,7 +160,8 @@ public class AppContext {
                                     new ChatIdParser<>(
                                             new UserIdParser<>(
                                                     new TriggerParser(3, 2)))),
-                            3)),
+                            3),
+                    adminId),
             admin(
                     new NoWhitespaceCommand(
                             new ArgsAwareCommand(
@@ -172,8 +170,8 @@ public class AppContext {
                                             "change trigger reaction",
                                             bot),
                                     1
-                            ))
-            ),
+                            )),
+                    adminId),
             new ListProcessStatesCommand(LIST_PROCESS_STATE_COMMAND, "list all trigger reactions"),
             new ShowStateCommand(
                     SHOW_CURRENT_STATE_COMMAND,
@@ -182,25 +180,33 @@ public class AppContext {
             admin(
                     new NoWhitespaceCommand(
                             new ArgsAwareCommand(
-                                    new ChangeMessageLengthCmd(CHANGE_TRIGGER_MESSAGE_LENGTH_CMD, triggerCmdConfig()),
+                                    new ChangeMessageLengthCmd(CHANGE_TRIGGER_MESSAGE_LENGTH_CMD, triggerCmdConfig),
                                     1
                             )
-                    )
-            ),
+                    ),
+                    adminId),
             new IgnoreTriggerCmd(IGNORE_TRIGGERS_CMD, ignoreTriggerRepository)
     };
   }
 
+  @Bean
+  public TriggerCmdConfig triggerCmdConfig(final int defaultMessageLength) {
+    final TriggerCmdConfig config = new TriggerCmdConfig();
+    config.setMessageLength(defaultMessageLength);
+    return config;
+  }
+
   private BotCommand triggerCommand(final String command, final String description,
-                                    final Parser<TriggerRecord> strategy, final TriggerRepository triggerRepository) {
+                                    final Parser<TriggerRecord> strategy, final TriggerRepository triggerRepository,
+                                    final TriggerCmdConfig triggerCmdConfig) {
     return new NoWhitespaceCommand(
             new ArgsAwareCommand(
-                    new AddTriggerCommand(command, description, triggerRepository, strategy, triggerCmdConfig()),
+                    new AddTriggerCommand(command, description, triggerRepository, strategy, triggerCmdConfig),
                     strategy.parametersCount()));
   }
 
-  private AdminAwareCommand admin(final BotCommand command) {
-    return new AdminAwareCommand(command, adminId());
+  private AdminAwareCommand admin(final BotCommand command, final Long adminId) {
+    return new AdminAwareCommand(command, adminId);
   }
 
   private DailyParser adminDailyParser() {
@@ -225,63 +231,12 @@ public class AppContext {
   }
 
   private BotCommand repeatCommand(final String command, final String description,
-                                   final Parser<RepeatRecord> strategy, final RepeatService repeatService)
-          throws SchedulerException {
+                                   final Parser<RepeatRecord> strategy, final RepeatService repeatService,
+                                   final RepeatScheduler scheduler) {
     return new NoWhitespaceCommand(
             new ArgsAwareCommand(
-                    new RepeatCommand(command, description, strategy, scheduler(), repeatService),
+                    new RepeatCommand(command, description, strategy, scheduler, repeatService),
                     strategy.parametersCount()));
-  }
-
-  @Bean
-  public TriggerCmdConfig triggerCmdConfig() {
-    final TriggerCmdConfig config = new TriggerCmdConfig();
-    config.setMessageLength(defaultMessageLength());
-    return config;
-  }
-
-  @Bean
-  public RepeatScheduler scheduler() throws SchedulerException {
-    final Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
-    scheduler.start();
-    return new RepeatScheduler(scheduler);
-  }
-
-  @Bean
-  public QueryRunner sql(final DataSource dataSource) {
-    return new QueryRunner(dataSource);
-  }
-
-  @Bean
-  public DataSource dataSource() {
-    final PGSimpleDataSource dataSource = new PGSimpleDataSource();
-    dataSource.setServerName(env.getRequiredProperty("db.url"));
-    dataSource.setDatabaseName(env.getRequiredProperty("db.name"));
-    dataSource.setUser(env.getRequiredProperty("db.user"));
-    dataSource.setPassword(env.getRequiredProperty("db.password"));
-    dataSource.setPortNumber(Integer.valueOf(env.getRequiredProperty("db.port")));
-    return dataSource;
-  }
-
-  @Bean
-  public Long adminId() {
-    return Long.parseLong(env.getRequiredProperty("admin.id"));
-  }
-
-  @Bean
-  public String botName() {
-    return env.getRequiredProperty("bot.name");
-  }
-
-  @Bean
-  public String botToken() {
-    return env.getRequiredProperty("bot.token");
-  }
-
-  @Bean
-  public Integer defaultMessageLength() {
-    final String raw = env.getProperty("bot.message_length");
-    return raw == null ? MAX_MESSAGE_LENGTH : Integer.parseInt(raw);
   }
 
 }
