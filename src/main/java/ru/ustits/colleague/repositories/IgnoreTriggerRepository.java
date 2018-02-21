@@ -1,6 +1,7 @@
 package ru.ustits.colleague.repositories;
 
 import org.apache.commons.dbutils.QueryRunner;
+import org.springframework.stereotype.Component;
 import ru.ustits.colleague.repositories.records.IgnoreTriggerRecord;
 
 import java.sql.ResultSet;
@@ -9,6 +10,7 @@ import java.sql.SQLException;
 /**
  * @author ustits
  */
+@Component
 public class IgnoreTriggerRepository extends AbstractRepository<IgnoreTriggerRecord> {
 
   public IgnoreTriggerRepository(final QueryRunner sql) {

@@ -18,7 +18,9 @@ import ru.ustits.colleague.commands.repeats.*;
 import ru.ustits.colleague.commands.stats.StatsCommand;
 import ru.ustits.colleague.commands.stats.WordStatsCmd;
 import ru.ustits.colleague.commands.triggers.*;
-import ru.ustits.colleague.repositories.*;
+import ru.ustits.colleague.repositories.IgnoreTriggerRepository;
+import ru.ustits.colleague.repositories.Repository;
+import ru.ustits.colleague.repositories.TriggerRepository;
 import ru.ustits.colleague.repositories.records.RepeatRecord;
 import ru.ustits.colleague.repositories.records.StopWordRecord;
 import ru.ustits.colleague.repositories.records.TriggerRecord;
@@ -70,7 +72,10 @@ public class AppContext {
   private Environment env;
 
   @Bean
-  public ColleagueBot bot() throws SchedulerException {
+  public ColleagueBot bot(final TriggerRepository triggerRepository, final RepeatService repeatService,
+                          final MessageService messageService, final Repository<StopWordRecord> stopWordRepository,
+                          final IgnoreTriggerRepository ignoreTriggerRepository)
+          throws SchedulerException {
     final ColleagueBot bot = new ColleagueBot(botName());
     bot.registerAll(
             admin(
@@ -78,60 +83,70 @@ public class AppContext {
                             ADMIN_ADD_TRIGGER_COMMAND,
                             "add trigger to a specific message and chat",
                             new ChatIdParser<>(
-                                    new TriggerParser(3, 1)))),
+                                    new TriggerParser(3, 1)),
+                            triggerRepository)),
             triggerCommand(
                     ADD_TRIGGER_COMMAND,
                     "add trigger to a specific message",
-                    new TriggerParser(2)),
+                    new TriggerParser(2),
+                    triggerRepository),
             helpCommand(bot),
             repeatCommand(
                     REPEAT_COMMAND,
                     "repeat message with cron expression",
-                    new PlainParser()),
+                    new PlainParser(),
+                    repeatService),
             admin(
                     repeatCommand(
                             ADMIN_REPEAT_COMMAND,
                             "add repeat message with cron expression to any chat",
                             new ChatIdParser<>(
-                                    new PlainParser(8, 1)))),
+                                    new PlainParser(8, 1)),
+                            repeatService)),
             repeatCommand(
                     REPEAT_DAILY_COMMAND,
                     "repeat message everyday",
-                    new DailyParser()),
+                    new DailyParser(),
+                    repeatService),
             admin(
                     repeatCommand(
                             ADMIN_REPEAT_DAILY_COMMAND,
                             "repeat message everyday (admin)",
                             new ChatIdParser<>(
-                                    adminDailyParser()))),
+                                    adminDailyParser()),
+                            repeatService)),
             repeatCommand(REPEAT_WORKDAYS_COMMAND, "repeat message every work day",
-                    new WorkDaysParser()),
+                    new WorkDaysParser(),
+                    repeatService),
             admin(
                     repeatCommand(
                             ADMIN_REPEAT_WORKDAYS_COMMAND,
                             "repeat message every work day (admin)",
                             new ChatIdParser<>(
                                     new WorkDaysParser(
-                                            adminDailyParser())))),
+                                            adminDailyParser())),
+                            repeatService)),
             repeatCommand(
                     REPEAT_WEEKENDS_COMMAND,
                     "repeat message every weekend",
-                    new WeekendsParser()),
+                    new WeekendsParser(),
+                    repeatService),
             admin(
                     repeatCommand(
                             ADMIN_REPEAT_WEEKENDS_COMMAND,
                             "repeat message every weekend (admin)",
                             new ChatIdParser<>(
                                     new WeekendsParser(
-                                            adminDailyParser())))),
-            listTriggersCommand(),
-            statsCommand(),
-            wordStatsCommand(),
+                                            adminDailyParser())),
+                            repeatService)),
+            listTriggersCommand(triggerRepository),
+            statsCommand(messageService),
+            wordStatsCommand(messageService, stopWordRepository),
             new ArgsAwareCommand(
                     new DeleteTriggerCommand(
                             DELETE_TRIGGER_COMMAND,
                             "delete chat trigger",
-                            triggerRepository(),
+                            triggerRepository,
                             new TriggerParser(1)),
                     1),
             admin(
@@ -139,7 +154,7 @@ public class AppContext {
                             new DeleteTriggerCommand(
                                     ADMIN_DELETE_TRIGGER_COMMAND,
                                     "delete admin's trigger for any chat",
-                                    triggerRepository(),
+                                    triggerRepository,
                                     new ChatIdParser<>(
                                             new TriggerParser(2, 1))),
                             2)),
@@ -148,7 +163,7 @@ public class AppContext {
                             new DeleteTriggerCommand(
                                     ADMIN_DELETE_USER_TRIGGER_COMMAND,
                                     "delete any user's trigger for any chat",
-                                    triggerRepository(),
+                                    triggerRepository,
                                     new ChatIdParser<>(
                                             new UserIdParser<>(
                                                     new TriggerParser(3, 2)))),
@@ -176,16 +191,16 @@ public class AppContext {
                             )
                     )
             ),
-            new IgnoreTriggerCmd(IGNORE_TRIGGERS_CMD, ignoreTriggerRepository())
+            new IgnoreTriggerCmd(IGNORE_TRIGGERS_CMD, ignoreTriggerRepository)
     );
     return bot;
   }
 
   private BotCommand triggerCommand(final String command, final String description,
-                                   final Parser<TriggerRecord> strategy) {
+                                    final Parser<TriggerRecord> strategy, final TriggerRepository triggerRepository) {
     return new NoWhitespaceCommand(
             new ArgsAwareCommand(
-                    new AddTriggerCommand(command, description, triggerRepository(), strategy, triggerCmdConfig()),
+                    new AddTriggerCommand(command, description, triggerRepository, strategy, triggerCmdConfig()),
                     strategy.parametersCount()));
   }
 
@@ -197,27 +212,29 @@ public class AppContext {
     return new DailyParser(4, 1);
   }
 
-  private ListTriggersCommand listTriggersCommand() {
-    return new ListTriggersCommand(TRIGGER_LIST_COMMAND, triggerRepository());
+  private ListTriggersCommand listTriggersCommand(final TriggerRepository triggerRepository) {
+    return new ListTriggersCommand(TRIGGER_LIST_COMMAND, triggerRepository);
   }
 
   private HelpCommand helpCommand(final ColleagueBot bot) {
     return new HelpCommand(bot, HELP_COMMAND);
   }
 
-  private StatsCommand statsCommand() {
-    return new StatsCommand(STATS_COMMAND, messageService());
+  private StatsCommand statsCommand(final MessageService messageService) {
+    return new StatsCommand(STATS_COMMAND, messageService);
   }
 
-  private WordStatsCmd wordStatsCommand() {
-    return new WordStatsCmd(WORD_STATS_CMD, messageService(), stopWordRepository());
+  private WordStatsCmd wordStatsCommand(final MessageService messageService,
+                                        final Repository<StopWordRecord> stopWordRepository) {
+    return new WordStatsCmd(WORD_STATS_CMD, messageService, stopWordRepository);
   }
 
   private BotCommand repeatCommand(final String command, final String description,
-                                  final Parser<RepeatRecord> strategy) throws SchedulerException {
+                                   final Parser<RepeatRecord> strategy, final RepeatService repeatService)
+          throws SchedulerException {
     return new NoWhitespaceCommand(
             new ArgsAwareCommand(
-                    new RepeatCommand(command, description, strategy, scheduler(), repeatService()),
+                    new RepeatCommand(command, description, strategy, scheduler(), repeatService),
                     strategy.parametersCount()));
   }
 
@@ -236,8 +253,8 @@ public class AppContext {
   }
 
   @Bean
-  public QueryRunner sql() {
-    return new QueryRunner(dataSource());
+  public QueryRunner sql(final DataSource dataSource) {
+    return new QueryRunner(dataSource);
   }
 
   @Bean
@@ -263,50 +280,6 @@ public class AppContext {
       log.error(e);
     }
     return null;
-  }
-
-  @Bean
-  public RepeatService repeatService() {
-    return new RepeatService(repeatRepository(), chatsRepository(), userRepository());
-  }
-
-  private MessageService messageService() {
-    return new MessageService(sql(), messageRepository());
-  }
-
-  @Bean
-  public MessageRepository messageRepository() {
-    return new MessageRepository(sql());
-  }
-
-  @Bean
-  public ChatsRepository chatsRepository() {
-    return new ChatsRepository(sql());
-  }
-
-  @Bean
-  public UserRepository userRepository() {
-    return new UserRepository(sql());
-  }
-
-  @Bean
-  public TriggerRepository triggerRepository() {
-    return new TriggerRepository(sql());
-  }
-
-  @Bean
-  public RepeatRepository repeatRepository() {
-    return new RepeatRepository(sql());
-  }
-
-  @Bean
-  public IgnoreTriggerRepository ignoreTriggerRepository() {
-    return new IgnoreTriggerRepository(sql());
-  }
-
-  @Bean
-  public Repository<StopWordRecord> stopWordRepository() {
-    return new CachedRepository<>(new StopWordRepository(sql()));
   }
 
   @Bean

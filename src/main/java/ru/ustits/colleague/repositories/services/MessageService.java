@@ -3,6 +3,7 @@ package ru.ustits.colleague.repositories.services;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.dbutils.QueryRunner;
+import org.springframework.stereotype.Component;
 import ru.ustits.colleague.repositories.MessageRepository;
 import ru.ustits.colleague.repositories.records.MessageRecord;
 
@@ -13,6 +14,7 @@ import java.util.*;
  * @author ustits
  */
 @Log4j2
+@Component
 @RequiredArgsConstructor
 public final class MessageService {
 

@@ -2,6 +2,7 @@ package ru.ustits.colleague.repositories;
 
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.dbutils.QueryRunner;
+import org.springframework.stereotype.Component;
 import ru.ustits.colleague.repositories.records.StopWordRecord;
 
 import java.sql.ResultSet;
@@ -13,6 +14,7 @@ import java.util.List;
  * @author ustits
  */
 @Log4j2
+@Component
 public class StopWordRepository extends AbstractRepository<StopWordRecord> {
 
   public StopWordRepository(final QueryRunner sql) {

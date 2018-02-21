@@ -1,6 +1,7 @@
 package ru.ustits.colleague.repositories.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.api.objects.Chat;
 import org.telegram.telegrambots.api.objects.User;
 import ru.ustits.colleague.repositories.ChatsRepository;
@@ -18,6 +19,7 @@ import static java.lang.Integer.toUnsignedLong;
 /**
  * @author ustits
  */
+@Component
 @RequiredArgsConstructor
 public class RepeatService {
 
