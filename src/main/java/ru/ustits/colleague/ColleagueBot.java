@@ -3,7 +3,6 @@ package ru.ustits.colleague;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.api.methods.send.SendDocument;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -31,31 +30,32 @@ import static java.lang.Integer.toUnsignedLong;
 @Log4j2
 public class ColleagueBot extends TelegramLongPollingCommandBot {
 
-  @Autowired
-  private MessageRepository messageRepository;
-  @Autowired
-  private ChatsRepository chatsRepository;
-  @Autowired
-  private UserRepository userRepository;
-  @Autowired
-  private TriggerRepository triggerRepository;
-  @Autowired
-  private RepeatService repeatService;
-  @Autowired
-  private IgnoreTriggerRepository ignoreTriggerRepository;
-  @Autowired
-  private RepeatScheduler scheduler;
-  @Autowired
-  private String botName;
-  @Autowired
-  private String botToken;
+  private final MessageRepository messageRepository;
+  private final ChatsRepository chatsRepository;
+  private final UserRepository userRepository;
+  private final TriggerRepository triggerRepository;
+  private final RepeatService repeatService;
+  private final IgnoreTriggerRepository ignoreTriggerRepository;
+  private final RepeatScheduler scheduler;
+  private final String botToken;
 
   @Getter
   @Setter
   private ProcessState processState = ProcessState.ALL;
 
-  public ColleagueBot(final String botUsername) {
-    super(new DefaultBotOptions(), true, botUsername);
+  public ColleagueBot(final String botName, final String botToken, final MessageRepository messageRepository,
+                      final ChatsRepository chatsRepository, final UserRepository userRepository,
+                      final TriggerRepository triggerRepository, final RepeatService repeatService,
+                      final IgnoreTriggerRepository ignoreTriggerRepository, final RepeatScheduler scheduler) {
+    super(new DefaultBotOptions(), true, botName);
+    this.botToken = botToken;
+    this.messageRepository = messageRepository;
+    this.chatsRepository = chatsRepository;
+    this.userRepository = userRepository;
+    this.triggerRepository = triggerRepository;
+    this.repeatService = repeatService;
+    this.ignoreTriggerRepository = ignoreTriggerRepository;
+    this.scheduler = scheduler;
   }
 
   @PostConstruct
