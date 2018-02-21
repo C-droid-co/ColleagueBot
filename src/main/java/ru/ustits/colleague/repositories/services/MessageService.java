@@ -4,11 +4,21 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.dbutils.QueryRunner;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.api.objects.Chat;
+import org.telegram.telegrambots.api.objects.Message;
+import org.telegram.telegrambots.api.objects.User;
+import ru.ustits.colleague.repositories.ChatsRepository;
 import ru.ustits.colleague.repositories.MessageRepository;
+import ru.ustits.colleague.repositories.UserRepository;
+import ru.ustits.colleague.repositories.records.ChatRecord;
 import ru.ustits.colleague.repositories.records.MessageRecord;
+import ru.ustits.colleague.repositories.records.UserRecord;
 
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.*;
+
+import static java.lang.Integer.toUnsignedLong;
 
 /**
  * @author ustits
@@ -20,6 +30,8 @@ public final class MessageService {
 
   private final QueryRunner sql;
   private final MessageRepository messageRepository;
+  private final ChatsRepository chatsRepository;
+  private final UserRepository userRepository;
 
   public Map<String, Integer> count(final Long chatId, final boolean isEdited) {
     try {
@@ -63,6 +75,30 @@ public final class MessageService {
       log.error("Unable to count messages", e);
     }
     return Collections.emptyList();
+  }
+
+  public MessageRecord addMessage(final Message message) {
+    final Chat chat = message.getChat();
+    final ChatRecord chatRecord = new ChatRecord(chat.getId(), null, chat.getTitle());
+    if (!chatsRepository.exists(chatRecord)) {
+      chatsRepository.add(chatRecord);
+    }
+
+    final User user = message.getFrom();
+    final UserRecord userRecord = new UserRecord(toUnsignedLong(user.getId()),
+            user.getFirstName(), user.getLastName(), user.getUserName());
+    if (!userRepository.exists(userRecord)) {
+      userRepository.add(userRecord);
+    }
+    final MessageRecord messageRecord =
+            new MessageRecord(
+                    toUnsignedLong(message.getMessageId()),
+                    new Timestamp((long) message.getDate() * 1000),
+                    message.getText(),
+                    message.getEditDate() != null,
+                    chat.getId(),
+                    toUnsignedLong(user.getId()));
+    return messageRepository.add(messageRecord);
   }
 
 }

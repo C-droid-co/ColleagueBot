@@ -9,20 +9,25 @@ import org.telegram.telegrambots.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.api.methods.send.SendDocument;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.methods.send.SendSticker;
-import org.telegram.telegrambots.api.objects.*;
+import org.telegram.telegrambots.api.objects.CallbackQuery;
+import org.telegram.telegrambots.api.objects.Message;
+import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.bots.commandbot.TelegramLongPollingCommandBot;
 import org.telegram.telegrambots.bots.commandbot.commands.BotCommand;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
-import ru.ustits.colleague.repositories.*;
-import ru.ustits.colleague.repositories.records.*;
+import ru.ustits.colleague.repositories.IgnoreTriggerRepository;
+import ru.ustits.colleague.repositories.TriggerRepository;
+import ru.ustits.colleague.repositories.records.IgnoreTriggerRecord;
+import ru.ustits.colleague.repositories.records.RepeatRecord;
+import ru.ustits.colleague.repositories.records.TriggerRecord;
+import ru.ustits.colleague.repositories.services.MessageService;
 import ru.ustits.colleague.repositories.services.RepeatService;
 import ru.ustits.colleague.tasks.RepeatScheduler;
 import ru.ustits.colleague.tools.triggers.ProcessState;
 import ru.ustits.colleague.tools.triggers.TriggerProcessor;
 
 import javax.annotation.PostConstruct;
-import java.sql.Timestamp;
 import java.util.List;
 
 import static java.lang.Integer.toUnsignedLong;
@@ -34,9 +39,7 @@ import static java.lang.Integer.toUnsignedLong;
 @Service
 public class ColleagueBot extends TelegramLongPollingCommandBot {
 
-  private final MessageRepository messageRepository;
-  private final ChatsRepository chatsRepository;
-  private final UserRepository userRepository;
+  private final MessageService messageService;
   private final TriggerRepository triggerRepository;
   private final RepeatService repeatService;
   private final IgnoreTriggerRepository ignoreTriggerRepository;
@@ -49,15 +52,12 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
   @Setter
   private ProcessState processState = ProcessState.ALL;
 
-  public ColleagueBot(final String botName, final String botToken, final MessageRepository messageRepository,
-                      final ChatsRepository chatsRepository, final UserRepository userRepository,
+  public ColleagueBot(final String botName, final String botToken, final MessageService messageService,
                       final TriggerRepository triggerRepository, final RepeatService repeatService,
                       final IgnoreTriggerRepository ignoreTriggerRepository, final RepeatScheduler scheduler) {
     super(new DefaultBotOptions(), true, botName);
     this.botToken = botToken;
-    this.messageRepository = messageRepository;
-    this.chatsRepository = chatsRepository;
-    this.userRepository = userRepository;
+    this.messageService = messageService;
     this.triggerRepository = triggerRepository;
     this.repeatService = repeatService;
     this.ignoreTriggerRepository = ignoreTriggerRepository;
@@ -108,34 +108,10 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
 
   private void addMessage(final Update update) {
     if (isMessage(update)) {
-      addMessage(update.getMessage());
+      messageService.addMessage(update.getMessage());
     } else if (isEditMessage(update)) {
-      addMessage(update.getEditedMessage());
+      messageService.addMessage(update.getEditedMessage());
     }
-  }
-
-  private void addMessage(final Message message) {
-    final Chat chat = message.getChat();
-    final ChatRecord chatRecord = new ChatRecord(chat.getId(), null, chat.getTitle());
-    if (!chatsRepository.exists(chatRecord)) {
-      chatsRepository.add(chatRecord);
-    }
-
-    final User user = message.getFrom();
-    final UserRecord userRecord = new UserRecord(toUnsignedLong(user.getId()),
-            user.getFirstName(), user.getLastName(), user.getUserName());
-    if (!userRepository.exists(userRecord)) {
-      userRepository.add(userRecord);
-    }
-    final MessageRecord messageRecord =
-            new MessageRecord(
-                    toUnsignedLong(message.getMessageId()),
-                    new Timestamp((long) message.getDate() * 1000),
-                    message.getText(),
-                    message.getEditDate() != null,
-                    chat.getId(),
-                    toUnsignedLong(user.getId()));
-    messageRepository.add(messageRecord);
   }
 
   private void findTriggers(final Message message) {
