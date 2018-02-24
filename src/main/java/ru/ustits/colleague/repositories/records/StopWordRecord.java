@@ -1,27 +1,24 @@
 package ru.ustits.colleague.repositories.records;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
+
+import javax.persistence.*;
 
 /**
  * @author ustits
  */
-@Getter
-@ToString
+@Entity
+@Table(name = "stopwords")
+@Value
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
 @EqualsAndHashCode(exclude = "id")
 public final class StopWordRecord {
 
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
+
   private String word;
-
-  public StopWordRecord(final String word) {
-    this(null, word);
-  }
-
-  public StopWordRecord(final Integer id, final String word) {
-    this.id = id;
-    this.word = word;
-  }
 
 }

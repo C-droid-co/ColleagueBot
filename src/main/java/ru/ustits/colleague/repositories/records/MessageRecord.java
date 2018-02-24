@@ -1,41 +1,47 @@
 package ru.ustits.colleague.repositories.records;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Value;
 
-import java.sql.Timestamp;
+import javax.persistence.*;
+import java.util.Date;
 
 /**
  * @author ustits
  */
-@Getter
-@ToString
-@EqualsAndHashCode
+@Entity
+@Table(name = "messages")
+@Value
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
 public final class MessageRecord {
 
-  private final Integer id;
-  private final Long messageId;
-  private final Timestamp date;
-  private final String text;
-  private final Boolean isEdited;
-  private final Long chatId;
-  private final Long userId;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Integer id;
 
-  public MessageRecord(final Long messageId, final Timestamp date, final String text,
+  @Column(name = "msg_id")
+  private Long messageId;
+
+  @Temporal(TemporalType.TIMESTAMP)
+  private Date date;
+
+  private String text;
+
+  @Column(name = "is_edited")
+  private Boolean isEdited;
+
+  @Column(name = "chat_id")
+  private Long chatId;
+
+  @Column(name = "user_id")
+  private Long userId;
+
+  public MessageRecord(final Long messageId, final Date date, final String text,
                        final Boolean isEdited, final Long chatId, final Long userId) {
     this(null, messageId, date, text, isEdited, chatId, userId);
   }
 
-  public MessageRecord(final Integer id, final Long messageId, final Timestamp date,
-                       final String text, final Boolean isEdited, final Long chatId,
-                       final Long userId) {
-    this.id = id;
-    this.messageId = messageId;
-    this.date = date;
-    this.text = text;
-    this.isEdited = isEdited;
-    this.chatId = chatId;
-    this.userId = userId;
-  }
 }

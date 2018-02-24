@@ -1,31 +1,35 @@
 package ru.ustits.colleague.repositories.records;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Value;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  * @author ustits
  */
-@Getter
-@ToString
-@EqualsAndHashCode
+@Entity
+@Table(name = "users")
+@Value
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
 public final class UserRecord {
 
-  private final Long id;
-  private final String firstName;
-  private final String lastName;
-  private final String userName;
+  @Id
+  private Long id;
 
-  public UserRecord(final Long id) {
-    this(id, null, null, null);
-  }
+  @Column(name = "first_name")
+  private String firstName;
 
-  public UserRecord(final Long id, final String firstName, final String lastName,
-                    final String userName) {
-    this.id = id;
-    this.firstName = firstName;
-    this.lastName = lastName;
-    this.userName = userName;
-  }
+  @Column(name = "last_name")
+  private String lastName;
+
+  @Column(name = "user_name")
+  private String userName;
+
 }

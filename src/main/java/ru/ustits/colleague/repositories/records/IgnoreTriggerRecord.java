@@ -1,29 +1,34 @@
 package ru.ustits.colleague.repositories.records;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Value;
+
+import javax.persistence.*;
 
 /**
  * @author ustits
  */
-@Getter
-@ToString
-@EqualsAndHashCode
+@Entity
+@Table(name = "ignore_triggers")
+@Value
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
 public final class IgnoreTriggerRecord {
 
-  private final Integer id;
-  private final Long chatId;
-  private final Long userId;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Integer id;
+
+  @Column(name = "chat_id")
+  private Long chatId;
+
+  @Column(name = "user_id")
+  private Long userId;
 
   public IgnoreTriggerRecord(final Long chatId, final Long userId) {
     this(null, chatId, userId);
-  }
-
-  public IgnoreTriggerRecord(final Integer id, final Long chatId, final Long userId) {
-    this.id = id;
-    this.chatId = chatId;
-    this.userId = userId;
   }
 
 }
