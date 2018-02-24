@@ -1,9 +1,9 @@
 package ru.ustits.colleague.repositories;
 
-import org.apache.commons.dbutils.QueryRunner;
 import org.junit.Before;
 import org.junit.Rule;
 import org.postgresql.ds.PGSimpleDataSource;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.PostgreSQLContainer;
 
@@ -16,7 +16,6 @@ import static ru.ustits.colleague.RandomUtils.string;
  */
 public abstract class RepositoryTest {
 
-  protected static final int FETCH_ALL_RESULT = 3;
   private static final String DB_SCRIPT = "db.sql";
   private static final String BUILD_SCRIPT = System.getProperty("user.dir") + "/db/" + DB_SCRIPT;
   private static final String TEST_ENV = "test-env.sql";
@@ -34,11 +33,11 @@ public abstract class RepositoryTest {
                   .withClasspathResourceMapping(TEST_ENV,
                           INIT_DIR + TEST_ENV, BindMode.READ_ONLY);
 
-  protected QueryRunner sql;
+  protected JdbcTemplate sql;
 
   @Before
   public void setUp() throws Exception {
-    sql = new QueryRunner(dataSource());
+    sql = new JdbcTemplate(dataSource());
   }
 
   private DataSource dataSource() {

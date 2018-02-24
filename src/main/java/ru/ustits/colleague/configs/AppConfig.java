@@ -1,6 +1,5 @@
 package ru.ustits.colleague.configs;
 
-import org.apache.commons.dbutils.QueryRunner;
 import org.hibernate.jpa.HibernatePersistenceProvider;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.quartz.Scheduler;
@@ -15,6 +14,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import ru.ustits.colleague.tasks.RepeatScheduler;
@@ -49,8 +49,8 @@ public class AppConfig {
   }
 
   @Bean
-  public QueryRunner sql(final DataSource dataSource) {
-    return new QueryRunner(dataSource);
+  public JdbcTemplate sql(final DataSource dataSource) {
+    return new JdbcTemplate(dataSource);
   }
 
   @Bean

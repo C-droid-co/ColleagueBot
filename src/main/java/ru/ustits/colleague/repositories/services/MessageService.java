@@ -2,7 +2,7 @@ package ru.ustits.colleague.repositories.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.dbutils.QueryRunner;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.api.objects.Chat;
 import org.telegram.telegrambots.api.objects.Message;
@@ -14,8 +14,10 @@ import ru.ustits.colleague.repositories.records.ChatRecord;
 import ru.ustits.colleague.repositories.records.MessageRecord;
 import ru.ustits.colleague.repositories.records.UserRecord;
 
-import java.sql.SQLException;
-import java.util.*;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import static java.lang.Integer.toUnsignedLong;
 
@@ -27,33 +29,29 @@ import static java.lang.Integer.toUnsignedLong;
 @RequiredArgsConstructor
 public final class MessageService {
 
-  private final QueryRunner sql;
+  private final JdbcTemplate sql;
   private final MessageRepository messageRepository;
   private final ChatsRepository chatsRepository;
   private final UserRepository userRepository;
 
   public Map<String, Integer> count(final Long chatId, final boolean isEdited) {
-    try {
-      final Map<String, Integer> counts = new LinkedHashMap<>();
-      return sql.query("SELECT users.first_name, count(*) as messages_count " +
-                      "FROM messages " +
-                      "INNER JOIN users ON (messages.user_id = users.id) " +
-                      "WHERE messages.chat_id=? AND messages.is_edited=? " +
-                      "GROUP BY users.first_name " +
-                      "ORDER BY messages_count DESC",
-              resultSet -> {
-                while (resultSet.next()) {
-                  final String name = resultSet.getString(1);
-                  final int count = resultSet.getInt(2);
-                  counts.put(name, count);
-                }
-                log.info("Fetched: {}", counts);
-                return counts;
-              }, chatId, isEdited);
-    } catch (SQLException e) {
-      log.error("Unable to count messages", e);
-    }
-    return Collections.emptyMap();
+    final Map<String, Integer> counts = new LinkedHashMap<>();
+    return sql.query("SELECT users.first_name, count(*) as messages_count " +
+                    "FROM messages " +
+                    "INNER JOIN users ON (messages.user_id = users.id) " +
+                    "WHERE messages.chat_id=? AND messages.is_edited=? " +
+                    "GROUP BY users.first_name " +
+                    "ORDER BY messages_count DESC",
+            new Object[]{chatId, isEdited},
+            rs -> {
+              while (rs.next()) {
+                final String name = rs.getString(1);
+                final int count = rs.getInt(2);
+                counts.put(name, count);
+              }
+              log.info("Fetched: {}", counts);
+              return counts;
+            });
   }
 
   public List<MessageRecord> messagesForUser(final Long userId, final Long chatId) {

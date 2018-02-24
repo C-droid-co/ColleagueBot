@@ -1,8 +1,8 @@
 package ru.ustits.colleague.commands.stats;
 
-import org.apache.commons.dbutils.QueryRunner;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.jdbc.core.JdbcTemplate;
 import ru.ustits.colleague.repositories.ChatsRepository;
 import ru.ustits.colleague.repositories.MessageRepository;
 import ru.ustits.colleague.repositories.UserRepository;
@@ -28,7 +28,7 @@ public class StatsCommandTest {
   @Before
   public void setUp() throws Exception {
     command = new StatsCommand(string(),
-            new MessageService(mock(QueryRunner.class), mock(MessageRepository.class), mock(ChatsRepository.class),
+            new MessageService(mock(JdbcTemplate.class), mock(MessageRepository.class), mock(ChatsRepository.class),
                     mock(UserRepository.class)));
   }
 
