@@ -15,7 +15,6 @@ import ru.ustits.colleague.repositories.records.MessageRecord;
 import ru.ustits.colleague.repositories.records.UserRecord;
 
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.*;
 
 import static java.lang.Integer.toUnsignedLong;
@@ -58,47 +57,33 @@ public final class MessageService {
   }
 
   public List<MessageRecord> messagesForUser(final Long userId, final Long chatId) {
-    try {
-      final List<MessageRecord> messages = new ArrayList<>();
-      return sql.query("SELECT * FROM messages WHERE chat_id=? AND user_id=?",
-              resultSet -> {
-                while (resultSet.next()) {
-                  final MessageRecord record = messageRepository.toRecord(resultSet);
-                  messages.add(record);
-
-                }
-                log.info("Fetched: {} messages for userId[{}] and chatId[{}]",
-                        messages.size(), userId, chatId);
-                return messages;
-              }, chatId, userId);
-    } catch (SQLException e) {
-      log.error("Unable to count messages", e);
-    }
-    return Collections.emptyList();
+    return messageRepository.findAllByUserIdAndChatId(userId, chatId);
   }
 
   public MessageRecord addMessage(final Message message) {
     final Chat chat = message.getChat();
-    final ChatRecord chatRecord = new ChatRecord(chat.getId(), null, chat.getTitle());
-    if (!chatsRepository.exists(chatRecord)) {
-      chatsRepository.add(chatRecord);
+    final Long chatId = chat.getId();
+    final ChatRecord chatRecord = new ChatRecord(chatId, null, chat.getTitle());
+    if (!chatsRepository.existsById(chatId)) {
+      chatsRepository.save(chatRecord);
     }
 
     final User user = message.getFrom();
-    final UserRecord userRecord = new UserRecord(toUnsignedLong(user.getId()),
-            user.getFirstName(), user.getLastName(), user.getUserName());
-    if (!userRepository.exists(userRecord)) {
-      userRepository.add(userRecord);
+    final Long userId = toUnsignedLong(user.getId());
+    final UserRecord userRecord = new UserRecord(userId, user.getFirstName(),
+            user.getLastName(), user.getUserName());
+    if (!userRepository.existsById(userId)) {
+      userRepository.save(userRecord);
     }
     final MessageRecord messageRecord =
             new MessageRecord(
                     toUnsignedLong(message.getMessageId()),
-                    new Timestamp((long) message.getDate() * 1000),
+                    new Date((long) message.getDate() * 1000),
                     message.getText(),
                     message.getEditDate() != null,
                     chat.getId(),
                     toUnsignedLong(user.getId()));
-    return messageRepository.add(messageRecord);
+    return messageRepository.save(messageRecord);
   }
 
 }

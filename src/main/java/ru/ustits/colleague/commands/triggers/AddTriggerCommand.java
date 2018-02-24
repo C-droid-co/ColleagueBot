@@ -45,15 +45,13 @@ public final class AddTriggerCommand extends AbstractTriggerCommand {
       log.info("Can't add {}: expecting message length to be {}", toAdd, messageLimit);
       answer.setText(
               "Trigger's message length must be less or equal to [" + messageLimit + "] symbols");
-    } else if (!getRepository().exists(toAdd)) {
-      final TriggerRecord record = getRepository().add(toAdd);
+    } else if (!getRepository().existsByTriggerAndChatIdAndUserId(toAdd.getTrigger(),
+            toAdd.getChatId(), toAdd.getUserId())) {
+      final TriggerRecord record = getRepository().save(toAdd);
       answer.setText(String.format("Trigger [%s] added", record.getTrigger()));
     } else {
-      if (getRepository().update(toAdd) <= 0) {
-        answer.setText("Ooops, i couldn't update trigger");
-      } else {
-        answer.setText(String.format("Trigger [%s] was updated", toAdd.getTrigger()));
-      }
+      getRepository().save(toAdd);
+      answer.setText(String.format("Trigger [%s] was updated", toAdd.getTrigger()));
     }
     return answer;
   }

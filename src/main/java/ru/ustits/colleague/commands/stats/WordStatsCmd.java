@@ -1,5 +1,6 @@
 package ru.ustits.colleague.commands.stats;
 
+import com.google.common.collect.Lists;
 import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
 import org.telegram.telegrambots.api.objects.Chat;
@@ -9,7 +10,7 @@ import ru.ustits.colleague.analysis.Cleanup;
 import ru.ustits.colleague.analysis.SimpleTokenizer;
 import ru.ustits.colleague.analysis.filters.MessageFilter;
 import ru.ustits.colleague.analysis.filters.NoUrlFilter;
-import ru.ustits.colleague.repositories.Repository;
+import ru.ustits.colleague.repositories.StopWordRepository;
 import ru.ustits.colleague.repositories.records.MessageRecord;
 import ru.ustits.colleague.repositories.records.StopWordRecord;
 import ru.ustits.colleague.repositories.services.MessageService;
@@ -37,16 +38,16 @@ public final class WordStatsCmd extends StatsCommand {
 
   private final SimpleTokenizer tokenizer = new SimpleTokenizer();
   private final Cleanup cleanup = new Cleanup();
-  private final Repository<StopWordRecord> stopWordRepository;
+  private final StopWordRepository stopWordRepository;
   private final int statsLength;
 
   public WordStatsCmd(final String commandIdentifier, final MessageService service,
-                      final Repository<StopWordRecord> stopWordRepository) {
+                      final StopWordRepository stopWordRepository) {
     this(commandIdentifier, service, stopWordRepository, DEFAULT_STATS_LEN);
   }
 
   public WordStatsCmd(final String commandIdentifier, final MessageService service,
-                      final Repository<StopWordRecord> stopWordRepository, final int statsLength) {
+                      final StopWordRepository stopWordRepository, final int statsLength) {
     super(commandIdentifier, service);
     this.stopWordRepository = stopWordRepository;
     this.statsLength = statsLength;
@@ -64,9 +65,9 @@ public final class WordStatsCmd extends StatsCommand {
             .filter(new NoUrlFilter())
             .collect(Collectors.toList()));
 
-    final List<StopWordRecord> stopWordRecords = stopWordRepository.fetchAll();
+    final List<StopWordRecord> stopWordRecords = Lists.newArrayList(stopWordRepository.findAll());
     final List<String> cleanedTokens;
-    if (stopWordRecords == null) {
+    if (stopWordRecords.isEmpty()) {
       cleanedTokens = cleanup.clean(tokens);
     } else {
       final List<String> stopWords = stopWordRecords.stream().map(StopWordRecord::getWord)

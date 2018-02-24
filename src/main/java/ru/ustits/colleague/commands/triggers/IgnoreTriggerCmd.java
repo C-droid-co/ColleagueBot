@@ -32,12 +32,12 @@ public final class IgnoreTriggerCmd extends BotCommand {
     final Long chatId = chat.getId();
     final IgnoreTriggerRecord record = new IgnoreTriggerRecord(chatId, userId);
     final SendMessage answer = new SendMessage().setChatId(chatId);
-    if (repository.exists(record)) {
+    if (repository.existsByChatIdAndUserId(record.getChatId(), record.getUserId())) {
       repository.delete(record);
       log.info("Deleted [{}] in chat [{}] from ignore_triggers table", userId, chatId);
       answer.setText("You are now not ignored by triggers");
     } else {
-      repository.add(record);
+      repository.save(record);
       log.info("Added [{}] in chat [{}] to ignore_triggers table", userId, chatId);
       answer.setText("You are now ignored by triggers");
     }
