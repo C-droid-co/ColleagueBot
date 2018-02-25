@@ -6,6 +6,9 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.impl.StdSchedulerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -28,6 +31,7 @@ import java.util.Properties;
  * @author ustits
  */
 @Configuration
+@EnableCaching
 @EnableJpaRepositories(basePackages = "ru.ustits.colleague.repositories")
 @ComponentScan(basePackages = "ru.ustits.colleague")
 @PropertySource("classpath:bot_config.properties")
@@ -86,6 +90,11 @@ public class AppConfig {
     final JpaTransactionManager transactionManager = new JpaTransactionManager();
     transactionManager.setDataSource(dataSource);
     return transactionManager;
+  }
+
+  @Bean
+  public CacheManager cacheManager() {
+    return new ConcurrentMapCacheManager();
   }
 
   @Bean
