@@ -11,20 +11,25 @@ import static ru.ustits.colleague.RandomUtils.string;
 public class ProcessStateTest {
 
   @Test
-  public void testHas() {
-    final String state = ProcessState.ALL.getName();
-    assertThat(ProcessState.has(state)).isTrue();
+  public void testToState() {
+    final ProcessState processState = ProcessState.NOTHING;
+    final String state = processState.getName();
+    assertThat(ProcessState.toState(state))
+            .isPresent()
+            .hasValue(processState);
   }
 
   @Test
-  public void testHasNot() {
+  public void testToStateIsEmpty() {
     final String state = string();
-    assertThat(ProcessState.has(state)).isFalse();
+    assertThat(ProcessState.toState(state))
+            .isNotPresent();
   }
 
   @Test
-  public void testHasNotIfStateIsNull() {
-    assertThat(ProcessState.has(null)).isFalse();
+  public void testToStateIsEmptyWithPassedNull() {
+    assertThat(ProcessState.toState(null))
+            .isNotPresent();
   }
 
 }

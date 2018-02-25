@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
+import java.util.Optional;
+
 /**
  * @author ustits
  */
@@ -22,17 +24,18 @@ public enum ProcessState {
   private final ProcessingStrategy strategy;
   private final String name;
 
-  public static boolean has(final String state) {
+  public static Optional<ProcessState> toState(final String state) {
     if (state == null) {
       log.warn("State can't be null");
-      return false;
+      return Optional.empty();
     }
     for (final ProcessState value : ProcessState.values()) {
       if (state.equals(value.getName())) {
-        return true;
+        return Optional.of(value);
       }
     }
-    return false;
+    log.warn("Got unknown state {}", state);
+    return Optional.empty();
   }
 
 }
