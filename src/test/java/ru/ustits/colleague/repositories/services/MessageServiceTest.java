@@ -6,9 +6,7 @@ import ru.ustits.colleague.repositories.ChatsRepository;
 import ru.ustits.colleague.repositories.MessageRepository;
 import ru.ustits.colleague.repositories.RepositoryTest;
 import ru.ustits.colleague.repositories.UserRepository;
-import ru.ustits.colleague.repositories.records.MessageRecord;
 
-import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,12 +31,6 @@ public class MessageServiceTest extends RepositoryTest {
   public void testCount() {
     final Map<String, Integer> result = service.count(1L, false);
     assertThat(result).containsOnlyKeys("name1", "name2", "name3").containsValues(1);
-  }
-
-  @Test
-  public void testMessagesForUser() {
-    final List<MessageRecord> records = service.messagesForUser(1L, 1L);
-    assertThat(records).hasSize(1);
   }
 
 }

@@ -18,7 +18,6 @@ import org.telegram.telegrambots.bots.commandbot.commands.BotCommand;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 import ru.ustits.colleague.repositories.IgnoreTriggerRepository;
 import ru.ustits.colleague.repositories.TriggerRepository;
-import ru.ustits.colleague.repositories.records.IgnoreTriggerRecord;
 import ru.ustits.colleague.repositories.records.RepeatRecord;
 import ru.ustits.colleague.repositories.records.TriggerRecord;
 import ru.ustits.colleague.repositories.services.MessageService;
@@ -118,10 +117,9 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
     final String text = message.getText();
     final Long chatId = message.getChatId();
     final Long userId = toUnsignedLong(message.getFrom().getId());
-    final IgnoreTriggerRecord ignoredUser = new IgnoreTriggerRecord(chatId, userId);
-    if (!ignoreTriggerRepository.exists(ignoredUser)) {
+    if (!ignoreTriggerRepository.existsByChatIdAndUserId(chatId, userId)) {
       log.debug("Searching triggers for user [{}] and message [{}]", userId, text);
-      final List<TriggerRecord> triggers = triggerRepository.fetchAll(chatId);
+      final List<TriggerRecord> triggers = triggerRepository.findAllByChatId(chatId);
       final TriggerProcessor processor = new TriggerProcessor(triggers, processState.getStrategy());
       final List<SendMessage> messages = processor.process(text);
       for (final SendMessage msg : messages) {

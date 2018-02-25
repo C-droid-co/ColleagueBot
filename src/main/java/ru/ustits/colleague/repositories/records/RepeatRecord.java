@@ -1,38 +1,39 @@
 package ru.ustits.colleague.repositories.records;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.ToString;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Value;
+
+import javax.persistence.*;
 
 /**
  * @author ustits
  */
-@Getter
-@ToString
-@EqualsAndHashCode
+@Entity
+@Table(name = "repeats")
+@Value
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
 public final class RepeatRecord {
 
-  private final Integer id;
-  private final String message;
-  private final Long chatId;
-  private final Long userId;
-  private final String cron;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Integer id;
+
+  private String message;
+
+  private String cron;
+
+  @Column(name = "chat_id")
+  private Long chatId;
+
+  @Column(name = "user_id")
+  private Long userId;
 
   public RepeatRecord(final String message, final String cron,
                       final Long chatId, final Long userId) {
     this(null, message, cron, chatId, userId);
   }
 
-  public RepeatRecord(final Integer id,
-                      @NonNull final String message,
-                      @NonNull final String cron,
-                      @NonNull final Long chatId,
-                      @NonNull final Long userId) {
-    this.id = id;
-    this.message = message;
-    this.cron = cron;
-    this.chatId = chatId;
-    this.userId = userId;
-  }
 }

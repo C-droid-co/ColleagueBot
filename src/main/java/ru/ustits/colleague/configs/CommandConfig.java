@@ -8,8 +8,7 @@ import ru.ustits.colleague.commands.AdminAwareCommand;
 import ru.ustits.colleague.commands.HelpCommand;
 import ru.ustits.colleague.commands.stats.StatsCommand;
 import ru.ustits.colleague.commands.stats.WordStatsCmd;
-import ru.ustits.colleague.repositories.Repository;
-import ru.ustits.colleague.repositories.records.StopWordRecord;
+import ru.ustits.colleague.repositories.StopWordRepository;
 import ru.ustits.colleague.repositories.services.MessageService;
 
 /**
@@ -35,7 +34,7 @@ class CommandConfig {
 
   @Bean
   public WordStatsCmd wordStatsCommand(final MessageService messageService,
-                                       final Repository<StopWordRecord> stopWordRepository) {
+                                       final StopWordRepository stopWordRepository) {
     return new WordStatsCmd(WORD_STATS_CMD, messageService, stopWordRepository);
   }
 

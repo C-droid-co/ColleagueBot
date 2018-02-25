@@ -34,7 +34,7 @@ public final class ListTriggersCommand extends BotCommand {
   @Override
   public void execute(final AbsSender absSender, final User user, final Chat chat, final String[] arguments) {
     final Long chatId = chat.getId();
-    final List<TriggerRecord> triggers = repository.fetchAll(chatId);
+    final List<TriggerRecord> triggers = repository.findAllByChatId(chatId);
     final List<String> messages = toMessages(triggers);
     for (final String messageText : messages) {
       final SendMessage message = new SendMessage(chatId, messageText).enableMarkdown(true);

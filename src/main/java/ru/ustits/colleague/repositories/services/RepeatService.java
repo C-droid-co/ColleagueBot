@@ -28,43 +28,48 @@ public class RepeatService {
   private final UserRepository userRepository;
 
   public RepeatRecord addRepeat(final RepeatRecord record, final Chat chat, final User user) {
-    final ChatRecord chatRecord = new ChatRecord(chat.getId(), chat.getTitle());
-    if (!chatsRepository.exists(chatRecord)) {
-      chatsRepository.add(chatRecord);
+    final Long chatId = chat.getId();
+    final ChatRecord chatRecord = new ChatRecord(chatId, chat.getTitle());
+    if (!chatsRepository.existsById(chatId)) {
+      chatsRepository.save(chatRecord);
     }
-    final UserRecord userRecord = new UserRecord(toUnsignedLong(user.getId()),
-            user.getFirstName(), user.getLastName(), user.getUserName());
-    if (!userRepository.exists(userRecord)) {
-      userRepository.add(userRecord);
+    final Long userId = toUnsignedLong(user.getId());
+    final UserRecord userRecord = new UserRecord(userId, user.getFirstName(),
+            user.getLastName(), user.getUserName());
+    if (!userRepository.existsById(userId)) {
+      userRepository.save(userRecord);
     }
-    return repeatRepository.add(record);
+    return repeatRepository.save(record);
   }
 
   public RepeatRecord addRepeat(final String message, final String cron, final Chat chat, final User user) {
-    final ChatRecord chatRecord = new ChatRecord(chat.getId(), chat.getTitle());
-    if (!chatsRepository.exists(chatRecord)) {
-      chatsRepository.add(chatRecord);
+    final Long chatId = chat.getId();
+    final ChatRecord chatRecord = new ChatRecord(chatId, chat.getTitle());
+    if (!chatsRepository.existsById(chatId)) {
+      chatsRepository.save(chatRecord);
     }
-    final UserRecord userRecord = new UserRecord(toUnsignedLong(user.getId()),
+    final Long userId = toUnsignedLong(user.getId());
+    final UserRecord userRecord = new UserRecord(userId,
             user.getFirstName(), user.getLastName(), user.getUserName());
-    if (!userRepository.exists(userRecord)) {
-      userRepository.add(userRecord);
+    if (!userRepository.existsById(userId)) {
+      userRepository.save(userRecord);
     }
     final RepeatRecord record = new RepeatRecord(message, cron, chat.getId(), toUnsignedLong(user.getId()));
-    return repeatRepository.add(record);
+    return repeatRepository.save(record);
   }
 
-  public void deleteRepeat(final RepeatRecord record) {
-    repeatRepository.delete(record);
+  public void deleteRepeat(final Integer repeatId) {
+    repeatRepository.deleteById(repeatId);
   }
 
   public List<RepeatRecord> fetchAllRepeats() {
     final List<RepeatRecord> allRepeats = new ArrayList<>();
-    final List<ChatRecord> chats = chatsRepository.fetchAll();
+    final Iterable<ChatRecord> chats = chatsRepository.findAll();
     for (final ChatRecord chat : chats) {
-      final List<RepeatRecord> repeats = repeatRepository.fetchAll(chat.getId());
+      final List<RepeatRecord> repeats = repeatRepository.findAllByChatId(chat.getId());
       allRepeats.addAll(repeats);
     }
     return allRepeats;
   }
+
 }

@@ -41,13 +41,15 @@ public final class DeleteTriggerCommand extends AbstractTriggerCommand {
     }
   }
 
-  boolean deleteTrigger(final TriggerRecord record) {
+  private boolean deleteTrigger(final TriggerRecord record) {
     if (record == null) {
       return false;
     }
-    final boolean exists = getRepository().exists(record);
+    final boolean exists = getRepository().existsByTriggerAndChatIdAndUserId(record.getTrigger(), record.getChatId(),
+            record.getUserId());
     if (exists) {
-      getRepository().delete(record);
+      getRepository().deleteByTriggerAndChatIdAndUserId(record.getTrigger(), record.getChatId(),
+              record.getUserId());
       return true;
     } else {
       return false;

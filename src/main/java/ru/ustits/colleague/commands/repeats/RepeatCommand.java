@@ -57,7 +57,7 @@ public final class RepeatCommand extends BotCommand {
       final RepeatRecord dbRecord = service.addRepeat(record, chat, user);
       final boolean isScheduled = scheduler.scheduleTask(dbRecord, sender);
       if (!isScheduled) {
-        service.deleteRepeat(dbRecord);
+        service.deleteRepeat(dbRecord.getId());
         return false;
       } else {
         return true;
