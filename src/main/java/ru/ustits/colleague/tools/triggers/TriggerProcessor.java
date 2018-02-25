@@ -1,6 +1,5 @@
 package ru.ustits.colleague.tools.triggers;
 
-import org.telegram.telegrambots.api.methods.send.SendMessage;
 import ru.ustits.colleague.repositories.records.TriggerRecord;
 
 import java.util.List;
@@ -25,11 +24,11 @@ public class TriggerProcessor {
     this.strategy = strategy;
   }
 
-  public List<SendMessage> process(final String text) {
+  public List<String> process(final String text) {
     return strategy.process(
             triggers.stream().
                     filter(record -> hasTrigger(text, record.getTrigger())).
-                    map(record -> createMessage(record.getMessage())).
+                    map(TriggerRecord::getMessage).
                     collect(Collectors.toList()));
   }
 
@@ -51,9 +50,4 @@ public class TriggerProcessor {
             .replace("\\E", "");
   }
 
-  SendMessage createMessage(final String response) {
-    final SendMessage message = new SendMessage();
-    message.setText(response);
-    return message;
-  }
 }

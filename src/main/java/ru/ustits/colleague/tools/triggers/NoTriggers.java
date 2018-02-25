@@ -1,7 +1,5 @@
 package ru.ustits.colleague.tools.triggers;
 
-import org.telegram.telegrambots.api.methods.send.SendMessage;
-
 import java.util.Collections;
 import java.util.List;
 
@@ -11,7 +9,7 @@ import java.util.List;
 public final class NoTriggers implements ProcessingStrategy {
 
   @Override
-  public List<SendMessage> process(final List<SendMessage> messages) {
+  public List<String> process(final List<String> messages) {
     return Collections.emptyList();
   }
 }

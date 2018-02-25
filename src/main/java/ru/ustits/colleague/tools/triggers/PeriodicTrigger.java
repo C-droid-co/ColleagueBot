@@ -1,7 +1,5 @@
 package ru.ustits.colleague.tools.triggers;
 
-import org.telegram.telegrambots.api.methods.send.SendMessage;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -26,7 +24,7 @@ public final class PeriodicTrigger implements ProcessingStrategy {
   }
 
   @Override
-  public List<SendMessage> process(final List<SendMessage> messages) {
+  public List<String> process(final List<String> messages) {
     final Random random = new Random();
     final int result = random.nextInt(RANDOM_BOUND);
     if (result >= failChance) {
@@ -35,4 +33,5 @@ public final class PeriodicTrigger implements ProcessingStrategy {
       return Collections.emptyList();
     }
   }
+
 }

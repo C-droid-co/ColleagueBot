@@ -123,10 +123,12 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
       log.debug("Searching triggers for user [{}] and message [{}]", userId, text);
       final List<TriggerRecord> triggers = triggerRepository.findAllByChatId(chatId);
       final TriggerProcessor processor = new TriggerProcessor(triggers, processState.getStrategy());
-      final List<SendMessage> messages = processor.process(text);
-      for (final SendMessage msg : messages) {
+      final List<String> messages = processor.process(text);
+      messages.forEach(s -> {
+        final SendMessage msg = new SendMessage();
+        msg.setText(s);
         sendMessage(chatId, msg);
-      }
+      });
     } else {
       log.debug("Ignoring triggers for user {}", userId);
     }
