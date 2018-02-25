@@ -48,7 +48,8 @@ public final class DeleteTriggerCommand extends AbstractTriggerCommand {
     final boolean exists = getRepository().existsByTriggerAndChatIdAndUserId(record.getTrigger(), record.getChatId(),
             record.getUserId());
     if (exists) {
-      getRepository().delete(record);
+      getRepository().deleteByTriggerAndChatIdAndUserId(record.getTrigger(), record.getChatId(),
+              record.getUserId());
       return true;
     } else {
       return false;

@@ -58,8 +58,8 @@ public class RepeatService {
     return repeatRepository.save(record);
   }
 
-  public void deleteRepeat(final RepeatRecord record) {
-    repeatRepository.delete(record);
+  public void deleteRepeat(final Integer repeatId) {
+    repeatRepository.deleteById(repeatId);
   }
 
   public List<RepeatRecord> fetchAllRepeats() {
