@@ -1,0 +1,45 @@
+package ru.ustits.colleague.repositories.services;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.api.objects.Chat;
+import ru.ustits.colleague.repositories.ChatStateRepository;
+import ru.ustits.colleague.repositories.ChatsRepository;
+import ru.ustits.colleague.repositories.records.ChatRecord;
+import ru.ustits.colleague.repositories.records.ChatStateRecord;
+import ru.ustits.colleague.tools.triggers.ProcessState;
+
+import java.util.Optional;
+
+/**
+ * @author ustits
+ */
+@Component
+@RequiredArgsConstructor
+public class ChatService {
+
+  private final ChatsRepository chatsRepository;
+  private final ChatStateRepository chatStateRepository;
+
+  public ChatRecord changeState(final Chat chat, final ProcessState state) {
+    final ChatRecord chatRecord = identifyChat(chat);
+    final ChatStateRecord oldState = chatRecord.getState();
+    final String stateName = state.getName();
+    final ChatStateRecord newState;
+    if (oldState == null) {
+      newState = new ChatStateRecord(chatRecord, stateName);
+    } else {
+      newState = new ChatStateRecord(oldState, stateName);
+    }
+    final ChatStateRecord stateRecord = chatStateRepository.save(newState);
+    return chatsRepository.save(new ChatRecord(chatRecord, stateRecord));
+  }
+
+  private ChatRecord identifyChat(final Chat chat) {
+    final Long chatId = chat.getId();
+    final Optional<ChatRecord> chatDbEntry = chatsRepository.findById(chatId);
+    return chatDbEntry.orElseGet(() ->
+            chatsRepository.save(new ChatRecord(chatId, chat.getTitle())));
+  }
+
+}
