@@ -48,7 +48,7 @@ public class ChatService {
   public ProcessState getChatState(final Long chatId) {
     final Optional<ChatRecord> dbEntity = chatsRepository.findById(chatId);
     final ProcessState result;
-    if (dbEntity.isPresent()) {
+    if (dbEntity.isPresent() && dbEntity.get().getState() != null) {
       final ChatStateRecord record = dbEntity.get().getState();
       final Optional<ProcessState> state = ProcessState.toState(record.getState());
       result = state.orElse(defaultProcessState);
