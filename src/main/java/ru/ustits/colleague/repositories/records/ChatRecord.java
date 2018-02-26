@@ -37,4 +37,8 @@ public final class ChatRecord {
     this(chatRecord.id, chatRecord.type, chatRecord.title, state);
   }
 
+  public ChatRecord(final ChatStateRecord state) {
+    this(null, null, null, state);
+  }
+
 }

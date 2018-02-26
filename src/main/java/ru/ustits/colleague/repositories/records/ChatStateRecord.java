@@ -38,4 +38,8 @@ public class ChatStateRecord {
     this(chatStateRecord.id, chatStateRecord.chatId, state);
   }
 
+  public ChatStateRecord(final String state) {
+    this(null, null, state);
+  }
+
 }
