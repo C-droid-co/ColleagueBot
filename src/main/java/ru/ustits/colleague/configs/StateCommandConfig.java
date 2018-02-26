@@ -5,9 +5,9 @@ import org.springframework.context.annotation.Configuration;
 import org.telegram.telegrambots.bots.commandbot.commands.BotCommand;
 import ru.ustits.colleague.commands.ArgsAwareCommand;
 import ru.ustits.colleague.commands.NoWhitespaceCommand;
-import ru.ustits.colleague.commands.triggers.ListProcessStatesCommand;
-import ru.ustits.colleague.commands.triggers.ProcessStateCommand;
-import ru.ustits.colleague.commands.triggers.ShowStateCommand;
+import ru.ustits.colleague.commands.triggers.states.ChangeStateCommand;
+import ru.ustits.colleague.commands.triggers.states.ListStatesCommand;
+import ru.ustits.colleague.commands.triggers.states.ShowStateCommand;
 import ru.ustits.colleague.repositories.services.ChatService;
 import ru.ustits.colleague.tools.triggers.ProcessState;
 
@@ -26,7 +26,7 @@ class StateCommandConfig extends CommandConfig {
     return admin(
             new NoWhitespaceCommand(
                     new ArgsAwareCommand(
-                            new ProcessStateCommand(
+                            new ChangeStateCommand(
                                     PROCESS_STATE_COMMAND,
                                     "change trigger reaction",
                                     chatService),
@@ -37,7 +37,7 @@ class StateCommandConfig extends CommandConfig {
 
   @Bean
   public BotCommand listStateCommand() {
-    return new ListProcessStatesCommand(LIST_PROCESS_STATE_COMMAND, "list all trigger reactions");
+    return new ListStatesCommand(LIST_PROCESS_STATE_COMMAND, "list all trigger reactions");
   }
 
   @Bean

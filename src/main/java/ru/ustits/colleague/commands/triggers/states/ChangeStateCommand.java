@@ -1,4 +1,4 @@
-package ru.ustits.colleague.commands.triggers;
+package ru.ustits.colleague.commands.triggers.states;
 
 import lombok.extern.log4j.Log4j2;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -17,12 +17,12 @@ import java.util.Optional;
  * @author ustits
  */
 @Log4j2
-public final class ProcessStateCommand extends BotCommand {
+public final class ChangeStateCommand extends BotCommand {
 
   private final ChatService chatService;
 
-  public ProcessStateCommand(final String commandIdentifier, final String description,
-                             final ChatService chatService) {
+  public ChangeStateCommand(final String commandIdentifier, final String description,
+                            final ChatService chatService) {
     super(commandIdentifier, description);
     this.chatService = chatService;
   }
