@@ -7,7 +7,7 @@ import org.telegram.telegrambots.api.objects.User;
 import org.telegram.telegrambots.bots.AbsSender;
 import org.telegram.telegrambots.bots.commandbot.commands.BotCommand;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
-import ru.ustits.colleague.ColleagueBot;
+import ru.ustits.colleague.repositories.services.ChatService;
 import ru.ustits.colleague.tools.triggers.ProcessState;
 
 /**
@@ -16,22 +16,23 @@ import ru.ustits.colleague.tools.triggers.ProcessState;
 @Log4j2
 public final class ShowStateCommand extends BotCommand {
 
-  private final ColleagueBot bot;
+  private final ChatService chatService;
 
   public ShowStateCommand(final String commandIdentifier, final String description,
-                          final ColleagueBot bot) {
+                          final ChatService chatService) {
     super(commandIdentifier, description);
-    this.bot = bot;
+    this.chatService = chatService;
   }
 
   @Override
   public void execute(final AbsSender absSender, final User user, final Chat chat,
                       final String[] arguments) {
-    final ProcessState state = bot.getProcessState();
+    final ProcessState state = chatService.getChatState(chat.getId());
     try {
       absSender.execute(new SendMessage(chat.getId(), "Current mode [" + state.getName() + "]"));
     } catch (TelegramApiException e) {
       log.error("Unable to send message", e);
     }
   }
+
 }
