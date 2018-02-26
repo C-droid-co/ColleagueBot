@@ -2,7 +2,6 @@ package ru.ustits.colleague.tools.triggers;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.telegram.telegrambots.api.methods.send.SendMessage;
 import ru.ustits.colleague.repositories.records.TriggerRecord;
 
 import java.util.Collections;
@@ -30,7 +29,7 @@ public class TriggerProcessorTest {
   @Test
   public void testProcess() throws Exception {
     final String text = "some text with trigger";
-    final List<SendMessage> messages = processor.process(text);
+    final List<String> messages = processor.process(text);
     assertThat(messages).hasSize(1);
   }
 
@@ -46,13 +45,6 @@ public class TriggerProcessorTest {
     final String text = "triggertrigger";
     final boolean result = processor.hasTrigger(text, trigger);
     assertThat(result).isFalse();
-  }
-
-  @Test
-  public void testCreateMessage() throws Exception {
-    final String text = "text";
-    final SendMessage message = processor.createMessage(text);
-    assertThat(message.getText()).isEqualTo(text);
   }
 
   @Test

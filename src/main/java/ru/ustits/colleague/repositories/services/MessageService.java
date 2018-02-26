@@ -61,7 +61,7 @@ public final class MessageService {
   public MessageRecord addMessage(final Message message) {
     final Chat chat = message.getChat();
     final Long chatId = chat.getId();
-    final ChatRecord chatRecord = new ChatRecord(chatId, null, chat.getTitle());
+    final ChatRecord chatRecord = new ChatRecord(chatId, chat.getTitle());
     if (!chatsRepository.existsById(chatId)) {
       chatsRepository.save(chatRecord);
     }

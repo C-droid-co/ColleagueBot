@@ -1,7 +1,5 @@
 package ru.ustits.colleague;
 
-import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,26 +8,20 @@ import org.telegram.telegrambots.api.methods.send.SendDocument;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.methods.send.SendSticker;
 import org.telegram.telegrambots.api.objects.CallbackQuery;
-import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.bots.commandbot.TelegramLongPollingCommandBot;
 import org.telegram.telegrambots.bots.commandbot.commands.BotCommand;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
-import ru.ustits.colleague.repositories.IgnoreTriggerRepository;
-import ru.ustits.colleague.repositories.TriggerRepository;
+import ru.ustits.colleague.repositories.records.MessageRecord;
 import ru.ustits.colleague.repositories.records.RepeatRecord;
-import ru.ustits.colleague.repositories.records.TriggerRecord;
 import ru.ustits.colleague.repositories.services.MessageService;
 import ru.ustits.colleague.repositories.services.RepeatService;
+import ru.ustits.colleague.repositories.services.TriggerService;
 import ru.ustits.colleague.tasks.RepeatScheduler;
-import ru.ustits.colleague.tools.triggers.ProcessState;
-import ru.ustits.colleague.tools.triggers.TriggerProcessor;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
-
-import static java.lang.Integer.toUnsignedLong;
 
 /**
  * @author ustits
@@ -39,27 +31,21 @@ import static java.lang.Integer.toUnsignedLong;
 public class ColleagueBot extends TelegramLongPollingCommandBot {
 
   private final MessageService messageService;
-  private final TriggerRepository triggerRepository;
+  private final TriggerService triggerService;
   private final RepeatService repeatService;
-  private final IgnoreTriggerRepository ignoreTriggerRepository;
   private final RepeatScheduler scheduler;
   private final String botToken;
 
   private BotCommand[] commands;
 
-  @Getter
-  @Setter
-  private ProcessState processState = ProcessState.ALL;
-
   public ColleagueBot(final String botName, final String botToken, final MessageService messageService,
-                      final TriggerRepository triggerRepository, final RepeatService repeatService,
-                      final IgnoreTriggerRepository ignoreTriggerRepository, final RepeatScheduler scheduler) {
+                      final TriggerService triggerService, final RepeatService repeatService,
+                      final RepeatScheduler scheduler) {
     super(new DefaultBotOptions(), true, botName);
     this.botToken = botToken;
     this.messageService = messageService;
-    this.triggerRepository = triggerRepository;
+    this.triggerService = triggerService;
     this.repeatService = repeatService;
-    this.ignoreTriggerRepository = ignoreTriggerRepository;
     this.scheduler = scheduler;
   }
 
@@ -76,9 +62,9 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
     if (update.hasCallbackQuery()) {
       processCallback(update.getCallbackQuery());
     } else if (hasMessage(update)) {
-      addMessage(update);
-      if (isMessage(update)) {
-        findTriggers(update.getMessage());
+      final MessageRecord record = addMessage(update);
+      if (record != null && !record.getIsEdited()) {
+        replyWithTriggers(record);
       }
     }
   }
@@ -105,29 +91,25 @@ public class ColleagueBot extends TelegramLongPollingCommandBot {
     return update.hasEditedMessage() && update.getEditedMessage().hasText();
   }
 
-  private void addMessage(final Update update) {
+  private MessageRecord addMessage(final Update update) {
+    final MessageRecord record;
     if (isMessage(update)) {
-      messageService.addMessage(update.getMessage());
+      record = messageService.addMessage(update.getMessage());
     } else if (isEditMessage(update)) {
-      messageService.addMessage(update.getEditedMessage());
+      record = messageService.addMessage(update.getEditedMessage());
+    } else {
+      record = null;
     }
+    return record;
   }
 
-  private void findTriggers(final Message message) {
-    final String text = message.getText();
-    final Long chatId = message.getChatId();
-    final Long userId = toUnsignedLong(message.getFrom().getId());
-    if (!ignoreTriggerRepository.existsByChatIdAndUserId(chatId, userId)) {
-      log.debug("Searching triggers for user [{}] and message [{}]", userId, text);
-      final List<TriggerRecord> triggers = triggerRepository.findAllByChatId(chatId);
-      final TriggerProcessor processor = new TriggerProcessor(triggers, processState.getStrategy());
-      final List<SendMessage> messages = processor.process(text);
-      for (final SendMessage msg : messages) {
-        sendMessage(chatId, msg);
-      }
-    } else {
-      log.debug("Ignoring triggers for user {}", userId);
-    }
+  private void replyWithTriggers(final MessageRecord message) {
+    final List<String> triggers = triggerService.findTriggers(message);
+    triggers.forEach(s -> {
+      final SendMessage msg = new SendMessage();
+      msg.setText(s);
+      sendMessage(message.getChatId(), msg);
+    });
   }
 
   private void processCallback(final CallbackQuery callback) {

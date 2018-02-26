@@ -3,12 +3,13 @@ package ru.ustits.colleague.configs;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.telegram.telegrambots.bots.commandbot.commands.BotCommand;
-import ru.ustits.colleague.ColleagueBot;
 import ru.ustits.colleague.commands.ArgsAwareCommand;
 import ru.ustits.colleague.commands.NoWhitespaceCommand;
-import ru.ustits.colleague.commands.triggers.ListProcessStatesCommand;
-import ru.ustits.colleague.commands.triggers.ProcessStateCommand;
-import ru.ustits.colleague.commands.triggers.ShowStateCommand;
+import ru.ustits.colleague.commands.triggers.states.ChangeStateCommand;
+import ru.ustits.colleague.commands.triggers.states.ListStatesCommand;
+import ru.ustits.colleague.commands.triggers.states.ShowStateCommand;
+import ru.ustits.colleague.repositories.services.ChatService;
+import ru.ustits.colleague.tools.triggers.ProcessState;
 
 /**
  * @author ustits
@@ -21,14 +22,14 @@ class StateCommandConfig extends CommandConfig {
   private static final String SHOW_CURRENT_STATE_COMMAND = "state";
 
   @Bean
-  public BotCommand changeStateCommand(final ColleagueBot bot, final Long adminId) {
+  public BotCommand changeStateCommand(final Long adminId, final ChatService chatService) {
     return admin(
             new NoWhitespaceCommand(
                     new ArgsAwareCommand(
-                            new ProcessStateCommand(
+                            new ChangeStateCommand(
                                     PROCESS_STATE_COMMAND,
                                     "change trigger reaction",
-                                    bot),
+                                    chatService),
                             1
                     )),
             adminId);
@@ -36,15 +37,20 @@ class StateCommandConfig extends CommandConfig {
 
   @Bean
   public BotCommand listStateCommand() {
-    return new ListProcessStatesCommand(LIST_PROCESS_STATE_COMMAND, "list all trigger reactions");
+    return new ListStatesCommand(LIST_PROCESS_STATE_COMMAND, "list all trigger reactions");
   }
 
   @Bean
-  public BotCommand showStateCommand(final ColleagueBot bot) {
+  public BotCommand showStateCommand(final ChatService chatService) {
     return new ShowStateCommand(
             SHOW_CURRENT_STATE_COMMAND,
             "show current trigger reaction",
-            bot);
+            chatService);
+  }
+
+  @Bean
+  public ProcessState defaultProcessState() {
+    return ProcessState.ALL;
   }
 
 }

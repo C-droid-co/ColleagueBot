@@ -1,7 +1,5 @@
 package ru.ustits.colleague.tools.triggers;
 
-import org.telegram.telegrambots.api.methods.send.SendMessage;
-
 import java.util.List;
 
 /**
@@ -9,6 +7,6 @@ import java.util.List;
  */
 public interface ProcessingStrategy {
 
-  List<SendMessage> process(final List<SendMessage> messages);
+  List<String> process(final List<String> messages);
 
 }

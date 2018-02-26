@@ -40,4 +40,8 @@ public final class TriggerRecord {
     this(null, trigger, message, chatId, userId);
   }
 
+  public TriggerRecord(final String trigger, final String message) {
+    this(trigger, message, null, null);
+  }
+
 }

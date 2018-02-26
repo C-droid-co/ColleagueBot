@@ -2,13 +2,13 @@ package ru.ustits.colleague.tools.triggers;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.telegram.telegrambots.api.methods.send.SendMessage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static ru.ustits.colleague.RandomUtils.string;
 
 /**
  * @author ustits
@@ -23,15 +23,15 @@ public class LastTriggerTest {
   }
 
   @Test
-  public void testProcess() throws Exception {
-    final SendMessage last = new SendMessage();
-    final List<SendMessage> messages = Arrays.asList(new SendMessage(), new SendMessage(), last);
+  public void testProcess() {
+    final String last = string();
+    final List<String> messages = Arrays.asList(string(), string(), last);
     assertThat(strategy.process(messages)).containsOnly(last);
   }
 
   @Test
-  public void testProcessWithEmptyList() throws Exception {
-    final List<SendMessage> messages = new ArrayList<>();
+  public void testProcessWithEmptyList() {
+    final List<String> messages = new ArrayList<>();
     assertThat(strategy.process(messages)).isEmpty();
   }
 
