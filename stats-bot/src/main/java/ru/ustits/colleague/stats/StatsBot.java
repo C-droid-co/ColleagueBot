@@ -2,6 +2,7 @@ package ru.ustits.colleague.stats;
 
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.api.objects.Update;
+import org.telegram.telegrambots.bots.commandbot.commands.BotCommand;
 import ru.ustits.colleague.ColleagueBot;
 import ru.ustits.colleague.repositories.records.MessageRecord;
 import ru.ustits.colleague.services.MessageService;
@@ -14,8 +15,9 @@ public class StatsBot extends ColleagueBot {
 
   private final MessageService messageService;
 
-  public StatsBot(final String botName, final String botToken, final MessageService messageService) {
-    super(botName, botToken);
+  public StatsBot(final String botName, final String botToken, final BotCommand[] commands,
+                  final MessageService messageService) {
+    super(botName, botToken, commands);
     this.messageService = messageService;
   }
 

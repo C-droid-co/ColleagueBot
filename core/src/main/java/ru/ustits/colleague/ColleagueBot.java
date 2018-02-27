@@ -1,7 +1,6 @@
 package ru.ustits.colleague;
 
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.api.methods.send.SendDocument;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -22,12 +21,12 @@ import javax.annotation.PostConstruct;
 public abstract class ColleagueBot extends TelegramLongPollingCommandBot {
 
   private final String botToken;
+  private final BotCommand[] commands;
 
-  private BotCommand[] commands;
-
-  public ColleagueBot(final String botName, final String botToken) {
+  public ColleagueBot(final String botName, final String botToken, final BotCommand[] commands) {
     super(new DefaultBotOptions(), true, botName);
     this.botToken = botToken;
+    this.commands = commands;
   }
 
   @PostConstruct
@@ -41,11 +40,6 @@ public abstract class ColleagueBot extends TelegramLongPollingCommandBot {
     if (update.hasCallbackQuery()) {
       processCallback(update.getCallbackQuery());
     }
-  }
-
-  @Autowired
-  public void setCommands(final BotCommand[] commands) {
-    this.commands = commands;
   }
 
   @Override
