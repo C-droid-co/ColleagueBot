@@ -2,9 +2,14 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/a8b489aca8ac426089f64ba35de99bda)](https://www.codacy.com/app/ustits/ColleagueBot?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ustits/ColleagueBot&amp;utm_campaign=Badge_Grade)
 [![codecov](https://codecov.io/gh/ustits/ColleagueBot/branch/develop/graph/badge.svg)](https://codecov.io/gh/ustits/ColleagueBot)
 
-# Colleague bot for Telegram
+# Telegram Colleague
+
+It's a bundle of telegram bots, that brings some handy commands to
+your chat
 
 ## Supported Commands
+
+### Trigger bot
 
 * `/trigger trigger message` - shows the message if the trigger was written in the chat
 * `/trigger_rm trigger` - delete trigger
@@ -18,12 +23,18 @@
   * `last` - returns last found trigger
   * `periodic` - returns one random trigger with a specified chance
 * `/state` - show current trigger response strategy
+
+### Repeat bot
+
 * `/repeat cron_patter message` - repeat message by [cron](http://www.quartz-scheduler.org/documentation/quartz-2.x/tutorials/crontrigger.html)
   * `/repeat_d hh mm` - repeat daily
   * `/repeat_wd hh mm` - repeat on work days
   * `/repeat_we hh mm` - repeat on weekends
+
+### Stats bot
+
 * `/stats` - show message statistics for current chat
-* `/help` - lists all available commands
+* `/word_stats` - show word usages statistics
 
 ## Version info
 
