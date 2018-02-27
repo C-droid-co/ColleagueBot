@@ -1,4 +1,4 @@
-package ru.ustits.colleague.services;
+package ru.ustits.colleague.triggers.services;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -8,7 +8,7 @@ import ru.ustits.colleague.repositories.ChatStateRepository;
 import ru.ustits.colleague.repositories.ChatsRepository;
 import ru.ustits.colleague.repositories.records.ChatRecord;
 import ru.ustits.colleague.repositories.records.ChatStateRecord;
-import ru.ustits.colleague.tools.triggers.ProcessState;
+import ru.ustits.colleague.triggers.tools.ProcessState;
 
 import java.util.Optional;
 
@@ -22,9 +22,9 @@ import static ru.ustits.colleague.RandomUtils.string;
 /**
  * @author ustits
  */
-public class ChatServiceTest {
+public class StateServiceTest {
 
-  private ChatService service;
+  private StateService service;
 
   @Mock
   private ChatsRepository chatsRepository;
@@ -35,10 +35,10 @@ public class ChatServiceTest {
   private ProcessState defaultState;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     MockitoAnnotations.initMocks(this);
     defaultState = ProcessState.LAST;
-    service = new ChatService(chatsRepository, chatStateRepository, defaultState);
+    service = new StateService(chatsRepository, chatStateRepository, defaultState);
   }
 
   @Test

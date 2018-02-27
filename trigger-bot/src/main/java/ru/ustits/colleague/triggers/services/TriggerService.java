@@ -1,4 +1,4 @@
-package ru.ustits.colleague.services;
+package ru.ustits.colleague.triggers.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -7,9 +7,9 @@ import org.telegram.telegrambots.api.objects.Message;
 import ru.ustits.colleague.repositories.IgnoreTriggerRepository;
 import ru.ustits.colleague.repositories.TriggerRepository;
 import ru.ustits.colleague.repositories.records.TriggerRecord;
-import ru.ustits.colleague.tools.triggers.ProcessState;
-import ru.ustits.colleague.tools.triggers.ProcessingStrategy;
-import ru.ustits.colleague.tools.triggers.TriggerProcessor;
+import ru.ustits.colleague.triggers.tools.ProcessState;
+import ru.ustits.colleague.triggers.tools.ProcessingStrategy;
+import ru.ustits.colleague.triggers.tools.TriggerProcessor;
 
 import java.util.Collections;
 import java.util.List;
@@ -24,14 +24,14 @@ public class TriggerService {
 
   private final TriggerRepository triggerRepository;
   private final IgnoreTriggerRepository ignoreTriggerRepository;
-  private final ChatService chatService;
+  private final StateService stateService;
 
   public List<String> findTriggers(final Message message) {
     final String text = message.getText();
     final Long chatId = message.getChatId();
     final Long userId = Integer.toUnsignedLong(message.getFrom().getId());
     if (!ignoreTriggerRepository.existsByChatIdAndUserId(chatId, userId)) {
-      final ProcessState state = chatService.getChatState(chatId);
+      final ProcessState state = stateService.getChatState(chatId);
       log.debug("Searching triggers for user [{}] and message [{}]", userId, text);
       return findTriggers(chatId, text, state.getStrategy());
     } else {

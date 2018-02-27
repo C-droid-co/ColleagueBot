@@ -1,4 +1,4 @@
-package ru.ustits.colleague.tools.triggers;
+package ru.ustits.colleague.triggers.tools;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -13,25 +13,26 @@ import static ru.ustits.colleague.RandomUtils.string;
 /**
  * @author ustits
  */
-public class RandomTriggerTest {
+public class LastTriggerTest {
 
-  private RandomTrigger strategy;
+  private LastTrigger strategy;
 
   @Before
   public void setUp() throws Exception {
-    strategy = new RandomTrigger();
+    strategy = new LastTrigger();
   }
 
   @Test
   public void testProcess() {
-    final List<String> values = Arrays.asList(string(), string(), string());
-    assertThat(strategy.process(values)).hasSize(1);
+    final String last = string();
+    final List<String> messages = Arrays.asList(string(), string(), last);
+    assertThat(strategy.process(messages)).containsOnly(last);
   }
 
   @Test
   public void testProcessWithEmptyList() {
-    final List<String> empty = new ArrayList<>();
-    assertThat(strategy.process(empty)).isEmpty();
+    final List<String> messages = new ArrayList<>();
+    assertThat(strategy.process(messages)).isEmpty();
   }
 
 }

@@ -1,4 +1,4 @@
-package ru.ustits.colleague.tools.triggers;
+package ru.ustits.colleague.triggers.tools;
 
 import java.util.Collections;
 import java.util.List;
@@ -6,15 +6,16 @@ import java.util.List;
 /**
  * @author ustits
  */
-public final class LastTrigger implements ProcessingStrategy {
+public final class FirstTrigger implements ProcessingStrategy {
 
   @Override
   public List<String> process(final List<String> messages) {
     if (messages.isEmpty()) {
       return messages;
     } else {
-      final String first = messages.get(messages.size() - 1);
+      final String first = messages.get(0);
       return Collections.singletonList(first);
     }
   }
+
 }

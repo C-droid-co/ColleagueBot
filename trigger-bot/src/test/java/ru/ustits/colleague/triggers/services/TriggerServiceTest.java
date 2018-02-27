@@ -1,4 +1,4 @@
-package ru.ustits.colleague.services;
+package ru.ustits.colleague.triggers.services;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -7,7 +7,7 @@ import org.mockito.MockitoAnnotations;
 import ru.ustits.colleague.repositories.IgnoreTriggerRepository;
 import ru.ustits.colleague.repositories.TriggerRepository;
 import ru.ustits.colleague.repositories.records.TriggerRecord;
-import ru.ustits.colleague.tools.triggers.ProcessState;
+import ru.ustits.colleague.triggers.tools.ProcessState;
 
 import java.util.List;
 
@@ -32,12 +32,12 @@ public class TriggerServiceTest {
   private IgnoreTriggerRepository ignoreTriggerRepository;
 
   @Mock
-  private ChatService chatService;
+  private StateService stateService;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     MockitoAnnotations.initMocks(this);
-    service = new TriggerService(triggerRepository, ignoreTriggerRepository, chatService);
+    service = new TriggerService(triggerRepository, ignoreTriggerRepository, stateService);
   }
 
   @Test

@@ -5,7 +5,7 @@ import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 import ru.ustits.colleague.ColleagueBot;
-import ru.ustits.colleague.services.TriggerService;
+import ru.ustits.colleague.triggers.services.TriggerService;
 
 import java.util.List;
 

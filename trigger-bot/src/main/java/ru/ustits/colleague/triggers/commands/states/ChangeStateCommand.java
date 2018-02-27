@@ -8,8 +8,8 @@ import org.telegram.telegrambots.bots.AbsSender;
 import org.telegram.telegrambots.bots.commandbot.commands.BotCommand;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 import ru.ustits.colleague.repositories.records.ChatRecord;
-import ru.ustits.colleague.services.ChatService;
-import ru.ustits.colleague.tools.triggers.ProcessState;
+import ru.ustits.colleague.triggers.services.StateService;
+import ru.ustits.colleague.triggers.tools.ProcessState;
 
 import java.util.Optional;
 
@@ -19,12 +19,12 @@ import java.util.Optional;
 @Log4j2
 public final class ChangeStateCommand extends BotCommand {
 
-  private final ChatService chatService;
+  private final StateService stateService;
 
   public ChangeStateCommand(final String commandIdentifier, final String description,
-                            final ChatService chatService) {
+                            final StateService stateService) {
     super(commandIdentifier, description);
-    this.chatService = chatService;
+    this.stateService = stateService;
   }
 
   @Override
@@ -34,7 +34,7 @@ public final class ChangeStateCommand extends BotCommand {
     try {
       final Optional<ProcessState> state = ProcessState.toState(mode);
       if (state.isPresent()) {
-        final ChatRecord stateRecord = chatService.changeState(chat, state.get());
+        final ChatRecord stateRecord = stateService.changeState(chat, state.get());
         log.info("Changed state for chat: {}", stateRecord);
         absSender.execute(new SendMessage(chat.getId(), "Switched mode [" + mode + "]"));
       } else {

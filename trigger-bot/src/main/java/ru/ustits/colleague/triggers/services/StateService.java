@@ -1,4 +1,4 @@
-package ru.ustits.colleague.services;
+package ru.ustits.colleague.triggers.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -8,7 +8,7 @@ import ru.ustits.colleague.repositories.ChatStateRepository;
 import ru.ustits.colleague.repositories.ChatsRepository;
 import ru.ustits.colleague.repositories.records.ChatRecord;
 import ru.ustits.colleague.repositories.records.ChatStateRecord;
-import ru.ustits.colleague.tools.triggers.ProcessState;
+import ru.ustits.colleague.triggers.tools.ProcessState;
 
 import java.util.Optional;
 
@@ -18,7 +18,7 @@ import java.util.Optional;
 @Log4j2
 @Component
 @RequiredArgsConstructor
-public class ChatService {
+public class StateService {
 
   private final ChatsRepository chatsRepository;
   private final ChatStateRepository chatStateRepository;

@@ -1,4 +1,4 @@
-package ru.ustits.colleague.tools.triggers;
+package ru.ustits.colleague.triggers.tools;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

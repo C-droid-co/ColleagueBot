@@ -6,10 +6,11 @@ import org.telegram.telegrambots.bots.commandbot.commands.BotCommand;
 import ru.ustits.colleague.AppConfig;
 import ru.ustits.colleague.commands.ArgsAwareCommand;
 import ru.ustits.colleague.commands.NoWhitespaceCommand;
-import ru.ustits.colleague.services.ChatService;
 import ru.ustits.colleague.triggers.commands.states.ChangeStateCommand;
 import ru.ustits.colleague.triggers.commands.states.ListStatesCommand;
 import ru.ustits.colleague.triggers.commands.states.ShowStateCommand;
+import ru.ustits.colleague.triggers.services.StateService;
+import ru.ustits.colleague.triggers.tools.ProcessState;
 
 /**
  * @author ustits
@@ -22,14 +23,19 @@ public class StateCommandConfig extends AppConfig {
   private static final String SHOW_CURRENT_STATE_COMMAND = "state";
 
   @Bean
-  public BotCommand changeStateCommand(final Long adminId, final ChatService chatService) {
+  public ProcessState defaultProcessState() {
+    return ProcessState.ALL;
+  }
+
+  @Bean
+  public BotCommand changeStateCommand(final Long adminId, final StateService stateService) {
     return admin(
             new NoWhitespaceCommand(
                     new ArgsAwareCommand(
                             new ChangeStateCommand(
                                     PROCESS_STATE_COMMAND,
                                     "change trigger reaction",
-                                    chatService),
+                                    stateService),
                             1
                     )),
             adminId);
@@ -41,11 +47,11 @@ public class StateCommandConfig extends AppConfig {
   }
 
   @Bean
-  public BotCommand showStateCommand(final ChatService chatService) {
+  public BotCommand showStateCommand(final StateService stateService) {
     return new ShowStateCommand(
             SHOW_CURRENT_STATE_COMMAND,
             "show current trigger reaction",
-            chatService);
+            stateService);
   }
 
 }
