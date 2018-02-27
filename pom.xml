@@ -5,7 +5,15 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>ru.ustits</groupId>
     <artifactId>colleague_bot</artifactId>
+    <packaging>pom</packaging>
+
     <version>develop-SNAPSHOT</version>
+    <modules>
+        <module>trigger-bot</module>
+        <module>core</module>
+        <module>stats-bot</module>
+        <module>repeat-bot</module>
+    </modules>
 
     <properties>
         <log4j2>2.10.0</log4j2>
@@ -24,6 +32,11 @@
             <groupId>org.telegram</groupId>
             <artifactId>telegrambotsextensions</artifactId>
             <version>${bot-api}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.telegram</groupId>
+            <artifactId>telegrambots-abilities</artifactId>
+            <version>3.6</version>
         </dependency>
         <dependency>
             <groupId>postgresql</groupId>
