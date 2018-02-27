@@ -17,7 +17,7 @@ import static ru.ustits.colleague.RandomUtils.string;
 public abstract class RepositoryTest {
 
   private static final String DB_SCRIPT = "db.sql";
-  private static final String BUILD_SCRIPT = System.getProperty("user.dir") + "/db/" + DB_SCRIPT;
+  private static final String BUILD_SCRIPT = System.getProperty("user.dir") + "/../db/" + DB_SCRIPT;
   private static final String TEST_ENV = "test-env.sql";
   private static final String INIT_DIR = "/docker-entrypoint-initdb.d/";
   private static final int PG_PORT = 5432;
@@ -36,7 +36,7 @@ public abstract class RepositoryTest {
   protected JdbcTemplate sql;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     sql = new JdbcTemplate(dataSource());
   }
 
