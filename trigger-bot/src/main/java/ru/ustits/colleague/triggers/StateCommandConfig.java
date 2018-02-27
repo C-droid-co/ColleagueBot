@@ -7,7 +7,6 @@ import ru.ustits.colleague.AppConfig;
 import ru.ustits.colleague.commands.ArgsAwareCommand;
 import ru.ustits.colleague.commands.NoWhitespaceCommand;
 import ru.ustits.colleague.services.ChatService;
-import ru.ustits.colleague.tools.triggers.ProcessState;
 import ru.ustits.colleague.triggers.commands.states.ChangeStateCommand;
 import ru.ustits.colleague.triggers.commands.states.ListStatesCommand;
 import ru.ustits.colleague.triggers.commands.states.ShowStateCommand;
@@ -47,11 +46,6 @@ public class StateCommandConfig extends AppConfig {
             SHOW_CURRENT_STATE_COMMAND,
             "show current trigger reaction",
             chatService);
-  }
-
-  @Bean
-  public ProcessState defaultProcessState() {
-    return ProcessState.ALL;
   }
 
 }

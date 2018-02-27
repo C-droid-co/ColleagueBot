@@ -19,6 +19,7 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.telegram.telegrambots.bots.commandbot.commands.BotCommand;
 import ru.ustits.colleague.commands.AdminAwareCommand;
+import ru.ustits.colleague.tools.triggers.ProcessState;
 
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -86,6 +87,11 @@ public class AppConfig {
   @Bean
   public CacheManager cacheManager() {
     return new ConcurrentMapCacheManager();
+  }
+
+  @Bean
+  public ProcessState defaultProcessState() {
+    return ProcessState.ALL;
   }
 
   @Bean

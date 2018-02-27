@@ -2,7 +2,6 @@ package ru.ustits.colleague;
 
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.api.methods.PartialBotApiMethod;
 import org.telegram.telegrambots.api.methods.send.SendDocument;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -20,7 +19,6 @@ import javax.annotation.PostConstruct;
  * @author ustits
  */
 @Log4j2
-@Service
 public abstract class ColleagueBot extends TelegramLongPollingCommandBot {
 
   private final String botToken;
