@@ -23,7 +23,6 @@
   * `/repeat_wd hh mm` - repeat on work days
   * `/repeat_we hh mm` - repeat on weekends
 * `/stats` - show message statistics for current chat
-* `/help` - lists all available commands
 
 ## Version info
 
