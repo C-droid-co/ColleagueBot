@@ -2,9 +2,9 @@ package ru.ustits.colleague.repeats;
 
 import org.springframework.stereotype.Service;
 import ru.ustits.colleague.ColleagueBot;
+import ru.ustits.colleague.repeats.services.RepeatService;
 import ru.ustits.colleague.repeats.tasks.RepeatScheduler;
 import ru.ustits.colleague.repositories.records.RepeatRecord;
-import ru.ustits.colleague.services.RepeatService;
 
 import java.util.List;
 

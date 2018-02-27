@@ -11,6 +11,10 @@
 
     <artifactId>repeat-bot</artifactId>
 
+    <properties>
+        <quartz>2.3.0</quartz>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>ru.ustits</groupId>
@@ -23,6 +27,16 @@
             <version>develop-SNAPSHOT</version>
             <type>test-jar</type>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+            <version>${quartz}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz-jobs</artifactId>
+            <version>${quartz}</version>
         </dependency>
     </dependencies>
 

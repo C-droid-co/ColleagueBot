@@ -1,7 +1,7 @@
 package ru.ustits.colleague.repeats.commands;
 
+import ru.ustits.colleague.repeats.tools.CronBuilder;
 import ru.ustits.colleague.tools.StringUtils;
-import ru.ustits.colleague.tools.cron.CronBuilder;
 
 import static ru.ustits.colleague.tools.StringUtils.split;
 

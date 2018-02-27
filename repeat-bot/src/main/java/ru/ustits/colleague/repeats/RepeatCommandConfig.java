@@ -12,9 +12,9 @@ import ru.ustits.colleague.commands.ChatIdParser;
 import ru.ustits.colleague.commands.NoWhitespaceCommand;
 import ru.ustits.colleague.commands.Parser;
 import ru.ustits.colleague.repeats.commands.*;
+import ru.ustits.colleague.repeats.services.RepeatService;
 import ru.ustits.colleague.repeats.tasks.RepeatScheduler;
 import ru.ustits.colleague.repositories.records.RepeatRecord;
-import ru.ustits.colleague.services.RepeatService;
 
 /**
  * @author ustits

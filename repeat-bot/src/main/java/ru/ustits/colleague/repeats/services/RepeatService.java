@@ -1,4 +1,4 @@
-package ru.ustits.colleague.services;
+package ru.ustits.colleague.repeats.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

@@ -7,9 +7,9 @@ import org.mockito.MockitoAnnotations;
 import org.telegram.telegrambots.api.objects.Chat;
 import org.telegram.telegrambots.api.objects.User;
 import org.telegram.telegrambots.bots.AbsSender;
+import ru.ustits.colleague.repeats.services.RepeatService;
 import ru.ustits.colleague.repeats.tasks.RepeatScheduler;
 import ru.ustits.colleague.repositories.records.RepeatRecord;
-import ru.ustits.colleague.services.RepeatService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;

@@ -1,4 +1,4 @@
-package ru.ustits.colleague.tools.cron;
+package ru.ustits.colleague.repeats.tools;
 
 import org.junit.Before;
 import org.junit.Test;

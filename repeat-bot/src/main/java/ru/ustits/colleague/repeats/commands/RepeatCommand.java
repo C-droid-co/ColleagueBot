@@ -9,9 +9,9 @@ import org.telegram.telegrambots.bots.AbsSender;
 import org.telegram.telegrambots.bots.commandbot.commands.BotCommand;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 import ru.ustits.colleague.commands.Parser;
+import ru.ustits.colleague.repeats.services.RepeatService;
 import ru.ustits.colleague.repeats.tasks.RepeatScheduler;
 import ru.ustits.colleague.repositories.records.RepeatRecord;
-import ru.ustits.colleague.services.RepeatService;
 
 import java.util.Arrays;
 

@@ -1,4 +1,4 @@
-package ru.ustits.colleague.tools.cron;
+package ru.ustits.colleague.repeats.tools;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -8,8 +8,8 @@ import ru.ustits.colleague.tools.StringUtils;
 import java.text.ParseException;
 import java.util.Optional;
 
-import static ru.ustits.colleague.tools.cron.CronFields.MINUTES;
-import static ru.ustits.colleague.tools.cron.CronFields.SECONDS;
+import static ru.ustits.colleague.repeats.tools.CronFields.MINUTES;
+import static ru.ustits.colleague.repeats.tools.CronFields.SECONDS;
 
 /**
  * @author ustits
